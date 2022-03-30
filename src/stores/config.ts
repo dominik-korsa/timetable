@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { OptivumTimetableInfo } from 'src/api';
+import { OptivumTimetableInfo } from 'src/api/optivum';
 
 export interface ConfigHistory {
   title: string;

@@ -85,11 +85,11 @@ import {
   computed, defineComponent, ref, watch,
 } from 'vue';
 import isUrl from 'is-url-superb';
-import { loadOptivumTimetable } from 'src/api';
 import { useRouter } from 'vue-router';
 import { useConfigStore } from 'stores/config';
-import { CacheMode } from 'src/requests';
+import { CacheMode } from 'src/api/requests';
 import { useQuasar } from 'quasar';
+import { loadOptivumTimetable } from 'src/api/optivum';
 
 export default defineComponent({
   name: 'IndexPage',

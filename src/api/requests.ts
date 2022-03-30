@@ -7,6 +7,10 @@ function assertOk<T extends Response>(response: T): T {
   return response;
 }
 
+/*
+Make request and if successful store and return its response,
+otherwise return cache
+ */
 async function fetchNetworkFirst(
   input: RequestInfo,
   init?: RequestInit,
@@ -23,6 +27,10 @@ async function fetchNetworkFirst(
   }
 }
 
+/*
+Return cache if available,
+otherwise make new request, cache its response and return it
+ */
 async function fetchCacheFirst(
   input: RequestInfo,
   init?: RequestInit,
@@ -37,9 +45,35 @@ async function fetchCacheFirst(
   return response;
 }
 
+/*
+Return cache if available,
+then make new request and cache its response
+(return if cache was not available)
+ */
+async function fetchLazyUpdate(
+  input: RequestInfo,
+  init?: RequestInit,
+): Promise<Response> {
+  const cache = await getCache();
+
+  const match = await cache.match(input);
+  const responsePromise = fetch(input, init)
+    .then(assertOk)
+    .then(async (response) => {
+      await cache.put(input, response.clone());
+      return response;
+    });
+  if (match) {
+    responsePromise.catch(console.error);
+    return match;
+  }
+  return responsePromise;
+}
+
 export enum CacheMode {
   NetworkFirst,
   CacheFirst,
+  LazyUpdate,
 }
 
 export function fetchWithCache(
@@ -52,5 +86,7 @@ export function fetchWithCache(
       return fetchNetworkFirst(input, init);
     case CacheMode.CacheFirst:
       return fetchCacheFirst(input, init);
+    case CacheMode.LazyUpdate:
+      return fetchLazyUpdate(input, init);
   }
 }

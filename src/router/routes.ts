@@ -6,6 +6,11 @@ const timetableRoutes = [
     path: '',
     component: () => import('pages/SelectClass.vue'),
   },
+  {
+    name: 'ClassTimetable',
+    path: 'class/:class/',
+    component: () => import('pages/ClassTimetable.vue'),
+  },
 ];
 
 const routes: RouteRecordRaw[] = [
@@ -17,7 +22,7 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/timetable/v-lo',
+    path: '/timetable/v-lo/',
     component: () => import('layouts/TimetableLayout.vue'),
     children: [
       ...timetableRoutes.map((route) => ({
@@ -27,7 +32,7 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/timetable/optivum/:url',
+    path: '/timetable/optivum/:url/',
     component: () => import('layouts/TimetableLayout.vue'),
     children: [
       ...timetableRoutes.map((route) => ({
