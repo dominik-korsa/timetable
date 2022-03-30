@@ -3,30 +3,17 @@
     <q-header class="bg-primary text-white">
       <q-toolbar>
         <q-btn
-          dense
           flat
           round
-          icon="menu"
-          @click="toggleLeftDrawer"
+          icon="arrow_back"
+          @click="goBack"
         />
 
         <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
-          </q-avatar>
           Title
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      side="left"
-      bordered
-    >
-      <!-- drawer content -->
-    </q-drawer>
 
     <q-page-container>
       <router-view />
@@ -35,17 +22,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import _ from 'lodash';
+import { BackTo } from 'src/router/routes';
 
 export default defineComponent({
   name: 'TimetableLayout',
   setup() {
-    const leftDrawerOpen = ref(false);
+    const route = useRoute();
+    const router = useRouter();
 
     return {
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
+      goBack: () => {
+        const backTo = (_.last(route.matched)?.meta?.backTo as BackTo | undefined)?.(route) ?? { name: 'Home' };
+        const resolved = router.resolve(backTo);
+        if (resolved.href === window.history.state.back) router.back();
+        else router.push(backTo);
       },
     };
   },

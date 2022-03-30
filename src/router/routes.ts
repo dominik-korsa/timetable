@@ -1,44 +1,71 @@
-import { RouteRecordRaw } from 'vue-router';
+import { RouteLocation, RouteLocationRaw, RouteRecordRaw } from 'vue-router';
 
-const timetableRoutes = [
-  {
-    name: 'SelectClass',
-    path: '',
-    component: () => import('pages/SelectClass.vue'),
-  },
-  {
-    name: 'ClassTimetable',
-    path: 'class/:class/',
-    component: () => import('pages/ClassTimetable.vue'),
-  },
-];
+export type BackTo = (route: RouteLocation) => RouteLocationRaw;
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
+      {
+        name: 'Home',
+        path: '',
+        component: () => import('pages/IndexPage.vue'),
+      },
     ],
   },
   {
     path: '/timetable/v-lo/',
     component: () => import('layouts/TimetableLayout.vue'),
     children: [
-      ...timetableRoutes.map((route) => ({
-        ...route,
-        name: route.name ? `VLo/${route.name}` : undefined,
-      })),
+      {
+        name: 'VLo/SelectClass',
+        path: '',
+        component: () => import('pages/SelectClass.vue'),
+        meta: {
+          backTo: (): RouteLocationRaw => ({
+            name: 'Home',
+          }),
+        },
+      },
+      {
+        name: 'VLo/ClassTimetable',
+        path: 'class/:class/',
+        component: () => import('pages/ClassTimetable.vue'),
+        meta: {
+          backTo: (route: RouteLocation): RouteLocationRaw => ({
+            name: 'VLo/SelectClass',
+            params: route.params,
+          }),
+        },
+      },
     ],
   },
   {
     path: '/timetable/optivum/:url/',
     component: () => import('layouts/TimetableLayout.vue'),
     children: [
-      ...timetableRoutes.map((route) => ({
-        ...route,
-        name: route.name ? `Optivum/${route.name}` : undefined,
-      })),
+      {
+        name: 'Optivum/SelectClass',
+        path: '',
+        component: () => import('pages/SelectClass.vue'),
+        meta: {
+          backTo: (): RouteLocationRaw => ({
+            name: 'Home',
+          }),
+        },
+      },
+      {
+        name: 'Optivum/ClassTimetable',
+        path: 'class/:class/',
+        component: () => import('pages/ClassTimetable.vue'),
+        meta: {
+          backTo: (route: RouteLocation): RouteLocationRaw => ({
+            name: 'Optivum/SelectClass',
+            params: route.params,
+          }),
+        },
+      },
     ],
   },
   {
