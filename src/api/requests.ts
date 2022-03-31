@@ -9,6 +9,20 @@ function assertOk<T extends Response>(response: T): T {
 
 /*
 Make request and if successful store and return its response,
+otherwise throw error
+ */
+async function fetchNetworkOnly(
+  input: RequestInfo,
+  init?: RequestInit,
+): Promise<Response> {
+  const cache = await getCache();
+  const response = assertOk(await fetch(input, init));
+  await cache.put(input, response.clone());
+  return response;
+}
+
+/*
+Make request and if successful store and return its response,
 otherwise return cache
  */
 async function fetchNetworkFirst(
@@ -17,9 +31,7 @@ async function fetchNetworkFirst(
 ): Promise<Response> {
   const cache = await getCache();
   try {
-    const response = assertOk(await fetch(input, init));
-    await cache.put(input, response.clone());
-    return response;
+    return fetchNetworkOnly(input, init);
   } catch (error) {
     const match = await cache.match(input);
     if (!match) throw error;
@@ -40,9 +52,7 @@ async function fetchCacheFirst(
   const match = await cache.match(input);
   if (match) return match;
 
-  const response = assertOk(await fetch(input, init));
-  await cache.put(input, response.clone());
-  return response;
+  return fetchNetworkOnly(input, init);
 }
 
 /*
@@ -64,16 +74,31 @@ async function fetchLazyUpdate(
       return response;
     });
   if (match) {
-    responsePromise.catch(console.error);
+    responsePromise.catch((error) => console.warn('Failed to lazy update cache', error));
     return match;
   }
   return responsePromise;
 }
 
+export class NotInCacheError extends Error {
+  name = 'NotInCacheError';
+
+  message = 'Cache for this request was not found';
+}
+
+async function fetchCacheOnly(input: RequestInfo): Promise<Response> {
+  const cache = await getCache();
+  const match = await cache.match(input);
+  if (!match) throw new NotInCacheError();
+  return match;
+}
+
 export enum CacheMode {
+  NetworkOnly,
   NetworkFirst,
   CacheFirst,
   LazyUpdate,
+  CacheOnly,
 }
 
 export function fetchWithCache(
@@ -82,11 +107,15 @@ export function fetchWithCache(
   init?: RequestInit,
 ): Promise<Response> {
   switch (mode) {
+    case CacheMode.NetworkOnly:
+      return fetchNetworkOnly(input, init);
     case CacheMode.NetworkFirst:
       return fetchNetworkFirst(input, init);
     case CacheMode.CacheFirst:
       return fetchCacheFirst(input, init);
     case CacheMode.LazyUpdate:
       return fetchLazyUpdate(input, init);
+    case CacheMode.CacheOnly:
+      return fetchCacheOnly(input);
   }
 }

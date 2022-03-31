@@ -105,17 +105,12 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-console': process.env.NODE_ENV === 'production' ? ['error', {
       allow: ['warn', 'error']
-    }] : ['off']
+    }] : ['off'],
+
+    'no-undef': 'off',
+    'default-case': 'off',
+    '@typescript-eslint/switch-exhaustiveness-check': 'warn',
+    'consistent-return': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off'
   },
-  overrides: [
-    {
-      files: ['*.ts'],
-      rules: {
-        'no-undef': 'off',
-        'default-case': 'off',
-        '@typescript-eslint/switch-exhaustiveness-check': 'warn',
-        'consistent-return': 'off'
-      }
-    }
-  ]
 };

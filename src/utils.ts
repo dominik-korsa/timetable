@@ -12,6 +12,24 @@ export function useDocumentListener<K extends keyof DocumentEventMap>(
   });
 }
 
+export function useInterval<Args extends []>(
+  handler: (...handlerArgs: Args) => unknown,
+  timeout: number,
+  immediate = false,
+  ...args: Args
+): void {
+  let intervalId: number | undefined;
+  onMounted(() => {
+    clearInterval(intervalId);
+    intervalId = setInterval(handler, timeout, ...args) as unknown as number;
+    if (immediate) handler(...args);
+  });
+  onBeforeUnmount(() => {
+    clearInterval(intervalId);
+    intervalId = undefined;
+  });
+}
+
 export class DefaultsMap<K, V> extends Map<K, V> {
   private readonly generateDefault: (key: K) => V;
 
@@ -27,4 +45,14 @@ export class DefaultsMap<K, V> extends Map<K, V> {
     this.set(key, value);
     return value;
   }
+}
+
+export function parseHour(value: string): number {
+  const [hours, minutes] = value.split(':').map((v) => parseInt(v, 10));
+  return hours * 60 + minutes;
+}
+
+export function adjacentDifference(array: number[]): number[] {
+  if (array.length === 0) return [];
+  return array.slice(1).map((v, i) => v - array[i]);
 }
