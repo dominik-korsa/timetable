@@ -20,12 +20,24 @@
     </div>
   </div>
   <q-separator vertical />
-  <div class="timetable-grid__grid">
+  <div class="timetable-grid__days">
     <div
-      v-if="markerPosition !== null"
-      class="timetable-grid__marker"
-      :style="`grid-column: ${markerPosition.dayIndex + 1}; --offset: ${markerPosition.offset}px`"
-    />
+      v-for="(day, i) in lessonItems"
+      :key="i"
+      class="timetable-grid__day"
+    >
+      <timetable-item
+        v-for="item in day"
+        :key="item.gridRow"
+        :style="`grid-row: ${item.gridRow}`"
+        :lessons="item.lessons"
+      />
+      <div
+        v-if="markerPosition !== null && markerPosition.dayIndex === i"
+        class="timetable-grid__marker"
+        :style="`--offset: ${markerPosition.offset}px`"
+      />
+    </div>
   </div>
 </template>
 
@@ -33,12 +45,19 @@
 import {
   computed, defineComponent, PropType, ref,
 } from 'vue';
-import { TableData } from 'src/api/common';
+import { TableData, TableLesson } from 'src/api/common';
 import { adjacentDifference, parseHour, useInterval } from 'src/utils';
 import _ from 'lodash';
+import TimetableItem from 'components/TimetableItem.vue';
+
+interface LessonItem {
+  lessons: TableLesson[];
+  gridRow: number;
+}
 
 export default defineComponent({
   name: 'TimetableGrid',
+  components: { TimetableItem },
   props: {
     data: {
       type: Object as PropType<TableData>,
@@ -65,7 +84,7 @@ export default defineComponent({
       now.value = new Date();
     }, 5000, true);
 
-    const hourPixels = 50;
+    const hourPixels = 55;
 
     const markerPosition = computed(() => {
       const dayIndex = now.value.getDay() - 1;
@@ -85,6 +104,18 @@ export default defineComponent({
       };
     });
 
+    const lessonItems = computed(() => props.data.lessons.map((day) => {
+      const items: LessonItem[] = [];
+      day.forEach((lessons, hourIndex) => {
+        if (lessons.length === 0) return;
+        items.push({
+          gridRow: hourIndex * 2 + 2,
+          lessons,
+        });
+      });
+      return items;
+    }));
+
     return {
       rows: computed(
         () => adjacentDifference(timestamps.value)
@@ -92,12 +123,15 @@ export default defineComponent({
           .join(' '),
       ),
       markerPosition,
+      lessonItems,
     };
   },
 });
 </script>
 
 <style lang="scss">
+$timetable-gap: 4px;
+
 .timetable-grid__temporal-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -118,7 +152,7 @@ export default defineComponent({
       align-self: center;
       justify-self: left;
       margin-right: 5px;
-      font-size: 1.1em;
+      font-size: 1.1rem;
       border: 1px solid;
       border-radius: $generic-border-radius;
       padding: 0 2px;
@@ -126,7 +160,7 @@ export default defineComponent({
     }
 
     .timetable-grid__temporal-start, .timetable-grid__temporal-end {
-      font-size: 0.8em;
+      font-size: 0.8rem;
       line-height: 1;
       text-align: right;
     }
@@ -141,7 +175,7 @@ export default defineComponent({
       align-self: end;
     }
 
-    @media (max-width: 500px) {
+    @media (max-width: 870px) {
       & {
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr auto;
@@ -156,7 +190,7 @@ export default defineComponent({
         margin: 0;
         padding: 0;
         border: none;
-        font-size: 0.9em;
+        font-size: 0.9rem;
         text-align: center;
         line-height: 0;
         justify-self: center;
@@ -170,17 +204,63 @@ export default defineComponent({
   }
 }
 
-.timetable-grid__grid {
+.timetable-grid__days {
   flex-grow: 1;
-  display: grid;
-  grid-auto-columns: 1fr;
-  grid-template-rows: v-bind(rows);
+  display: flex;
+  overflow-x: auto;
+  margin-right: $timetable-gap;
+  scroll-snap-type: x mandatory;
+
+  --column-count: 5;
+  @media (max-width: 840px) { --column-count: 4; }
+  @media (max-width: 700px) { --column-count: 3; }
+  @media (max-width: 525px) { --column-count: 2; }
+
+  .timetable-grid__day {
+    $width: calc(100% / var(--column-count));
+    width: $width;
+    box-sizing: border-box;
+    padding-left: $timetable-gap;
+    display: grid;
+    grid-template-rows: v-bind(rows);
+    flex: 0 0 $width;
+    scroll-snap-align: end;
+    scroll-snap-stop: always;
+  }
 
   .timetable-grid__marker {
-    height: 2px;
-    background: #C1001555;
-    margin-top: calc(var(--offset) - 1px);
+    $height: 2px;
+    $color: $red-8;
+    $triangle-size: 7px;
+    height: $height;
+    background: transparentize($color, 0.65);
+    margin-top: - 1px;
+    transform: translateY(var(--offset));
+    margin-left: -4px;
+    margin-right: -4px;
     pointer-events: none;
+    z-index: 1;
+
+    &:before, &:after {
+      display: block;
+      content: '';
+      border-top: $triangle-size solid transparent;
+      border-bottom: $triangle-size solid transparent;
+
+      height: 0;
+      width: 0;
+      margin-top: -$triangle-size + $height/2;
+    }
+
+    &:before {
+      border-left: $triangle-size solid $color;
+      float: left;
+    }
+
+    &:after {
+      border-right: $triangle-size solid $color;
+      float: right;
+    }
   }
 }
 </style>
