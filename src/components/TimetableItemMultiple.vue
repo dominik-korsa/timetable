@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="timetable-item-multiple"
-    @click="dialogVisible = true"
-  >
+  <div class="timetable-item-multiple">
     <div
       v-if="favouriteLesson !== null"
       class="timetable-item-multiple__favourite"
@@ -28,68 +25,14 @@
       </div>
     </div>
   </div>
-  <q-dialog v-model="dialogVisible">
-    <q-card>
-      <q-list
-        class="timetable-item-multiple__dialog"
-        separator
-      >
-        <q-item
-          v-for="(lesson, i) in items"
-          :key="i"
-          class="q-px-sm"
-        >
-          <q-item-section
-            side
-            class="q-pr-xs"
-          >
-            <q-btn
-              :icon="lesson.isFavourite ? 'star' : 'star_border'"
-              :color="lesson.isFavourite ? 'amber' : undefined"
-              flat
-              round
-              @click="lesson.favouriteClick"
-            />
-          </q-item-section>
-          <q-item-section>
-            <timetable-item-single
-              :lesson="lesson"
-              class="timetable-item-multiple__dialog-item"
-              full-subject
-            />
-          </q-item-section>
-        </q-item>
-      </q-list>
-      <q-separator />
-      <q-item
-        class="q-px-sm"
-      >
-        <q-item-section
-          side
-          class="q-pr-sm"
-        >
-          <q-btn
-            :icon="favourite === null ? 'visibility_off' : 'visibility'"
-            flat
-            round
-            :color="favourite === null ? 'primary' : undefined"
-            @click="hideClick"
-          />
-        </q-item-section>
-        <q-item-section>
-          {{ favourite === null ? 'Lekcja ukryta' : 'Lekcja widoczna' }}
-        </q-item-section>
-      </q-item>
-    </q-card>
-  </q-dialog>
 </template>
 
 <script lang="ts">
 import { TableLesson } from 'src/api/common';
 import {
-  computed, defineComponent, PropType, ref,
+  computed, defineComponent, PropType,
 } from 'vue';
-import { common, getTypeValidator } from 'src/utils';
+import { common } from 'src/utils';
 import TimetableItemSingle from 'components/TimetableItemSingle.vue';
 import { Favourite } from 'stores/config';
 
@@ -109,11 +52,7 @@ export default defineComponent({
       default: undefined,
     },
   },
-  emits: {
-    setFavourite: getTypeValidator<[value: Favourite | undefined]>(),
-  },
-  setup: (props, { emit }) => ({
-    dialogVisible: ref(false),
+  setup: (props) => ({
     groupsText: computed(() => ({
       zero: 'grup',
       one: 'grupa',
@@ -125,26 +64,6 @@ export default defineComponent({
     commonSubject: computed(
       () => common(props.lessons.map((lesson) => lesson.subjectShort)),
     ),
-    hideClick: () => {
-      emit('setFavourite', props.favourite === null ? undefined : null);
-    },
-    items: computed(() => props.lessons.map((lesson) => {
-      const isFavourite = props.favourite
-          && props.favourite.group === lesson.group
-          && props.favourite.subject === lesson.subject;
-      return ({
-        ...lesson,
-        isFavourite,
-        favouriteClick: isFavourite ? () => {
-          emit('setFavourite', undefined);
-        } : () => {
-          emit('setFavourite', {
-            subject: lesson.subject,
-            group: lesson.group,
-          });
-        },
-      });
-    })),
     favouriteLesson: computed(() => {
       const { favourite } = props;
       if (!favourite) return null;
@@ -197,15 +116,6 @@ export default defineComponent({
       font-size: 0.7rem;
       align-self: center;
     }
-  }
-}
-
-.timetable-item-multiple__dialog {
-  min-width: 300px;
-  max-width: 100%;
-
-  .timetable-item-multiple__dialog-item {
-    min-height: 40px;
   }
 }
 </style>

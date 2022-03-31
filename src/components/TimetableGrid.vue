@@ -223,6 +223,7 @@ $timetable-gap: 4px;
   @media (max-width: 840px) { --column-count: 4; }
   @media (max-width: 700px) { --column-count: 3; }
   @media (max-width: 525px) { --column-count: 2; }
+  @media (max-width: 350px) { --column-count: 1; }
 
   .timetable-grid__day {
     $width: calc(100% / var(--column-count));
