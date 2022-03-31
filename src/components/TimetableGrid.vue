@@ -34,6 +34,7 @@
       />
       <div
         v-if="markerPosition !== null && markerPosition.dayIndex === i"
+        :ref="el => marker = el"
         class="timetable-grid__marker"
         :style="`--offset: ${markerPosition.offset}px`"
       />
@@ -43,7 +44,7 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, PropType, ref,
+  computed, defineComponent, onMounted, PropType, ref,
 } from 'vue';
 import { TableData, TableLesson } from 'src/api/common';
 import { adjacentDifference, parseHour, useInterval } from 'src/utils';
@@ -116,7 +117,14 @@ export default defineComponent({
       return items;
     }));
 
+    const marker = ref<HTMLDivElement>();
+
+    onMounted(() => {
+      marker.value?.scrollIntoView();
+    });
+
     return {
+      marker,
       rows: computed(
         () => adjacentDifference(timestamps.value)
           .map((v) => `${(v * hourPixels) / 60}px`)
@@ -208,7 +216,7 @@ $timetable-gap: 4px;
   flex-grow: 1;
   display: flex;
   overflow-x: auto;
-  margin-right: $timetable-gap;
+  margin: 0 $timetable-gap / 2;
   scroll-snap-type: x mandatory;
 
   --column-count: 5;
@@ -219,13 +227,13 @@ $timetable-gap: 4px;
   .timetable-grid__day {
     $width: calc(100% / var(--column-count));
     width: $width;
+    padding: 0 $timetable-gap / 2;
     box-sizing: border-box;
-    padding-left: $timetable-gap;
     display: grid;
     grid-template-rows: v-bind(rows);
     flex: 0 0 $width;
-    scroll-snap-align: end;
-    scroll-snap-stop: always;
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
   }
 
   .timetable-grid__marker {
