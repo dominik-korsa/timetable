@@ -75,11 +75,13 @@ export default defineComponent({
   .timetable-item__group {
     text-align: left;
     flex-shrink: 0;
+    font-style: italic;
+    padding-right: 2px;
   }
 
   .timetable-item__teacher {
     text-align: right;
-    margin-left: 5px;
+    padding-left: 2px;
     font-weight: 300;
   }
 

@@ -56,3 +56,9 @@ export function adjacentDifference(array: number[]): number[] {
   if (array.length === 0) return [];
   return array.slice(1).map((v, i) => v - array[i]);
 }
+
+export function common<T>(array: T[]): T | undefined {
+  if (array.length === 0) return undefined;
+  const value = array[0];
+  return array.every((v) => v === value) ? value : undefined;
+}
