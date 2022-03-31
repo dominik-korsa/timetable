@@ -30,7 +30,7 @@
         v-for="item in day"
         :key="item.gridRow"
         :style="`grid-row: ${item.gridRow}`"
-        :lessons="item.lessons"
+        :moment="item.moment"
       />
       <div
         v-if="markerPosition !== null && markerPosition.dayIndex === i"
@@ -46,13 +46,13 @@
 import {
   computed, defineComponent, onMounted, PropType, ref,
 } from 'vue';
-import { TableData, TableLesson } from 'src/api/common';
+import { TableData, TableLessonMoment } from 'src/api/common';
 import { adjacentDifference, parseHour, useInterval } from 'src/utils';
 import _ from 'lodash';
 import TimetableItem from 'components/TimetableItem.vue';
 
-interface LessonItem {
-  lessons: TableLesson[];
+interface TableItem {
+  moment: TableLessonMoment;
   gridRow: number;
 }
 
@@ -106,12 +106,12 @@ export default defineComponent({
     });
 
     const lessonItems = computed(() => props.data.lessons.map((day) => {
-      const items: LessonItem[] = [];
-      day.forEach((lessons, hourIndex) => {
-        if (lessons.length === 0) return;
+      const items: TableItem[] = [];
+      day.forEach((moment, momentIndex) => {
+        if (moment.lessons.length === 0) return;
         items.push({
-          gridRow: hourIndex * 2 + 2,
-          lessons,
+          moment,
+          gridRow: momentIndex * 2 + 2,
         });
       });
       return items;

@@ -7,25 +7,43 @@ export interface ConfigHistory {
   lastUse: string;
 }
 
-export interface Config {
-  history: ConfigHistory[];
+export interface FavouriteLesson {
+  subject: string;
+  group: string | undefined;
 }
 
-export const useConfigStore = defineStore('config', {
-  state: (): Config => ({
-    history: [],
-  }),
-  actions: {
-    addHistoryEntry(info: OptivumTimetableInfo) {
-      this.history = [
-        {
-          title: info.title,
-          baseUrl: info.baseUrl,
-          lastUse: new Date().toISOString(),
-        },
-        ...this.history.filter((e) => e.baseUrl !== info.baseUrl),
-      ];
+export type Favourite = FavouriteLesson | null;
+
+export interface Config {
+  history: ConfigHistory[];
+  favourites: Record<string, Favourite | undefined>;
+}
+
+export const useConfigStore = defineStore(
+  'config',
+  {
+    state: (): Config => ({
+      history: [],
+      favourites: {},
+    }),
+    actions: {
+      addHistoryEntry(info: OptivumTimetableInfo) {
+        this.history = [
+          {
+            title: info.title,
+            baseUrl: info.baseUrl,
+            lastUse: new Date().toISOString(),
+          },
+          ...this.history.filter((e) => e.baseUrl !== info.baseUrl),
+        ];
+      },
+      setFavourite(
+        umid: string,
+        favourite: Favourite | undefined,
+      ) {
+        this.favourites[umid] = favourite;
+      },
     },
+    persist: true,
   },
-  persist: true,
-});
+);

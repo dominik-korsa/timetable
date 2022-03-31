@@ -1,26 +1,22 @@
 <template>
-  <q-card
-    class="timetable-item timetable-item--single"
-    bordered
-    flat
-  >
-    <div class="timetable-item__top">
-      <div class="timetable-item__subject">
-        {{ lesson.subjectShort }}
+  <div class="timetable-item-single">
+    <div class="timetable-item-single__top">
+      <div class="timetable-item-single__subject">
+        {{ fullSubject ? lesson.subject : lesson.subjectShort }}
       </div>
-      <div class="timetable-item__room">
+      <div class="timetable-item-single__room">
         {{ lesson.room }}
       </div>
     </div>
-    <div class="timetable-item__bottom">
-      <div class="timetable-item__group">
+    <div class="timetable-item-single__bottom">
+      <div class="timetable-item-single__group">
         {{ lesson.group }}
       </div>
-      <div class="timetable-item__teacher">
+      <div class="timetable-item-single__teacher">
         {{ lesson.teacher }}
       </div>
     </div>
-  </q-card>
+  </div>
 </template>
 
 <script lang="ts">
@@ -35,13 +31,14 @@ export default defineComponent({
       type: Object as PropType<TableLesson>,
       required: true,
     },
+    fullSubject: Boolean,
   },
   setup: () => ({}),
 });
 </script>
 
 <style lang="scss">
-.timetable-item--single {
+.timetable-item-single {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -51,42 +48,42 @@ export default defineComponent({
   white-space: nowrap;
   overflow: hidden;
 
-  .timetable-item__top, .timetable-item__bottom {
+  .timetable-item-single__top, .timetable-item-single__bottom {
     display: flex;
     justify-content: space-between;
     overflow-x: hidden;
     width: 100%;
   }
 
-  .timetable-item__subject {
+  .timetable-item-single__subject {
     text-align: left;
     font-weight: 500;
     font-size: 1.2em;
     flex-grow: 1;
   }
 
-  .timetable-item__room {
+  .timetable-item-single__room {
     text-align: right;
     margin-left: 1px;
     flex-shrink: 0;
     flex-grow: 1;
   }
 
-  .timetable-item__group {
+  .timetable-item-single__group {
     text-align: left;
     flex-shrink: 0;
     font-style: italic;
     padding-right: 2px;
   }
 
-  .timetable-item__teacher {
+  .timetable-item-single__teacher {
     text-align: right;
     padding-left: 2px;
     font-weight: 300;
   }
 
-  .timetable-item__subject, .timetable-item__room,
-  .timetable-item__group, .timetable-item__teacher {
+  .timetable-item-single__subject, .timetable-item-single__room,
+  .timetable-item-single__group, .timetable-item-single__teacher {
     overflow-x: hidden;
     overflow-y: clip;
     text-overflow: ellipsis;

@@ -62,3 +62,8 @@ export function common<T>(array: T[]): T | undefined {
   const value = array[0];
   return array.every((v) => v === value) ? value : undefined;
 }
+
+export function getTypeValidator<T extends unknown[]>() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return (...args: T) => true;
+}

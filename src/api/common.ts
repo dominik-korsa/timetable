@@ -12,7 +12,22 @@ export interface TableLesson {
   group: string | undefined,
 }
 
+export interface TableLessonMoment {
+  umid: string;
+  lessons: TableLesson[];
+}
+
 export interface TableData {
   hours: TableHour[];
-  lessons: TableLesson[][][];
+  lessons: TableLessonMoment[][];
 }
+
+// Universal moment id
+export const toUmid = (
+  baseUrl: string | undefined,
+  classValue: string,
+  day: number,
+  hour: number,
+): string => `${
+  baseUrl === undefined ? 'v-lo' : encodeURIComponent(baseUrl)
+}|${encodeURIComponent(classValue)}|${day.toString()}|${hour.toString()}`;

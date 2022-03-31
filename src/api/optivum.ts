@@ -2,7 +2,7 @@ import {
   ListItem, Table, Timetable, TimetableList,
 } from '@wulkanowy/timetable-parser';
 import { CacheMode, fetchWithCache } from 'src/api/requests';
-import { TableData } from 'src/api/common';
+import { TableData, toUmid } from 'src/api/common';
 
 function toProxiedUrl(url: URL | string): URL {
   return new URL(`/${url}`, process.env.PROXY_URL);
@@ -54,12 +54,15 @@ export async function loadOptivumTable(
       begin: timeFrom,
       end: timeTo,
     })),
-    lessons: table.getDays().map((day) => day.map((hour) => hour.map((lesson) => ({
-      subject: lesson.subject,
-      subjectShort: lesson.subject,
-      group: lesson.groupName,
-      room: lesson.room,
-      teacher: lesson.teacher,
-    })))),
+    lessons: table.getDays().map((day, dayIndex) => day.map((moment, momentIndex) => ({
+      umid: toUmid(baseUrl.toString(), classValue, dayIndex, momentIndex),
+      lessons: moment.map((lesson) => ({
+        subject: lesson.subject,
+        subjectShort: lesson.subject,
+        group: lesson.groupName,
+        room: lesson.room,
+        teacher: lesson.teacher,
+      })),
+    }))),
   };
 }

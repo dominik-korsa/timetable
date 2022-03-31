@@ -1,5 +1,7 @@
 import { CacheMode, fetchWithCache } from 'src/api/requests';
-import { TableHour, TableLesson } from 'src/api/common';
+import {
+  TableHour, TableLessonMoment, toUmid,
+} from 'src/api/common';
 import _ from 'lodash';
 
 export async function loadVLoClassList(cacheMode: CacheMode): Promise<string[]> {
@@ -39,15 +41,20 @@ export async function loadVLoHours(cacheMode: CacheMode): Promise<TableHour[]> {
 export async function loadVLoLessons(
   cacheMode: CacheMode,
   classValue: string,
-): Promise<TableLesson[][][]> {
+): Promise<TableLessonMoment[][]> {
   const response = await fetchWithCache(cacheMode, `https://api.cld.sh/vlo/ttdata/${classValue}`);
   const body = await response.json() as LessonResponseItem[][][];
-  return body.map((dayResponse) => {
-    const day: TableLesson[][] = [];
-    _.flatten(dayResponse).forEach((lesson) => {
-      while (day.length < lesson.time_index + lesson.duration) day.push([]);
+  return body.map((day, datIndex) => {
+    const moments: TableLessonMoment[] = [];
+    _.flatten(day).forEach((lesson) => {
+      while (moments.length < lesson.time_index + lesson.duration) {
+        moments.push({
+          umid: toUmid(undefined, classValue, datIndex, moments.length),
+          lessons: [],
+        });
+      }
       for (let i = lesson.time_index; i < lesson.time_index + lesson.duration; i += 1) {
-        day[i].push({
+        moments[i].lessons.push({
           subject: lesson.subject,
           subjectShort: lesson.subject_short,
           teacher: lesson.teacher || undefined,
@@ -56,6 +63,6 @@ export async function loadVLoLessons(
         });
       }
     });
-    return day;
+    return moments;
   });
 }
