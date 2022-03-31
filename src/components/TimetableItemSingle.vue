@@ -64,7 +64,7 @@ export default defineComponent({
 
   .timetable-item-single__room {
     text-align: right;
-    margin-left: 1px;
+    margin-left: 4px;
     flex-shrink: 0;
     flex-grow: 1;
   }
