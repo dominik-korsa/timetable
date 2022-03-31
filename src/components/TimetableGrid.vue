@@ -116,6 +116,7 @@ export default defineComponent({
     .timetable-grid__temporal-number {
       grid-area: number;
       align-self: center;
+      justify-self: left;
       margin-right: 5px;
       font-size: 1.1em;
       border: 1px solid;
@@ -158,10 +159,12 @@ export default defineComponent({
         font-size: 0.9em;
         text-align: center;
         line-height: 0;
+        justify-self: center;
       }
 
       .timetable-grid__temporal-start, .timetable-grid__temporal-end {
         font-size: 0.7em;
+        text-align: center;
       }
     }
   }

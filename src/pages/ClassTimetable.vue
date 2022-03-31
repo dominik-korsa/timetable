@@ -37,7 +37,7 @@
 import { TableData } from 'src/api/common';
 import { defineComponent, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { loadVLoHours } from 'src/api/v-lo';
+import { loadVLoHours, loadVLoLessons } from 'src/api/v-lo';
 import { CacheMode, NotInCacheError } from 'src/api/requests';
 import TimetableGrid from 'components/TimetableGrid.vue';
 import { loadOptivumTable } from 'src/api/optivum';
@@ -61,9 +61,13 @@ export default defineComponent({
       cacheMode: CacheMode,
     ): Promise<TableData> => {
       if (url === undefined) {
-        const [hours] = await Promise.all([loadVLoHours(cacheMode)]);
+        const [hours, lessons] = await Promise.all([
+          loadVLoHours(cacheMode),
+          loadVLoLessons(cacheMode, classValue),
+        ]);
         return {
           hours,
+          lessons,
         };
       }
       return loadOptivumTable(url, classValue, cacheMode);
