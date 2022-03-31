@@ -71,13 +71,10 @@ export default defineComponent({
       const dayIndex = now.value.getDay() - 1;
       if (dayIndex < 0 || dayIndex >= 5) return null;
 
-      console.log(dayIndex);
-
       const midnight = new Date(now.value);
       midnight.setHours(0, 0, 0, 0);
 
       const timePosition = (now.value.getTime() - midnight.getTime()) / 1000 / 60;
-      console.log(timePosition);
       if (
         timePosition < timestamps.value[0]
         || timePosition > _.last(timestamps.value)!

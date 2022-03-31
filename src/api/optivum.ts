@@ -1,5 +1,8 @@
-import { ListItem, Timetable, TimetableList } from '@wulkanowy/timetable-parser';
+import {
+  ListItem, Table, Timetable, TimetableList,
+} from '@wulkanowy/timetable-parser';
 import { CacheMode, fetchWithCache } from 'src/api/requests';
+import { TableData } from 'src/api/common';
 
 function toProxiedUrl(url: URL | string): URL {
   return new URL(`/${url}`, process.env.PROXY_URL);
@@ -34,4 +37,22 @@ export async function loadOptivumClassList(
   const response = await fetchWithCache(cacheMode, toProxiedUrl(listUrl).toString());
   const timetableList = new TimetableList(await response.text());
   return timetableList.getList().classes;
+}
+
+export async function loadOptivumTable(
+  baseUrl: URL | string,
+  classValue: string,
+  cacheMode: CacheMode,
+): Promise<TableData> {
+  const tableUrl = new URL(`plany/o${classValue}.html`, baseUrl);
+  const response = await fetchWithCache(cacheMode, toProxiedUrl(tableUrl).toString());
+  const table = new Table(await response.text());
+
+  return {
+    hours: Object.values(table.getHours()).map(({ number, timeFrom, timeTo }) => ({
+      display: number.toString(),
+      begin: timeFrom,
+      end: timeTo,
+    })),
+  };
 }
