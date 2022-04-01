@@ -22,6 +22,7 @@
           :key="item.key"
           :to="item.to"
           outline
+          no-caps
         >
           {{ item.name }}
         </q-btn>
