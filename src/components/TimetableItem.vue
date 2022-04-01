@@ -68,7 +68,7 @@ export default defineComponent({
   }
 
   &.timetable-item--hidden {
-    opacity: 20%;
+    opacity: 15%;
   }
 }
 
