@@ -149,7 +149,7 @@ module.exports = configure((ctx) => ({
       short_name: 'Timetable',
       description: '',
       display: 'standalone',
-      orientation: 'portrait',
+      orientation: 'any',
       background_color: '#ffffff',
       theme_color: '#027be3',
       icons: [

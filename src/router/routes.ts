@@ -69,6 +69,10 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/pwa-home',
+    redirect: '/',
+  },
+  {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),
   },

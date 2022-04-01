@@ -235,6 +235,7 @@ $timetable-gap: 4px;
     flex: 0 0 $width;
     scroll-snap-align: start;
     scroll-snap-stop: normal;
+    position: relative;
   }
 
   .timetable-grid__marker {
@@ -242,13 +243,16 @@ $timetable-gap: 4px;
     $color: $red-8;
     $triangle-size: 7px;
     height: $height;
+    width: 100%;
+    box-sizing: content-box;
     background: transparentize($color, 0.65);
     margin-top: - 1px;
     transform: translateY(var(--offset));
-    margin-left: -4px;
-    margin-right: -4px;
     pointer-events: none;
     z-index: 1;
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
 
     &:before, &:after {
       display: block;
@@ -263,12 +267,10 @@ $timetable-gap: 4px;
 
     &:before {
       border-left: $triangle-size solid $color;
-      float: left;
     }
 
     &:after {
       border-right: $triangle-size solid $color;
-      float: right;
     }
   }
 }
