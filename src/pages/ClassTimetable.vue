@@ -107,8 +107,13 @@ export default defineComponent({
     };
 
     watch(
-      [() => route.params.url as string | undefined, () => route.params.class as string],
+      [
+        () => route.params.url as string | undefined,
+        () => route.params.class as string | undefined,
+      ],
       async ([url, classValue]) => {
+        if (classValue === undefined) return;
+
         refreshId += 1;
         const currId = refreshId;
         data.value = null;
