@@ -83,6 +83,7 @@
     </q-card>
 
     <router-link
+      v-ripple
       :to="{ name: 'VLo/SelectClass' }"
       class="index-page__v-lo-link q-mt-md"
     >
@@ -94,7 +95,7 @@
       >
         <q-card-section horizontal>
           <img
-            src="/v-lo.png"
+            src="~assets/v-lo.png"
             alt="Logo V LO"
             class="index-page__v-lo-logo"
           >
