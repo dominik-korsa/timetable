@@ -1,43 +1,73 @@
 <template>
-  <q-page
-    v-if="data === null"
-    padding
-    class="column content-center justify-center"
-  >
-    <template v-if="errorMessage !== null">
-      <div class="text-center">
-        {{ errorMessage }}
-      </div>
-      <q-btn
-        color="primary"
-        class="q-mt-md"
-        @click="retryLoad"
+  <q-layout view="hHh LpR lfr">
+    <q-header
+      class="text-black bg-white"
+    >
+      <q-toolbar>
+        <q-btn
+          flat
+          round
+          icon="arrow_back"
+          @click="goBack"
+        />
+
+        <q-toolbar-title>
+          <q-skeleton
+            v-if="data === null"
+            type="text"
+            width="35px"
+          />
+          <template v-else>
+            {{ data.className }}
+          </template>
+        </q-toolbar-title>
+      </q-toolbar>
+    </q-header>
+
+    <q-page-container>
+      <q-page
+        v-if="data === null"
+        padding
+        class="column content-center justify-center"
       >
-        Spróbuj ponownie
-      </q-btn>
-    </template>
-    <q-spinner
-      v-else
-      color="primary"
-      size="64px"
-    />
-  </q-page>
-  <q-page
-    v-else
-    :style-fn="styleFn"
-    class="overflow-hidden"
-  >
-    <timetable-grid
-      v-if="data !== null"
-      :data="data"
-    />
-  </q-page>
+        <template v-if="errorMessage !== null">
+          <div class="text-center">
+            {{ errorMessage }}
+          </div>
+          <q-btn
+            color="primary"
+            class="q-mt-md"
+            @click="retryLoad"
+          >
+            Spróbuj ponownie
+          </q-btn>
+        </template>
+        <q-spinner
+          v-else
+          color="primary"
+          size="64px"
+        />
+      </q-page>
+      <q-page
+        v-else
+        :style-fn="styleFn"
+        class="overflow-hidden"
+      >
+        <timetable-grid
+          v-if="data !== null"
+          :data="data"
+        />
+      </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script lang="ts">
 import { TableData } from 'src/api/common';
-import { defineComponent, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import {
+  defineComponent, ref, watch,
+} from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { loadVLoHours, loadVLoLessons } from 'src/api/v-lo';
 import { CacheMode, NotInCacheError } from 'src/api/requests';
 import TimetableGrid from 'components/TimetableGrid.vue';
@@ -49,6 +79,7 @@ export default defineComponent({
   components: { TimetableGrid },
   setup: () => {
     const route = useRoute();
+    const router = useRouter();
     const quasar = useQuasar();
 
     const data = ref<TableData | null>(null);
@@ -69,6 +100,7 @@ export default defineComponent({
         return {
           hours,
           lessons,
+          className: classValue,
         };
       }
       return loadOptivumTable(url, classValue, cacheMode);
@@ -128,6 +160,15 @@ export default defineComponent({
       errorMessage,
       retryLoad,
       styleFn: (offset: number, height: number) => ({ height: `${height - offset}px` }),
+      goBack: () => {
+        const backTo = {
+          name: route.params.url === undefined ? 'VLo/SelectClass' : 'Optivum/SelectClass',
+          params: route.params,
+        };
+        const resolved = router.resolve(backTo);
+        if (resolved.href === window.history.state.back) router.back();
+        else router.push(backTo);
+      },
     });
   },
 });

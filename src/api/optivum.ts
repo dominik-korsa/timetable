@@ -49,6 +49,7 @@ export async function loadOptivumTable(
   const table = new Table(await response.text());
 
   return {
+    className: table.getTitle(),
     hours: Object.values(table.getHours()).map(({ number, timeFrom, timeTo }) => ({
       display: number.toString(),
       begin: timeFrom,

@@ -21,6 +21,7 @@ export interface TableLessonMoment {
 export interface TableData {
   hours: TableHour[];
   lessons: TableLessonMoment[][];
+  className: string;
 }
 
 // Universal moment id

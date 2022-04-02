@@ -31,32 +31,14 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/timetable/',
-    component: () => import('layouts/TimetableLayout.vue'),
-    children: [
-      {
-        name: 'VLo/ClassTimetable',
-        path: 'v-lo/class/:class/',
-        component: () => import('pages/ClassTimetable.vue'),
-        meta: {
-          backTo: (route: RouteLocation): RouteLocationRaw => ({
-            name: 'VLo/SelectClass',
-            params: route.params,
-          }),
-        },
-      },
-      {
-        name: 'Optivum/ClassTimetable',
-        path: 'optivum/:url/class/:class/',
-        component: () => import('pages/ClassTimetable.vue'),
-        meta: {
-          backTo: (route: RouteLocation): RouteLocationRaw => ({
-            name: 'Optivum/SelectClass',
-            params: route.params,
-          }),
-        },
-      },
-    ],
+    name: 'VLo/ClassTimetable',
+    path: '/timetable/v-lo/class/:class/',
+    component: () => import('pages/ClassTimetable.vue'),
+  },
+  {
+    name: 'Optivum/ClassTimetable',
+    path: '/timetable/optivum/:url/class/:class/',
+    component: () => import('pages/ClassTimetable.vue'),
   },
   {
     path: '/pwa-home',
