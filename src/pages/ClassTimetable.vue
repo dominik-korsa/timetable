@@ -24,7 +24,8 @@
   </q-page>
   <q-page
     v-else
-    class="class-timetable"
+    :style-fn="styleFn"
+    class="overflow-hidden"
   >
     <timetable-grid
       v-if="data !== null"
@@ -126,14 +127,8 @@ export default defineComponent({
       data,
       errorMessage,
       retryLoad,
+      styleFn: (offset: number, height: number) => ({ height: `${height - offset}px` }),
     });
   },
 });
 </script>
-
-<style lang="scss">
-.class-timetable {
-  display: flex;
-  flex-direction: row;
-}
-</style>
