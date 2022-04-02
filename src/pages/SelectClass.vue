@@ -42,6 +42,7 @@ import { loadOptivumClassList, loadOptivumTimetable } from 'src/api/optivum';
 import { loadVLoClassList } from 'src/api/v-lo';
 import { DefaultsMap } from 'src/utils';
 import _ from 'lodash';
+import { useConfigStore } from 'stores/config';
 
 interface ClassItem {
   key: string;
@@ -57,6 +58,7 @@ export default defineComponent({
   setup: () => {
     const route = useRoute();
     const quasar = useQuasar();
+    const config = useConfigStore();
 
     const classItems = ref<ClassItem[] | null>(null);
     watch(() => route.params.url, async (baseUrl?: string | RouteParamValue[]) => {
@@ -76,6 +78,7 @@ export default defineComponent({
           }));
         } else {
           const timetable = await loadOptivumTimetable(baseUrl, CacheMode.CacheFirst);
+          config.addHistoryEntry(timetable);
           const classList = await loadOptivumClassList(timetable, CacheMode.LazyUpdate);
           newClassItems = classList.map(({ name, value }) => ({
             key: value,

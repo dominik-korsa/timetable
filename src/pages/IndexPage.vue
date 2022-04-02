@@ -33,18 +33,18 @@
             type="submit"
             :loading="optivumLoading"
           >
-            Połącz się
+            Wczytaj plan
           </q-btn>
         </q-card-actions>
       </q-form>
       <template v-if="historyItems.length > 0">
         <q-separator />
         <q-item-label header>
-          Ostatnie połączenia
+          Ostatnio używane
         </q-item-label>
         <q-list>
           <q-item
-            v-for="item in historyItems"
+            v-for="(item, i) in historyItems"
             :key="item.baseUrl"
             :to="{ name: 'Optivum/SelectClass', params: { url: item.baseUrl } }"
           >
@@ -58,6 +58,14 @@
               >
                 {{ item.baseUrl }}
               </q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-btn
+                icon="remove_circle_outline"
+                round
+                flat
+                @click.prevent="removeHistory(i)"
+              />
             </q-item-section>
           </q-item>
         </q-list>
@@ -158,7 +166,7 @@ export default defineComponent({
       optivumLoading.value = false;
     };
 
-    const historyLimit = ref(5);
+    const historyLimit = ref(3);
     watch(() => configStore.history.length, (value) => {
       while (historyLimit.value > value + 5) historyLimit.value -= 5;
     });
@@ -177,6 +185,9 @@ export default defineComponent({
       historyItems: computed(() => configStore.history.slice(0, historyLimit.value)),
       historyOverflow: computed(() => configStore.history.length > historyLimit.value),
       increaseHistoryLimit,
+      removeHistory: (index: number) => {
+        configStore.removeHistoryEntry(index);
+      },
     };
   },
 });

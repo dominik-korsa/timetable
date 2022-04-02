@@ -37,6 +37,9 @@ export const useConfigStore = defineStore(
           ...this.history.filter((e) => e.baseUrl !== info.baseUrl),
         ];
       },
+      removeHistoryEntry(index: number) {
+        this.history.splice(index, 1);
+      },
       setFavourite(
         umid: string,
         favourite: Favourite | undefined,
