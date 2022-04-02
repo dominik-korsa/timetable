@@ -13,7 +13,7 @@
 /* eslint func-names: 0 */
 /* eslint global-require: 0 */
 
-const dotenv = require('dotenv');
+require('dotenv').config();
 const { configure } = require('quasar/wrappers');
 
 module.exports = configure((ctx) => ({
@@ -80,7 +80,9 @@ module.exports = configure((ctx) => ({
     // https://v2.quasar.dev/quasar-cli-webpack/handling-webpack
     // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
     // chainWebpack (/* chain */) {}
-    env: dotenv.config().parsed,
+    env: {
+      PROXY_URL: process.env.PROXY_URL,
+    },
   },
 
   // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-devServer
