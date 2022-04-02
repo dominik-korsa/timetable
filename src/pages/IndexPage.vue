@@ -64,7 +64,7 @@
                 icon="remove_circle_outline"
                 round
                 flat
-                @click.prevent="removeHistory(i)"
+                @click.prevent="removeHistoryEntry(i)"
               />
             </q-item-section>
           </q-item>
@@ -175,6 +175,16 @@ export default defineComponent({
       historyLimit.value += 5;
     };
 
+    const removeHistoryEntry = (index: number) => {
+      quasar.dialog({
+        title: 'Usunąć adres z historii połączeń?',
+        message: 'Twoje preferencje dotyczące planu nie zostaną usunięte',
+        cancel: true,
+      }).onOk(() => {
+        configStore.removeHistoryEntry(index);
+      });
+    };
+
     return {
       url,
       urlRules: [
@@ -186,9 +196,7 @@ export default defineComponent({
       historyItems: computed(() => configStore.history.slice(0, historyLimit.value)),
       historyOverflow: computed(() => configStore.history.length > historyLimit.value),
       increaseHistoryLimit,
-      removeHistory: (index: number) => {
-        configStore.removeHistoryEntry(index);
-      },
+      removeHistoryEntry,
     };
   },
 });
