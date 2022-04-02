@@ -153,7 +153,7 @@ export default defineComponent({
         await router.push({
           name: 'Optivum/SelectClass',
           params: {
-            url: encodeURIComponent(timetableInfo.baseUrl),
+            url: timetableInfo.baseUrl,
           },
         });
       } catch (error) {
