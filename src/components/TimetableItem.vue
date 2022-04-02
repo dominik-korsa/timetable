@@ -16,6 +16,7 @@
     <timetable-item-single
       v-if="moment.lessons.length === 1"
       :lesson="moment.lessons[0]"
+      :show-color="favourite !== null"
     />
     <timetable-item-multiple
       v-else

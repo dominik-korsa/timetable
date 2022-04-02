@@ -10,6 +10,7 @@ export interface TableLesson {
   teacher: string | undefined,
   room: string | undefined,
   group: string | undefined,
+  color: string | undefined,
 }
 
 export interface TableLessonMoment {

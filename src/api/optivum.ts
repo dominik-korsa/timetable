@@ -62,6 +62,7 @@ export async function loadOptivumTable(
         group: lesson.groupName,
         room: lesson.room,
         teacher: lesson.teacher,
+        color: undefined,
       })),
     }))),
   };

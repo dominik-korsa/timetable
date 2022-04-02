@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { PropType } from 'vue/dist/vue';
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { TableLesson } from '../api/common';
 
 export default defineComponent({
@@ -32,8 +32,13 @@ export default defineComponent({
       required: true,
     },
     fullSubject: Boolean,
+    showColor: Boolean,
   },
-  setup: () => ({}),
+  setup: (props) => ({
+    background: computed(
+      () => (props.showColor && props.lesson.color ? `${props.lesson.color}bb` : 'transparent'),
+    ),
+  }),
 });
 </script>
 
@@ -42,11 +47,12 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 2px;
+  padding: 4px;
   font-size: 0.75rem;
   line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
+  background: v-bind(background);
 
   .timetable-item-single__top, .timetable-item-single__bottom {
     display: flex;

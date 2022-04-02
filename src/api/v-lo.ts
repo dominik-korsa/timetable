@@ -60,6 +60,7 @@ export async function loadVLoLessons(
           teacher: lesson.teacher || undefined,
           room: lesson.classroom || undefined,
           group: lesson.group || undefined,
+          color: lesson.color,
         });
       }
     });

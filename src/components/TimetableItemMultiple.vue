@@ -4,7 +4,10 @@
       v-if="favouriteLesson !== null"
       class="timetable-item-multiple__favourite"
     >
-      <timetable-item-single :lesson="favouriteLesson" />
+      <timetable-item-single
+        :lesson="favouriteLesson"
+        show-color
+      />
       <q-separator vertical />
       <div class="timetable-item-multiple__more">
         +{{ lessons.length-1 }}
