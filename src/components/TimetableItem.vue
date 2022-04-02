@@ -7,7 +7,11 @@
     :class="{
       'timetable-item--hidden': favourite === null
     }"
+    tabindex="0"
+    role="button"
     @click="dialogVisible = true"
+    @keyup.enter="dialogVisible = true"
+    @keyup.space="dialogVisible = true"
   >
     <timetable-item-single
       v-if="moment.lessons.length === 1"
@@ -62,6 +66,8 @@ export default defineComponent({
 <style lang="scss">
 .timetable-item {
   overflow: hidden;
+  cursor: pointer;
+  user-select: none;
 
   .timetable-item-single, .timetable-item-multiple {
     height: 100%;
