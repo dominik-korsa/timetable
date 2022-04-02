@@ -83,11 +83,11 @@
     </q-card>
 
     <router-link
-      v-ripple
       :to="{ name: 'VLo/SelectClass' }"
       class="index-page__v-lo-link q-mt-md"
     >
       <q-card
+        v-ripple
         class="index-page__v-lo"
         outlined
         dark
@@ -113,7 +113,7 @@
         </q-card-section>
       </q-card>
     </router-link>
-    <div class="text-caption q-mt-xs">
+    <div class="text-caption q-mt-xs text-center">
       <q-icon
         name="favorite"
         class="q-mr-xs"

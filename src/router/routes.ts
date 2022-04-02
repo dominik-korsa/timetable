@@ -12,25 +12,31 @@ const routes: RouteRecordRaw[] = [
         path: '',
         component: () => import('pages/IndexPage.vue'),
       },
-    ],
-  },
-  {
-    path: '/timetable/v-lo/',
-    component: () => import('layouts/TimetableLayout.vue'),
-    children: [
       {
         name: 'VLo/SelectClass',
-        path: '',
+        path: 'timetable/v-lo/',
         component: () => import('pages/SelectClass.vue'),
         meta: {
-          backTo: (): RouteLocationRaw => ({
-            name: 'Home',
-          }),
+          title: 'Wybierz klasę',
         },
       },
       {
+        name: 'Optivum/SelectClass',
+        path: 'timetable/optivum/:url/',
+        component: () => import('pages/SelectClass.vue'),
+        meta: {
+          title: 'Wybierz klasę',
+        },
+      },
+    ],
+  },
+  {
+    path: '/timetable/',
+    component: () => import('layouts/TimetableLayout.vue'),
+    children: [
+      {
         name: 'VLo/ClassTimetable',
-        path: 'class/:class/',
+        path: 'v-lo/class/:class/',
         component: () => import('pages/ClassTimetable.vue'),
         meta: {
           backTo: (route: RouteLocation): RouteLocationRaw => ({
@@ -39,25 +45,9 @@ const routes: RouteRecordRaw[] = [
           }),
         },
       },
-    ],
-  },
-  {
-    path: '/timetable/optivum/:url/',
-    component: () => import('layouts/TimetableLayout.vue'),
-    children: [
-      {
-        name: 'Optivum/SelectClass',
-        path: '',
-        component: () => import('pages/SelectClass.vue'),
-        meta: {
-          backTo: (): RouteLocationRaw => ({
-            name: 'Home',
-          }),
-        },
-      },
       {
         name: 'Optivum/ClassTimetable',
-        path: 'class/:class/',
+        path: 'optivum/:url/class/:class/',
         component: () => import('pages/ClassTimetable.vue'),
         meta: {
           backTo: (route: RouteLocation): RouteLocationRaw => ({
