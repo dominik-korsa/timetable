@@ -55,6 +55,35 @@
             @click="vLoOffset += 1"
           />
         </template>
+        <q-btn
+          icon="more_vert"
+          flat
+          round
+          class="q-ml-xs"
+          :dense="$q.screen.lt.sm"
+        >
+          <q-menu>
+            <q-card class="class-timetable__menu">
+              <q-list>
+                <q-item
+                  clickable
+                  class="non-selectable"
+                  @click="onFavouriteToggle"
+                >
+                  <q-item-section side>
+                    <q-icon
+                      :name="isFavourite ? 'star' : 'star_border'"
+                      :color="isFavourite ? 'amber' : undefined"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    {{ isFavourite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych' }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-card>
+          </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
@@ -107,6 +136,7 @@ import { CacheMode, NotInCacheError } from 'src/api/requests';
 import TimetableGrid from 'components/TimetableGrid.vue';
 import { loadOptivumTable } from 'src/api/optivum';
 import { useQuasar } from 'quasar';
+import { useConfigStore } from 'stores/config';
 
 interface TableRefVLo {
   classValue: string;
@@ -128,6 +158,7 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
     const quasar = useQuasar();
+    const config = useConfigStore();
 
     const data = ref<TableData | null>(null);
     const errorMessage = ref<string | null>(null);
@@ -224,7 +255,13 @@ export default defineComponent({
       up: vLoOffset.value >= 5,
     }));
     const showOffsetPicker = computed(() => route.params.url === undefined);
-    return ({
+
+    const isFavourite = computed(
+      () => config.favouriteTables[(route.params.url as string | undefined) ?? 'v-lo']
+        ?.includes(route.params.class as string) ?? false,
+    );
+
+    return {
       data,
       errorMessage,
       retryLoad,
@@ -247,7 +284,27 @@ export default defineComponent({
         if (event.direction === 'left' && !offsetChangeDisabled.value.down) vLoOffset.value -= 1;
         if (event.direction === 'right' && !offsetChangeDisabled.value.up) vLoOffset.value += 1;
       },
-    });
+      isFavourite,
+      onFavouriteToggle: () => {
+        if (isFavourite.value) {
+          config.removeFavouriteTable(
+            route.params.url as string | undefined,
+            route.params.class as string,
+          );
+        } else {
+          config.addFavouriteTable(
+            route.params.url as string | undefined,
+            route.params.class as string,
+          );
+        }
+      },
+    };
   },
 });
 </script>
+
+<style lang="scss">
+.class-timetable__menu {
+  min-width: 220px;
+}
+</style>

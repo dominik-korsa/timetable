@@ -4,18 +4,58 @@
     class="index-page column content-center"
   >
     <q-card
+      v-if="favouriteTables !== null && favouriteTables.length > 0"
       flat
       bordered
-      class="index-page__optivum-picker"
+      class="q-mb-md"
+    >
+      <q-card-section class="text-h6 q-pb-sm">
+        Ulubione
+      </q-card-section>
+      <q-list separator>
+        <q-item
+          v-for="table in favouriteTables"
+          :key="table.key"
+        >
+          <q-item-section>
+            <q-item-label lines="1">
+              {{ table.title }}
+            </q-item-label>
+            <q-item-label
+              v-if="table.subtitle !== null"
+              lines="1"
+              caption
+            >
+              {{ table.subtitle }}
+            </q-item-label>
+            <div class="index-page__favourites-classes q-mt-sm">
+              <q-btn
+                v-for="item in table.items"
+                :key="item.value"
+                :to="item.to"
+                outline
+                no-caps
+                color="amber-9"
+              >
+                {{ item.name }}
+              </q-btn>
+            </div>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-card>
+
+    <q-card
+      flat
+      bordered
+      class="index-page__optivum-picker q-mb-md"
     >
       <q-form
         greedy
         @submit.prevent="submitOptivum"
       >
-        <q-card-section>
-          <div class="text-h6">
-            Plan lekcji OPTIVUM
-          </div>
+        <q-card-section class="text-h6">
+          Plan lekcji OPTIVUM
         </q-card-section>
         <q-card-section class="q-py-none">
           <q-input
@@ -84,7 +124,7 @@
 
     <router-link
       :to="{ name: 'VLo/SelectClass' }"
-      class="index-page__v-lo-link q-mt-md"
+      class="index-page__v-lo-link"
     >
       <q-card
         v-ripple
@@ -129,15 +169,29 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, ref, watch,
+  computed, defineComponent, onMounted, ref, watch,
 } from 'vue';
 import isUrl from 'is-url-superb';
-import { useRouter } from 'vue-router';
+import { RouteLocationRaw, useRouter } from 'vue-router';
 import { useConfigStore } from 'stores/config';
 import { CacheMode } from 'src/api/requests';
 import { useQuasar } from 'quasar';
-import { loadOptivumTimetable } from 'src/api/optivum';
+import { loadOptivumClassList, loadOptivumTimetable } from 'src/api/optivum';
 import BuildInfo from 'components/BuildInfo.vue';
+import { loadVLoClassList } from 'src/api/v-lo';
+
+interface ClassItem {
+  value: string;
+  name: string;
+  to: RouteLocationRaw;
+}
+
+interface FavouriteTableItem {
+  key: string;
+  title: string;
+  subtitle: string | null;
+  items: ClassItem[];
+}
 
 export default defineComponent({
   name: 'IndexPage',
@@ -188,6 +242,49 @@ export default defineComponent({
       });
     };
 
+    const favouriteTables = ref<FavouriteTableItem[] | null>(null);
+
+    onMounted(async () => {
+      favouriteTables.value = await Promise.all(
+        Object.entries(configStore.favouriteTables)
+          .map(async ([key, classes]) => {
+            if (key === 'v-lo') {
+              const classList = await loadVLoClassList(CacheMode.CacheFirst);
+              return ({
+                key,
+                title: 'V LO',
+                subtitle: null,
+                items: classList
+                  .map((value) => ({
+                    value,
+                    name: value,
+                    to: {
+                      name: 'VLo/ClassTimetable',
+                      params: { class: value },
+                    },
+                  }))
+                  .filter((item) => classes.includes(item.value)),
+              });
+            }
+            const timetable = await loadOptivumTimetable(key, CacheMode.CacheFirst);
+            const classList = await loadOptivumClassList(timetable, CacheMode.CacheFirst);
+            return ({
+              key,
+              title: timetable.title,
+              subtitle: timetable.baseUrl,
+              items: classList.map(({ name, value }) => ({
+                value,
+                name,
+                to: {
+                  name: 'Optivum/ClassTimetable',
+                  params: { url: key, class: value },
+                },
+              })).filter((item) => classes.includes(item.value)),
+            });
+          }),
+      );
+    });
+
     return {
       url,
       urlRules: [
@@ -200,6 +297,8 @@ export default defineComponent({
       historyOverflow: computed(() => configStore.history.length > historyLimit.value),
       increaseHistoryLimit,
       removeHistoryEntry,
+
+      favouriteTables,
     };
   },
 });
@@ -207,6 +306,13 @@ export default defineComponent({
 
 <style lang="scss">
   .index-page {
+    .index-page__favourites-classes {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .index-page__optivum-picker {
       width: 100%;
       max-width: 600px;

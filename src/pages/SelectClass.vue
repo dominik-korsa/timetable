@@ -19,7 +19,7 @@
       >
         <q-btn
           v-for="item in items"
-          :key="item.key"
+          :key="item.value"
           :to="item.to"
           outline
           no-caps
@@ -45,7 +45,7 @@ import _ from 'lodash';
 import { useConfigStore } from 'stores/config';
 
 interface ClassItem {
-  key: string;
+  value: string;
   name: string;
   to: RouteLocationRaw;
 }
@@ -69,7 +69,7 @@ export default defineComponent({
         if (baseUrl === undefined) {
           const classList = await loadVLoClassList(CacheMode.LazyUpdate);
           newClassItems = classList.map((value) => ({
-            key: value,
+            value,
             name: value,
             to: {
               name: 'VLo/ClassTimetable',
@@ -81,7 +81,7 @@ export default defineComponent({
           config.addHistoryEntry(timetable);
           const classList = await loadOptivumClassList(timetable, CacheMode.LazyUpdate);
           newClassItems = classList.map(({ name, value }) => ({
-            key: value,
+            value,
             name,
             to: {
               name: 'Optivum/ClassTimetable',

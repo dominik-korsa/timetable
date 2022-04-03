@@ -52,7 +52,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from 'vue';
-import { Favourite, useConfigStore } from 'stores/config';
+import { FavouriteLesson, useConfigStore } from 'stores/config';
 import { TableLessonMoment } from 'src/api/common';
 import TimetableItemSingle from 'components/TimetableItemSingle.vue';
 
@@ -65,7 +65,7 @@ export default defineComponent({
       required: true,
     },
     favourite: {
-      type: [Object] as PropType<Favourite | undefined>,
+      type: [Object] as PropType<FavouriteLesson | null | undefined>,
       required: false,
       default: undefined,
     },
@@ -73,7 +73,7 @@ export default defineComponent({
   setup: (props) => {
     const config = useConfigStore();
 
-    const setFavourite = (value: Favourite | undefined) => {
+    const setFavourite = (value: FavouriteLesson | null | undefined) => {
       config.setFavourite(props.moment.umid, value);
     };
 

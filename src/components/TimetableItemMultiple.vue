@@ -37,7 +37,7 @@ import {
 } from 'vue';
 import { common } from 'src/utils';
 import TimetableItemSingle from 'components/TimetableItemSingle.vue';
-import { Favourite } from 'stores/config';
+import { FavouriteLesson } from 'stores/config';
 
 const pluralRules = new Intl.PluralRules('pl-PL');
 
@@ -50,7 +50,7 @@ export default defineComponent({
       required: true,
     },
     favourite: {
-      type: [Object] as PropType<Favourite | undefined>,
+      type: [Object] as PropType<FavouriteLesson | null | undefined>,
       required: false,
       default: undefined,
     },

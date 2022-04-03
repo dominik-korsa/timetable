@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { OptivumTimetableInfo } from 'src/api/optivum';
+import _ from 'lodash';
 
 export interface ConfigHistory {
   title: string;
@@ -12,41 +13,54 @@ export interface FavouriteLesson {
   group: string | undefined;
 }
 
-export type Favourite = FavouriteLesson | null;
-
 export interface Config {
   history: ConfigHistory[];
-  favourites: Record<string, Favourite | undefined>;
+  favouriteLessons: Record<string, FavouriteLesson | null | undefined>;
+  favouriteTables: Record<string, string[]>;
 }
 
-export const useConfigStore = defineStore(
-  'config',
-  {
-    state: (): Config => ({
-      history: [],
-      favourites: {},
-    }),
-    actions: {
-      addHistoryEntry(info: OptivumTimetableInfo) {
-        this.history = [
-          {
-            title: info.title,
-            baseUrl: info.baseUrl,
-            lastUse: new Date().toISOString(),
-          },
-          ...this.history.filter((e) => e.baseUrl !== info.baseUrl),
-        ];
-      },
-      removeHistoryEntry(index: number) {
-        this.history.splice(index, 1);
-      },
-      setFavourite(
-        umid: string,
-        favourite: Favourite | undefined,
-      ) {
-        this.favourites[umid] = favourite;
-      },
+export const useConfigStore = defineStore('config', {
+  state: (): Config => ({
+    history: [],
+    favouriteLessons: {},
+    favouriteTables: {},
+  }),
+  actions: {
+    addHistoryEntry(info: OptivumTimetableInfo) {
+      this.history = [
+        {
+          title: info.title,
+          baseUrl: info.baseUrl,
+          lastUse: new Date().toISOString(),
+        },
+        ...this.history.filter((e) => e.baseUrl !== info.baseUrl),
+      ];
     },
-    persist: true,
+    removeHistoryEntry(index: number) {
+      this.history.splice(index, 1);
+    },
+    setFavourite(
+      umid: string,
+      favourite: FavouriteLesson | null | undefined,
+    ) {
+      this.favouriteLessons[umid] = favourite;
+    },
+    addFavouriteTable(baseUrl: string | undefined, classValue: string) {
+      const key = baseUrl ?? 'v-lo';
+      let list = this.favouriteTables[key];
+      if (list === undefined) {
+        list = [];
+        this.favouriteTables[key] = list;
+      }
+      list.push(classValue);
+    },
+    removeFavouriteTable(baseUrl: string | undefined, classValue: string) {
+      const key = baseUrl ?? 'v-lo';
+      const list = this.favouriteTables[key];
+      if (list === undefined) return;
+      _.pull(list, classValue);
+      if (list.length === 0) delete this.favouriteTables[key];
+    },
   },
-);
+  persist: true,
+});
