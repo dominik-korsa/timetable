@@ -306,6 +306,7 @@ export default defineComponent({
       flex-direction: row;
       flex-wrap: wrap;
       gap: 8px;
+      justify-content: right;
     }
 
     .index-page__optivum-picker {
