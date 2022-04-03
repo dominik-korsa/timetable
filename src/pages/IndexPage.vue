@@ -4,48 +4,6 @@
     class="index-page column content-center"
   >
     <q-card
-      v-if="favouriteTables !== null && favouriteTables.length > 0"
-      flat
-      bordered
-      class="q-mb-md full-width"
-    >
-      <q-card-section class="text-h6 q-pb-sm">
-        Ulubione
-      </q-card-section>
-      <q-list separator>
-        <q-item
-          v-for="table in favouriteTables"
-          :key="table.key"
-        >
-          <q-item-section>
-            <q-item-label lines="1">
-              {{ table.title }}
-            </q-item-label>
-            <q-item-label
-              v-if="table.subtitle !== null"
-              lines="1"
-              caption
-            >
-              {{ table.subtitle }}
-            </q-item-label>
-            <div class="index-page__favourites-classes q-mt-sm">
-              <q-btn
-                v-for="item in table.items"
-                :key="item.value"
-                :to="item.to"
-                outline
-                no-caps
-                color="amber-9"
-              >
-                {{ item.name }}
-              </q-btn>
-            </div>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-card>
-
-    <q-card
       flat
       bordered
       class="index-page__optivum-picker q-mb-md"
@@ -124,7 +82,7 @@
 
     <router-link
       :to="{ name: 'VLo/SelectClass' }"
-      class="index-page__v-lo-link"
+      class="index-page__v-lo-link q-mb-md"
     >
       <q-card
         v-ripple
@@ -153,17 +111,50 @@
         </q-card-section>
       </q-card>
     </router-link>
-    <div class="text-caption q-mt-xs text-center">
-      <q-icon
-        name="favorite"
-        class="q-mr-xs"
-        color="red"
-      />
-      <a href="https://github.com/cloud11665/vlo.rocks-api">API planu V LO</a>
-      by <a href="https://github.com/cloud11665">cloud11665</a>
-    </div>
 
-    <build-info class="q-mt-lg" />
+    <q-card
+      v-if="favouriteTables !== null && favouriteTables.length > 0"
+      flat
+      bordered
+      class="full-width q-mb-md"
+    >
+      <q-card-section class="text-h6 q-pb-sm">
+        Ulubione
+      </q-card-section>
+      <q-list separator>
+        <q-item
+          v-for="table in favouriteTables"
+          :key="table.key"
+        >
+          <q-item-section>
+            <q-item-label lines="1">
+              {{ table.title }}
+            </q-item-label>
+            <q-item-label
+              v-if="table.subtitle !== null"
+              lines="1"
+              caption
+            >
+              {{ table.subtitle }}
+            </q-item-label>
+            <div class="index-page__favourites-classes q-mt-sm">
+              <q-btn
+                v-for="item in table.items"
+                :key="item.value"
+                :to="item.to"
+                outline
+                no-caps
+                color="amber-9"
+              >
+                {{ item.name }}
+              </q-btn>
+            </div>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-card>
+
+    <build-info />
   </q-page>
 </template>
 
@@ -252,7 +243,7 @@ export default defineComponent({
               const classList = await loadVLoClassList(CacheMode.CacheFirst);
               return ({
                 key,
-                title: 'V LO',
+                title: 'V LO w Krakowie',
                 subtitle: null,
                 items: classList
                   .map((value) => ({
