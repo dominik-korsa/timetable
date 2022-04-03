@@ -27,6 +27,7 @@
 
         <template v-if="showOffsetPicker">
           <q-btn
+            ref="offsetDownButton"
             icon="navigate_before"
             flat
             round
@@ -46,6 +47,7 @@
             Dzisiaj
           </q-btn>
           <q-btn
+            ref="offsetUpButton"
             icon="navigate_next"
             flat
             round
@@ -156,7 +158,7 @@ import { loadVLoHours, loadVLoLessons } from 'src/api/v-lo';
 import { CacheMode, NotInCacheError } from 'src/api/requests';
 import TimetableGrid from 'components/TimetableGrid.vue';
 import { loadOptivumTable } from 'src/api/optivum';
-import { useQuasar } from 'quasar';
+import { QBtn, useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
 
 interface TableRefVLo {
@@ -171,6 +173,19 @@ interface TableRefOptivum {
 }
 
 type TableRef = TableRefVLo | TableRefOptivum;
+
+const shake = (el: Element, reverse: boolean) => {
+  const keyframes = [
+    { transform: 'translateX(0)' },
+    { transform: 'translateX(-7px)' },
+    { transform: 'translateX(7px)' },
+    { transform: 'translateX(0)' },
+  ];
+  if (reverse) keyframes.reverse();
+  el.animate(keyframes, {
+    duration: 250,
+  });
+};
 
 export default defineComponent({
   name: 'ClassTimetable',
@@ -276,6 +291,8 @@ export default defineComponent({
       up: vLoOffset.value >= 5,
     }));
     const showOffsetPicker = computed(() => route.params.url === undefined);
+    const offsetDownButton = ref<QBtn>();
+    const offsetUpButton = ref<QBtn>();
 
     const isFavourite = computed(
       () => config.favouriteTables[(route.params.url as string | undefined) ?? 'v-lo']
@@ -307,8 +324,14 @@ export default defineComponent({
       offsetChangeDisabled,
       onOffsetSwipe: (event: { direction: 'left' | 'right' }) => {
         if (!showOffsetPicker.value) return;
-        if (event.direction === 'left' && !offsetChangeDisabled.value.down) vLoOffset.value -= 1;
-        if (event.direction === 'right' && !offsetChangeDisabled.value.up) vLoOffset.value += 1;
+        if (event.direction === 'right' && !offsetChangeDisabled.value.down) {
+          vLoOffset.value -= 1;
+          if (offsetDownButton.value) shake(offsetDownButton.value.$el, false);
+        }
+        if (event.direction === 'left' && !offsetChangeDisabled.value.up) {
+          vLoOffset.value += 1;
+          if (offsetUpButton.value) shake(offsetUpButton.value.$el, true);
+        }
       },
       isFavourite,
       onFavouriteToggle: () => {
@@ -331,6 +354,8 @@ export default defineComponent({
           classValue: route.params.class as string,
         });
       },
+      offsetDownButton,
+      offsetUpButton,
     };
   },
 });
