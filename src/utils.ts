@@ -67,3 +67,5 @@ export function getTypeValidator<T extends unknown[]>() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return (...args: T) => true;
 }
+
+export const typed = <T>(x: T): T => x;

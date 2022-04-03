@@ -16,6 +16,11 @@
 require('dotenv').config();
 const { configure } = require('quasar/wrappers');
 
+function requireEnv(key) {
+  if (!process.env[key]) throw new Error(`Env variable "${key}" not set`);
+  return process.env[key];
+}
+
 module.exports = configure((ctx) => ({
   // https://v2.quasar.dev/quasar-cli-webpack/supporting-ts
   supportTS: {
@@ -81,7 +86,13 @@ module.exports = configure((ctx) => ({
     // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
     // chainWebpack (/* chain */) {}
     env: {
-      PROXY_URL: process.env.PROXY_URL,
+      PROXY_URL: requireEnv('PROXY_URL'),
+      BRANCH: process.env.BRANCH,
+      DEPLOY_ID: process.env.DEPLOY_ID,
+      REPOSITORY_URL: process.env.REPOSITORY_URL,
+      COMMIT_REF: process.env.COMMIT_REF,
+      SITE_NAME: process.env.SITE_NAME,
+      BUILD_TIME: new Date().toISOString(),
     },
   },
 

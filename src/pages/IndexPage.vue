@@ -122,6 +122,8 @@
       <a href="https://github.com/cloud11665/vlo.rocks-api">API planu V LO</a>
       by <a href="https://github.com/cloud11665">cloud11665</a>
     </div>
+
+    <build-info class="q-mt-lg" />
   </q-page>
 </template>
 
@@ -135,10 +137,11 @@ import { useConfigStore } from 'stores/config';
 import { CacheMode } from 'src/api/requests';
 import { useQuasar } from 'quasar';
 import { loadOptivumTimetable } from 'src/api/optivum';
+import BuildInfo from 'components/BuildInfo.vue';
 
 export default defineComponent({
   name: 'IndexPage',
-  components: { },
+  components: { BuildInfo },
   setup() {
     const router = useRouter();
     const quasar = useQuasar();
