@@ -1,6 +1,7 @@
 <template>
   <q-layout view="hHh LpR lfr">
     <q-header
+      v-touch-swipe.horizontal="onOffsetSwipe"
       class="text-black bg-white"
     >
       <q-toolbar>
@@ -24,11 +25,7 @@
 
         <q-space />
 
-        <div
-          v-if="showOffsetPicker"
-          v-touch-swipe.horizontal="onOffsetSwipe"
-          class="row items-center self-stretch"
-        >
+        <template v-if="showOffsetPicker">
           <q-btn
             icon="navigate_before"
             flat
@@ -57,7 +54,7 @@
             :dense="$q.screen.lt.sm"
             @click="vLoOffset += 1"
           />
-        </div>
+        </template>
       </q-toolbar>
     </q-header>
 
@@ -226,6 +223,7 @@ export default defineComponent({
       down: vLoOffset.value <= -5,
       up: vLoOffset.value >= 5,
     }));
+    const showOffsetPicker = computed(() => route.params.url === undefined);
     return ({
       data,
       errorMessage,
@@ -242,9 +240,10 @@ export default defineComponent({
       },
       vLoOffset,
       todayOffset,
-      showOffsetPicker: computed(() => route.params.url === undefined),
+      showOffsetPicker,
       offsetChangeDisabled,
       onOffsetSwipe: (event: { direction: 'left' | 'right' }) => {
+        if (!showOffsetPicker.value) return;
         if (event.direction === 'left' && !offsetChangeDisabled.value.down) vLoOffset.value -= 1;
         if (event.direction === 'right' && !offsetChangeDisabled.value.up) vLoOffset.value += 1;
       },
