@@ -13,10 +13,16 @@ export interface FavouriteLesson {
   group: string | undefined;
 }
 
+export interface StartupTable {
+  baseUrl: string | undefined,
+  classValue: string,
+}
+
 export interface Config {
   history: ConfigHistory[];
   favouriteLessons: Record<string, FavouriteLesson | null | undefined>;
   favouriteTables: Record<string, string[]>;
+  startupTable: StartupTable | null,
 }
 
 export const useConfigStore = defineStore('config', {
@@ -24,6 +30,7 @@ export const useConfigStore = defineStore('config', {
     history: [],
     favouriteLessons: {},
     favouriteTables: {},
+    startupTable: null,
   }),
   actions: {
     addHistoryEntry(info: OptivumTimetableInfo) {
@@ -60,6 +67,9 @@ export const useConfigStore = defineStore('config', {
       if (list === undefined) return;
       _.pull(list, classValue);
       if (list.length === 0) delete this.favouriteTables[key];
+    },
+    setStartupTable(table: StartupTable | null) {
+      this.startupTable = table;
     },
   },
   persist: true,

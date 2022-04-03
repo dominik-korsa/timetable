@@ -1,4 +1,5 @@
 import { RouteLocation, RouteLocationRaw, RouteRecordRaw } from 'vue-router';
+import { useConfigStore } from 'stores/config';
 
 export type BackTo = (route: RouteLocation) => RouteLocationRaw;
 
@@ -42,7 +43,21 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/pwa-home',
-    redirect: '/',
+    redirect: () => {
+      const config = useConfigStore();
+
+      if (config.startupTable === null) return { name: 'Home' };
+      if (config.startupTable.baseUrl === undefined) {
+        return {
+          name: 'VLo/ClassTimetable',
+          params: { class: config.startupTable.classValue },
+        };
+      }
+      return {
+        name: 'Optivum/ClassTimetable',
+        params: { url: config.startupTable.baseUrl, class: config.startupTable.classValue },
+      };
+    },
   },
   {
     path: '/:catchAll(.*)*',

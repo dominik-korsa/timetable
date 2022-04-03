@@ -80,6 +80,27 @@
                     {{ isFavourite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych' }}
                   </q-item-section>
                 </q-item>
+                <q-item
+                  clickable
+                  class="non-selectable standalone"
+                >
+                  <q-item-section side>
+                    <q-icon
+                      name="bolt"
+                      :color="isStartupTable ? 'primary' : undefined"
+                    />
+                  </q-item-section>
+                  <q-item-section @click="onStartupToggle">
+                    <q-item-label>Otwieraj przy starcie</q-item-label>
+                    <q-item-label
+                      v-if="isStartupTable"
+                      caption
+                      class="text-primary"
+                    >
+                      Włączono
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
               </q-list>
             </q-card>
           </q-menu>
@@ -260,6 +281,11 @@ export default defineComponent({
       () => config.favouriteTables[(route.params.url as string | undefined) ?? 'v-lo']
         ?.includes(route.params.class as string) ?? false,
     );
+    const isStartupTable = computed(
+      () => config.startupTable !== null
+      && config.startupTable.baseUrl === route.params.url
+      && config.startupTable.classValue === route.params.class,
+    );
 
     return {
       data,
@@ -297,6 +323,13 @@ export default defineComponent({
             route.params.class as string,
           );
         }
+      },
+      isStartupTable,
+      onStartupToggle: () => {
+        config.setStartupTable(isStartupTable.value ? null : {
+          baseUrl: route.params.url as string | undefined,
+          classValue: route.params.class as string,
+        });
       },
     };
   },
