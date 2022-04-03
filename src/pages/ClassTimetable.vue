@@ -24,20 +24,27 @@
 
         <q-space />
 
-        <template v-if="showOffsetPicker">
+        <div
+          v-if="showOffsetPicker"
+          v-touch-swipe.horizontal="onOffsetSwipe"
+          class="row items-center self-stretch"
+        >
           <q-btn
             icon="navigate_before"
             flat
             round
-            :disable="vLoOffset <= -5"
+            :color="offsetChangeDisabled.down ? 'grey' : 'primary'"
+            :disable="offsetChangeDisabled.down"
+            :dense="$q.screen.lt.sm"
             @click="vLoOffset -= 1"
           />
           <q-btn
-            color="primary"
+            :color="vLoOffset === todayOffset ? 'grey' : 'primary'"
             outline
             class="q-mx-xs"
-            :disable="vLoOffset === 0"
-            @click="vLoOffset = 0"
+            :disable="vLoOffset === todayOffset"
+            :dense="$q.screen.lt.sm"
+            @click="vLoOffset = todayOffset"
           >
             Dzisiaj
           </q-btn>
@@ -45,10 +52,12 @@
             icon="navigate_next"
             flat
             round
-            :disable="vLoOffset >= 5"
+            :color="offsetChangeDisabled.up ? 'grey' : 'primary'"
+            :disable="offsetChangeDisabled.up"
+            :dense="$q.screen.lt.sm"
             @click="vLoOffset += 1"
           />
-        </template>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -128,7 +137,8 @@ export default defineComponent({
 
     let refreshId = 0;
 
-    const vLoOffset = ref(0);
+    const todayOffset = computed(() => ([0, 6].includes(new Date().getDay()) ? 1 : 0));
+    const vLoOffset = ref(todayOffset.value);
     const tableRef = computed<TableRef | null>(() => {
       if (route.params.class === undefined) return null;
       if (route.params.url === undefined) {
@@ -212,6 +222,10 @@ export default defineComponent({
       }
     };
 
+    const offsetChangeDisabled = computed(() => ({
+      down: vLoOffset.value <= -5,
+      up: vLoOffset.value >= 5,
+    }));
     return ({
       data,
       errorMessage,
@@ -227,7 +241,13 @@ export default defineComponent({
         else router.push(backTo);
       },
       vLoOffset,
+      todayOffset,
       showOffsetPicker: computed(() => route.params.url === undefined),
+      offsetChangeDisabled,
+      onOffsetSwipe: (event: { direction: 'left' | 'right' }) => {
+        if (event.direction === 'left' && !offsetChangeDisabled.value.down) vLoOffset.value -= 1;
+        if (event.direction === 'right' && !offsetChangeDisabled.value.up) vLoOffset.value += 1;
+      },
     });
   },
 });

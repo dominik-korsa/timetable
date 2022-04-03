@@ -181,7 +181,7 @@ $timetable-gap: 4px;
   @media (max-width: 525px) { --column-count: 2; }
   @media (max-width: 350px) { --column-count: 1; }
 
-  $width: calc(100% / var(--column-count));
+  $width: calc((100% - #{$timetable-gap}) / var(--column-count));
 
   .timetable-grid__temporal-wrapper {
     grid-column: 1;
@@ -274,11 +274,17 @@ $timetable-gap: 4px;
     top: -1px;
     margin-top: -1px;
     display: grid;
+    grid-template-columns: calc(#{$width} + #{$timetable-gap});
     grid-auto-columns: $width;
 
     .timetable-grid__header {
       grid-row: 1;
       border-bottom: solid $separator-color 1px;
+      padding-right: $timetable-gap;
+
+      &:first-of-type {
+        padding-left: $timetable-gap;
+      }
     }
   }
 
@@ -289,7 +295,7 @@ $timetable-gap: 4px;
 
     .timetable-grid__day {
       width: $width;
-      padding: 0 $timetable-gap / 2;
+      padding-right: $timetable-gap;
       box-sizing: border-box;
       display: grid;
       grid-template-rows: v-bind(rows);
@@ -297,6 +303,10 @@ $timetable-gap: 4px;
       scroll-snap-align: end;
       scroll-snap-stop: normal;
       position: relative;
+
+      &:first-of-type {
+        margin-left: $timetable-gap;
+      }
     }
 
     .timetable-grid__marker {
