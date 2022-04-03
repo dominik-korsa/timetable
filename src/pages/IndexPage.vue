@@ -7,7 +7,7 @@
       v-if="favouriteTables !== null && favouriteTables.length > 0"
       flat
       bordered
-      class="q-mb-md"
+      class="q-mb-md full-width"
     >
       <q-card-section class="text-h6 q-pb-sm">
         Ulubione
@@ -306,6 +306,10 @@ export default defineComponent({
 
 <style lang="scss">
   .index-page {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+
     .index-page__favourites-classes {
       display: flex;
       flex-direction: row;
@@ -315,7 +319,6 @@ export default defineComponent({
 
     .index-page__optivum-picker {
       width: 100%;
-      max-width: 600px;
     }
 
     .index-page__v-lo-link {
