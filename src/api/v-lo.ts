@@ -3,6 +3,7 @@ import {
   TableHour, TableLessonMoment, toUmid,
 } from 'src/api/common';
 import _ from 'lodash';
+import { mondayOf } from 'src/date-utils';
 
 export async function loadVLoClassList(cacheMode: CacheMode): Promise<string[]> {
   const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/vlo/listclass');
@@ -41,15 +42,30 @@ export async function loadVLoHours(cacheMode: CacheMode): Promise<TableHour[]> {
 export async function loadVLoLessons(
   cacheMode: CacheMode,
   classValue: string,
-): Promise<TableLessonMoment[][]> {
-  const response = await fetchWithCache(cacheMode, `https://api.cld.sh/vlo/ttdata/${classValue}`);
+  offset: number,
+): Promise<{
+  date: Date,
+  moments: TableLessonMoment[],
+}[]> {
+  const monday = mondayOf(new Date());
+  monday.setDate(monday.getDate() + 7 * offset);
+  const [mondayISO] = monday.toISOString().split('T');
+  const response = await fetchWithCache(
+    cacheMode,
+    `https://api.cld.sh/vlo/ttdata/${classValue}?offset=${offset}`,
+    undefined,
+    `https://api.cld.sh/vlo/ttdata/${classValue}?date=${mondayISO}`,
+  );
   const body = await response.json() as LessonResponseItem[][][];
-  return body.map((day, datIndex) => {
+  return body.map((day, dayIndex) => {
     const moments: TableLessonMoment[] = [];
+    let date = new Date(monday);
+    date.setDate(date.getDate() + dayIndex);
     _.flatten(day).forEach((lesson) => {
+      date = new Date(lesson.date);
       while (moments.length < lesson.time_index + lesson.duration) {
         moments.push({
-          umid: toUmid(undefined, classValue, datIndex, moments.length),
+          umid: toUmid(undefined, classValue, dayIndex, moments.length),
           lessons: [],
         });
       }
@@ -64,6 +80,9 @@ export async function loadVLoLessons(
         });
       }
     });
-    return moments;
+    return {
+      moments,
+      date,
+    };
   });
 }

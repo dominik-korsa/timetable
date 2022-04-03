@@ -30,6 +30,12 @@
         <div class="timetable-grid__header-name">
           {{ header.name }}
         </div>
+        <div
+          v-if="header.date !== null"
+          class="timetable-grid__header-date"
+        >
+          {{ header.date }}
+        </div>
       </div>
     </div>
 
@@ -131,6 +137,12 @@ export default defineComponent({
       return items;
     }));
 
+    const weekdayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
+    const headers = computed(() => weekdayNames.map((name, index) => ({
+      date: props.data.dates === null ? null : props.data.dates[index].toLocaleDateString(),
+      name,
+    })));
+
     const marker = ref<HTMLDivElement>();
 
     onMounted(() => {
@@ -146,7 +158,7 @@ export default defineComponent({
       ),
       markerPosition,
       lessonItems,
-      headers: ref(['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'].map((name) => ({ name }))),
+      headers,
     };
   },
 });

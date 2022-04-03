@@ -13,11 +13,12 @@ otherwise throw error
  */
 async function fetchNetworkOnly(
   input: RequestInfo,
+  cacheInput: RequestInfo,
   init?: RequestInit,
 ): Promise<Response> {
   const cache = await getCache();
   const response = assertOk(await fetch(input, init));
-  await cache.put(input, response.clone());
+  await cache.put(cacheInput, response.clone());
   return response;
 }
 
@@ -27,13 +28,14 @@ otherwise return cache
  */
 async function fetchNetworkFirst(
   input: RequestInfo,
+  cacheInput: RequestInfo,
   init?: RequestInit,
 ): Promise<Response> {
   const cache = await getCache();
   try {
-    return fetchNetworkOnly(input, init);
+    return fetchNetworkOnly(input, cacheInput, init);
   } catch (error) {
-    const match = await cache.match(input);
+    const match = await cache.match(cacheInput);
     if (!match) throw error;
     return match;
   }
@@ -45,14 +47,15 @@ otherwise make new request, cache its response and return it
  */
 async function fetchCacheFirst(
   input: RequestInfo,
+  cacheInput: RequestInfo,
   init?: RequestInit,
 ): Promise<Response> {
   const cache = await getCache();
 
-  const match = await cache.match(input);
+  const match = await cache.match(cacheInput);
   if (match) return match;
 
-  return fetchNetworkOnly(input, init);
+  return fetchNetworkOnly(input, cacheInput, init);
 }
 
 /*
@@ -62,15 +65,16 @@ then make new request and cache its response
  */
 async function fetchLazyUpdate(
   input: RequestInfo,
+  cacheInput: RequestInfo,
   init?: RequestInit,
 ): Promise<Response> {
   const cache = await getCache();
 
-  const match = await cache.match(input);
+  const match = await cache.match(cacheInput);
   const responsePromise = fetch(input, init)
     .then(assertOk)
     .then(async (response) => {
-      await cache.put(input, response.clone());
+      await cache.put(cacheInput, response.clone());
       return response;
     });
   if (match) {
@@ -86,9 +90,9 @@ export class NotInCacheError extends Error {
   message = 'Cache for this request was not found';
 }
 
-async function fetchCacheOnly(input: RequestInfo): Promise<Response> {
+async function fetchCacheOnly(cacheInput: RequestInfo): Promise<Response> {
   const cache = await getCache();
-  const match = await cache.match(input);
+  const match = await cache.match(cacheInput);
   if (!match) throw new NotInCacheError();
   return match;
 }
@@ -105,17 +109,18 @@ export function fetchWithCache(
   mode: CacheMode,
   input: RequestInfo,
   init?: RequestInit,
+  cacheInput: RequestInfo = input,
 ): Promise<Response> {
   switch (mode) {
     case CacheMode.NetworkOnly:
-      return fetchNetworkOnly(input, init);
+      return fetchNetworkOnly(input, cacheInput, init);
     case CacheMode.NetworkFirst:
-      return fetchNetworkFirst(input, init);
+      return fetchNetworkFirst(input, cacheInput, init);
     case CacheMode.CacheFirst:
-      return fetchCacheFirst(input, init);
+      return fetchCacheFirst(input, cacheInput, init);
     case CacheMode.LazyUpdate:
-      return fetchLazyUpdate(input, init);
+      return fetchLazyUpdate(input, cacheInput, init);
     case CacheMode.CacheOnly:
-      return fetchCacheOnly(input);
+      return fetchCacheOnly(cacheInput);
   }
 }

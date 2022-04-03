@@ -66,5 +66,6 @@ export async function loadOptivumTable(
         color: undefined,
       })),
     }))),
+    dates: null,
   };
 }

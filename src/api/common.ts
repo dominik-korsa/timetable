@@ -22,6 +22,7 @@ export interface TableData {
   hours: TableHour[];
   lessons: TableLessonMoment[][];
   className: string;
+  dates: Date[] | null,
 }
 
 // Universal moment id
