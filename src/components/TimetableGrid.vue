@@ -276,6 +276,7 @@ $timetable-gap: 4px;
     display: grid;
     grid-template-columns: calc(#{$width} + #{$timetable-gap});
     grid-auto-columns: $width;
+    min-width: 0;
 
     .timetable-grid__header {
       grid-row: 1;
