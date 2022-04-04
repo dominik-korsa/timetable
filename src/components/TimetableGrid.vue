@@ -315,13 +315,13 @@ $timetable-gap: 4px;
       $color: $red-8;
       $triangle-size: 7px;
       height: $height;
-      width: 100%;
+      width: calc(100% + #{$timetable-gap});
       box-sizing: content-box;
       background: transparentize($color, 0.65);
       margin-top: - 1px;
       transform: translateY(var(--offset));
+      margin-left: -$timetable-gap;
       pointer-events: none;
-      z-index: 1;
       position: absolute;
       display: flex;
       justify-content: space-between;
@@ -354,6 +354,7 @@ $timetable-gap: 4px;
     position: sticky;
     top: -1px;
     margin-top: -1px;
+    margin-right: -1px;
     left: 0;
   }
 }
