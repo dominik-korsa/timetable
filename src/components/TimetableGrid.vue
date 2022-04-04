@@ -302,7 +302,7 @@ $timetable-gap: 4px;
       grid-template-rows: v-bind(rows);
       flex: 0 0 $width;
       scroll-snap-align: end;
-      scroll-snap-stop: normal;
+      scroll-snap-stop: always;
       position: relative;
 
       &:first-of-type {
