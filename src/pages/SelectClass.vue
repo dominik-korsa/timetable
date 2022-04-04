@@ -21,7 +21,9 @@
           v-for="item in items"
           :key="item.value"
           :to="item.to"
-          outline
+          :outline="!$q.dark.isActive"
+          :unelevated="$q.dark.isActive"
+          :color="$q.dark.isActive ? 'grey-9' : undefined"
           no-caps
         >
           {{ item.name }}

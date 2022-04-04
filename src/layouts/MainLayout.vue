@@ -4,7 +4,7 @@
     view="hHh LpR lfr"
   >
     <q-header
-      class="text-black bg-white"
+      class="bg-page text-page"
       :bordered="elevateHeader"
     >
       <q-toolbar>
@@ -19,6 +19,22 @@
         <q-toolbar-title v-if="title">
           {{ title }}
         </q-toolbar-title>
+
+        <q-space />
+
+        <q-btn
+          flat
+          round
+          :icon="$q.dark.isActive ? 'dark_mode' : 'light_mode'"
+        >
+          <q-menu>
+            <q-card>
+              <q-card-section>
+                <theme-picker />
+              </q-card-section>
+            </q-card>
+          </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
@@ -32,9 +48,11 @@
 import { computed, defineComponent, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import _ from 'lodash';
+import ThemePicker from 'components/ThemePicker.vue';
 
 export default defineComponent({
   name: 'MainLayout',
+  components: { ThemePicker },
   setup: () => {
     const route = useRoute();
     const router = useRouter();

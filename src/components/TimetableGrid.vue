@@ -25,7 +25,7 @@
       <div
         v-for="(header, i) in headers"
         :key="i"
-        class="timetable-grid__header bg-white text-center q-pb-xs"
+        class="timetable-grid__header bg-page text-center q-pb-xs"
       >
         <div class="timetable-grid__header-name">
           {{ header.name }}
@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <div class="timetable-grid__temporal-grid bg-white">
+    <div class="timetable-grid__temporal-grid bg-page">
       <div
         v-for="(hour, i) in data.hours"
         :key="i"
@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <div class="timetable-grid__corner bg-white" />
+    <div class="timetable-grid__corner bg-page" />
   </div>
 </template>
 
@@ -198,7 +198,7 @@ $timetable-gap: 4px;
     grid-column: 1;
     grid-row: 2;
     left: 0;
-    border-right: solid $separator-color 1px;
+    border-right: solid var(--separator-color) 1px;
 
     .timetable-grid__temporal {
       grid-column: 1;
@@ -216,7 +216,7 @@ $timetable-gap: 4px;
         justify-self: left;
         margin-right: 5px;
         font-size: 1.1rem;
-        border: 1px solid;
+        border: 1px solid var(--separator-color);
         border-radius: $generic-border-radius;
         padding: 0 2px;
         text-align: center;
@@ -280,7 +280,7 @@ $timetable-gap: 4px;
 
     .timetable-grid__header {
       grid-row: 1;
-      border-bottom: solid $separator-color 1px;
+      border-bottom: solid var(--separator-color) 1px;
       padding-right: $timetable-gap;
 
       &:first-of-type {
@@ -350,7 +350,7 @@ $timetable-gap: 4px;
   .timetable-grid__corner {
     grid-row: 1;
     grid-column: 1;
-    border-bottom: solid $separator-color 1px;
+    border-bottom: solid var(--separator-color) 1px;
     position: sticky;
     top: -1px;
     margin-top: -1px;

@@ -2,7 +2,7 @@
   <q-layout view="hHh LpR lfr">
     <q-header
       v-touch-swipe.horizontal="onOffsetSwipe"
-      class="text-black bg-white"
+      class="bg-page text-page"
     >
       <q-toolbar>
         <q-btn
@@ -103,6 +103,12 @@
                     </q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-separator />
+                <q-item>
+                  <q-item-section>
+                    <theme-picker />
+                  </q-item-section>
+                </q-item>
               </q-list>
             </q-card>
           </q-menu>
@@ -160,6 +166,7 @@ import TimetableGrid from 'components/TimetableGrid.vue';
 import { loadOptivumTable } from 'src/api/optivum';
 import { QBtn, useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
+import ThemePicker from 'components/ThemePicker.vue';
 
 interface TableRefVLo {
   classValue: string;
@@ -189,7 +196,7 @@ const shake = (el: Element, reverse: boolean) => {
 
 export default defineComponent({
   name: 'ClassTimetable',
-  components: { TimetableGrid },
+  components: { ThemePicker, TimetableGrid },
   setup: () => {
     const route = useRoute();
     const router = useRouter();

@@ -22,7 +22,8 @@ export interface Config {
   history: ConfigHistory[];
   favouriteLessons: Record<string, FavouriteLesson | null | undefined>;
   favouriteTables: Record<string, string[]>;
-  startupTable: StartupTable | null,
+  startupTable: StartupTable | null;
+  dark: boolean | 'auto';
 }
 
 export const useConfigStore = defineStore('config', {
@@ -31,6 +32,7 @@ export const useConfigStore = defineStore('config', {
     favouriteLessons: {},
     favouriteTables: {},
     startupTable: null,
+    dark: 'auto',
   }),
   actions: {
     addHistoryEntry(info: OptivumTimetableInfo) {
@@ -70,6 +72,9 @@ export const useConfigStore = defineStore('config', {
     },
     setStartupTable(table: StartupTable | null) {
       this.startupTable = table;
+    },
+    setDark(dark: boolean | 'auto') {
+      this.dark = dark;
     },
   },
   persist: true,

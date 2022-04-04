@@ -4,3 +4,25 @@
     display: none;
   }
 }
+
+body {
+  --page-color: white;
+  --separator-color: #{$separator-color};
+
+  .text-page {
+    color: initial;
+  }
+
+  &.body--dark {
+    --page-color: var(--q-dark-page);
+    --separator-color: #{$separator-dark-color};
+
+    .text-page {
+      color: #fff;
+    }
+  }
+
+  .bg-page {
+    background: var(--page-color);
+  }
+}
