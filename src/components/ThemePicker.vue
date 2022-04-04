@@ -8,6 +8,7 @@
     ]"
     toggle-color="primary"
     unelevated
+    spread
     class="theme-picker"
     :dense="$q.screen.lt.sm"
     @update:model-value="onSet"
