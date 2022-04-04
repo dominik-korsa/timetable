@@ -149,6 +149,7 @@
         <timetable-grid
           v-if="data !== null"
           :data="data"
+          :is-current-week="isCurrentWeek"
         />
       </q-page>
     </q-page-container>
@@ -364,6 +365,9 @@ export default defineComponent({
       },
       offsetDownButton,
       offsetUpButton,
+      isCurrentWeek: computed(
+        () => !showOffsetPicker.value || vLoOffset.value === todayOffset.value,
+      ),
     };
   },
 });

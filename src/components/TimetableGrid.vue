@@ -84,6 +84,7 @@ export default defineComponent({
       type: Object as PropType<TableData>,
       required: true,
     },
+    isCurrentWeek: Boolean,
   },
   setup: (props) => {
     const timestamps = computed(
@@ -108,6 +109,7 @@ export default defineComponent({
     const hourPixels = 55;
 
     const markerPosition = computed(() => {
+      if (!props.isCurrentWeek) return null;
       const dayIndex = now.value.getDay() - 1;
       if (dayIndex < 0 || dayIndex >= 5) return null;
 
