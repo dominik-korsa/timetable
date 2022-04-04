@@ -36,7 +36,7 @@ export default defineComponent({
   },
   setup: (props) => ({
     background: computed(
-      () => (props.showColor && props.lesson.color ? `${props.lesson.color}bb` : 'transparent'),
+      () => (props.showColor && props.lesson.color ? `${props.lesson.color}77` : 'transparent'),
     ),
   }),
 });
