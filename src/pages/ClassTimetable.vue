@@ -85,6 +85,7 @@
                 <q-item
                   clickable
                   class="non-selectable standalone"
+                  @click="onStartupToggle"
                 >
                   <q-item-section side>
                     <q-icon
@@ -92,7 +93,7 @@
                       :color="isStartupTable ? 'primary' : undefined"
                     />
                   </q-item-section>
-                  <q-item-section @click="onStartupToggle">
+                  <q-item-section>
                     <q-item-label>Otwieraj przy starcie</q-item-label>
                     <q-item-label
                       v-if="isStartupTable"
