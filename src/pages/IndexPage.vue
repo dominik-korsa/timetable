@@ -319,6 +319,7 @@ export default defineComponent({
 
       .index-page__v-lo {
         background-color: #852439;
+        border: var(--separator-color) solid 1px;
 
         .index-page__v-lo-logo {
           height: 110px;

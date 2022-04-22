@@ -162,13 +162,14 @@ import {
   computed, defineComponent, ref, watch,
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { loadVLoHours, loadVLoLessons } from 'src/api/v-lo';
+import { loadVLoHours, loadVLoLessons, loadVLoSubstitutions } from 'src/api/v-lo';
 import { CacheMode, NotInCacheError } from 'src/api/requests';
 import TimetableGrid from 'components/TimetableGrid.vue';
 import { loadOptivumTable } from 'src/api/optivum';
 import { QBtn, useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
 import ThemePicker from 'components/ThemePicker.vue';
+import { mondayOf } from 'src/date-utils';
 
 interface TableRefVLo {
   classValue: string;
@@ -231,15 +232,25 @@ export default defineComponent({
       cacheMode: CacheMode,
     ): Promise<TableData> => {
       if (loadedTableRef.baseUrl === undefined) {
-        const [hours, days] = await Promise.all([
+        const date = mondayOf(new Date());
+        date.setDate(date.getDate() - loadedTableRef.offset * 7);
+        const [hours, days, substitutionDays] = await Promise.all([
           loadVLoHours(cacheMode),
           loadVLoLessons(cacheMode, loadedTableRef.classValue, loadedTableRef.offset),
+          Promise.all([0, 1, 2, 3, 4].map((value) => {
+            const weekdayDate = new Date(date);
+            weekdayDate.setDate(weekdayDate.getDate() + value);
+            return loadVLoSubstitutions(cacheMode, loadedTableRef.classValue, weekdayDate);
+          })),
         ]);
         return {
           hours,
           lessons: days.map((day) => day.moments),
           className: loadedTableRef.classValue,
-          dates: days.map((day) => day.date),
+          headers: days.map((day, dayIndex) => ({
+            date: day.date,
+            substitutions: substitutionDays[dayIndex],
+          })),
         };
       }
       return loadOptivumTable(loadedTableRef.baseUrl, loadedTableRef.classValue, cacheMode);

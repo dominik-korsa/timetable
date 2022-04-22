@@ -29,6 +29,11 @@ interface LessonResponseItem {
   day_index: number;
 }
 
+export interface VLoSubstitution {
+  time_signature: string;
+  comment: string;
+}
+
 export async function loadVLoHours(cacheMode: CacheMode): Promise<TableHour[]> {
   const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/vlo/timestamps');
   const body = await response.json() as TimestampsResponseItem[];
@@ -85,4 +90,22 @@ export async function loadVLoLessons(
       date,
     };
   });
+}
+
+export async function loadVLoSubstitutions(
+  cacheMode: CacheMode,
+  classValue: string,
+  date: Date,
+) {
+  const dateUTC = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+  const now = new Date();
+  const nowUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const offset = Math.round((dateUTC - nowUTC) / (1000 * 60 * 60 * 24));
+  const response = await fetchWithCache(
+    cacheMode,
+    `https://api.cld.sh/vlo/substitutions/${classValue}?offset=${offset}`,
+    undefined,
+    `https://api.cld.sh/vlo/substitutions/${classValue}?date=${date.toISOString()}`,
+  );
+  return await response.json() as VLoSubstitution[];
 }

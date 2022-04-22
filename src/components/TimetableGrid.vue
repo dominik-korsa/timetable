@@ -25,17 +25,23 @@
       <div
         v-for="(header, i) in headers"
         :key="i"
-        class="timetable-grid__header bg-page text-center q-pb-xs"
+        class="timetable-grid__header row items-center bg-page text-center q-pb-xs"
       >
-        <div class="timetable-grid__header-name">
-          {{ header.name }}
+        <div class="timetable-grid__header-content col-grow">
+          <div class="timetable-grid__header-name">
+            {{ header.name }}
+          </div>
+          <div
+            v-if="header.date !== null"
+            class="timetable-grid__header-date"
+          >
+            {{ header.date }}
+          </div>
         </div>
-        <div
-          v-if="header.date !== null"
-          class="timetable-grid__header-date"
-        >
-          {{ header.date }}
-        </div>
+        <substitutions-button
+          v-if="header.substitutions && header.substitutions.length > 0"
+          :substitutions="header.substitutions"
+        />
       </div>
     </div>
 
@@ -70,6 +76,7 @@ import { TableData, TableLessonMoment } from 'src/api/common';
 import { adjacentDifference, parseHour, useInterval } from 'src/utils';
 import _ from 'lodash';
 import TimetableItem from 'components/TimetableItem.vue';
+import SubstitutionsButton from 'components/SubstitutionsButton.vue';
 
 interface TableItem {
   moment: TableLessonMoment;
@@ -78,7 +85,7 @@ interface TableItem {
 
 export default defineComponent({
   name: 'TimetableGrid',
-  components: { TimetableItem },
+  components: { SubstitutionsButton, TimetableItem },
   props: {
     data: {
       type: Object as PropType<TableData>,
@@ -140,10 +147,19 @@ export default defineComponent({
     }));
 
     const weekdayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
-    const headers = computed(() => weekdayNames.map((name, index) => ({
-      date: props.data.dates === null ? null : props.data.dates[index].toLocaleDateString(),
-      name,
-    })));
+    const headers = computed(() => {
+      const headersValue = props.data.headers;
+      if (headersValue === null) return weekdayNames.map((name) => ({ name }));
+
+      return weekdayNames.map((name, index) => {
+        const header = headersValue[index];
+        return ({
+          name,
+          date: header.date.toLocaleDateString(),
+          substitutions: header.substitutions,
+        });
+      });
+    });
 
     const marker = ref<HTMLDivElement>();
 

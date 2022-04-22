@@ -1,3 +1,5 @@
+import { VLoSubstitution } from 'src/api/v-lo';
+
 export interface TableHour {
   begin: string;
   end: string;
@@ -22,7 +24,10 @@ export interface TableData {
   hours: TableHour[];
   lessons: TableLessonMoment[][];
   className: string;
-  dates: Date[] | null,
+  headers: {
+    date: Date;
+    substitutions: VLoSubstitution[];
+  }[] | null;
 }
 
 // Universal moment id
