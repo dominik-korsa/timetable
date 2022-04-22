@@ -233,7 +233,7 @@ export default defineComponent({
     ): Promise<TableData> => {
       if (loadedTableRef.baseUrl === undefined) {
         const date = mondayOf(new Date());
-        date.setDate(date.getDate() - loadedTableRef.offset * 7);
+        date.setDate(date.getDate() + loadedTableRef.offset * 7);
         const [hours, days, substitutionDays] = await Promise.all([
           loadVLoHours(cacheMode),
           loadVLoLessons(cacheMode, loadedTableRef.classValue, loadedTableRef.offset),
