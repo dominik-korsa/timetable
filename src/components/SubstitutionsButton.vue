@@ -3,6 +3,7 @@
     round
     color="amber-8"
     size="sm"
+    outline
     @click="dialogVisible = true"
   >
     {{ substitutions.length }}
