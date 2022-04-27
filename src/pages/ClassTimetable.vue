@@ -12,18 +12,18 @@
           @click="goBack"
         />
 
-        <q-toolbar-title>
-          <q-skeleton
-            v-if="data === null"
-            type="text"
-            width="35px"
-          />
-          <template v-else>
-            {{ data.className }}
-          </template>
-        </q-toolbar-title>
-
-        <q-space />
+        <div class="col-grow">
+          <q-toolbar-title>
+            <q-skeleton
+              v-if="data === null"
+              type="text"
+              width="35px"
+            />
+            <template v-else>
+              {{ data.className }}
+            </template>
+          </q-toolbar-title>
+        </div>
 
         <template v-if="showOffsetPicker">
           <q-btn

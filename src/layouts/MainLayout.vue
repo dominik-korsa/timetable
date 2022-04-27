@@ -16,11 +16,13 @@
           @click="goBack"
         />
 
-        <q-toolbar-title v-if="title">
+        <q-toolbar-title
+          v-if="title"
+          class="col-grow"
+        >
           {{ title }}
         </q-toolbar-title>
-
-        <q-space />
+        <q-space v-else />
 
         <q-btn
           flat
