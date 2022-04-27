@@ -101,11 +101,12 @@ export async function loadVLoSubstitutions(
   const now = new Date();
   const nowUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
   const offset = Math.round((dateUTC - nowUTC) / (1000 * 60 * 60 * 24));
+  const [dateIso] = date.toISOString().split('T');
   const response = await fetchWithCache(
     cacheMode,
     `https://api.cld.sh/vlo/substitutions/${classValue}?offset=${offset}`,
     undefined,
-    `https://api.cld.sh/vlo/substitutions/${classValue}?date=${date.toISOString()}`,
+    `https://api.cld.sh/vlo/substitutions/${classValue}?date=${dateIso}`,
   );
   return await response.json() as VLoSubstitution[];
 }
