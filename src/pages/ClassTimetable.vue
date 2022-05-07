@@ -162,7 +162,7 @@ import {
   computed, defineComponent, ref, watch,
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { loadVLoHours, loadVLoLessons } from 'src/api/v-lo';
+import { loadVLoHours, loadVLoLessons, loadVLoSubstitutions } from 'src/api/v-lo';
 import { CacheMode, NotInCacheError } from 'src/api/requests';
 import TimetableGrid from 'components/TimetableGrid.vue';
 import { loadOptivumTable } from 'src/api/optivum';
@@ -240,8 +240,7 @@ export default defineComponent({
           Promise.all([0, 1, 2, 3, 4].map((value) => {
             const weekdayDate = new Date(date);
             weekdayDate.setDate(weekdayDate.getDate() + value);
-            // return loadVLoSubstitutions(cacheMode, loadedTableRef.classValue, weekdayDate);
-            return []; // TODO: Restore substitution loading
+            return loadVLoSubstitutions(cacheMode, loadedTableRef.classValue, weekdayDate);
           })),
         ]);
         return {
