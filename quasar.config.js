@@ -160,9 +160,9 @@ module.exports = configure((ctx) => ({
     // chainWebpackCustomSW (/* chain */) {},
 
     manifest: {
-      name: 'Timetable',
-      short_name: 'Timetable',
-      description: '',
+      name: 'Plan lekcji',
+      short_name: 'Plan lekcji',
+      description: 'Aplikacja do planów lekcji OPTIVUM i planu V LO w Krakowie',
       display: 'standalone',
       orientation: 'any',
       background_color: '#ffffff',
