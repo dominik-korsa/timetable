@@ -36,7 +36,7 @@
         rounded
         class="standalone text-black bg-warning self-center shadow-4 q-mx-sm"
       >
-        Będziesz musiał ponownie zainstalować dodać stronę do ekranu głównego
+        Będziesz musiał ponownie dodać stronę do ekranu głównego
       </q-banner>
       <div
         id="footer"
