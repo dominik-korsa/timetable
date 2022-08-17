@@ -154,6 +154,8 @@
       </q-list>
     </q-card>
 
+    <pwa-banner class="q-mb-md" />
+
     <build-info />
   </q-page>
 </template>
@@ -170,6 +172,7 @@ import { useQuasar } from 'quasar';
 import { loadOptivumClassList, loadOptivumTimetable } from 'src/api/optivum';
 import BuildInfo from 'components/BuildInfo.vue';
 import { loadVLoClassList } from 'src/api/v-lo';
+import PwaBanner from 'components/PwaBanner.vue';
 
 interface ClassItem {
   value: string;
@@ -186,7 +189,7 @@ interface FavouriteTableItem {
 
 export default defineComponent({
   name: 'IndexPage',
-  components: { BuildInfo },
+  components: { BuildInfo, PwaBanner },
   setup() {
     const router = useRouter();
     const quasar = useQuasar();
