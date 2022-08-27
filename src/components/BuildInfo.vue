@@ -1,5 +1,12 @@
 <template>
-  <div class="text-caption text-center">
+  <div class="build-info text-caption text-center">
+    <template v-if="config.superSecretSettingsEnabled">
+      <router-link to="/super-secret-settings">
+        Super Secret Settings
+      </router-link>
+      <br>
+    </template>
+
     <q-icon
       name="favorite"
       class="q-mr-xs"
@@ -10,7 +17,13 @@
 
     <a href="https://github.com/dominik-korsa/timetable">Kod źródłowy aplikacji na GitHub</a><br>
 
-    Zbudowano: <b>{{ buildTimeString }}</b><br>
+    <span
+      class="build-time"
+      role="button"
+      @click.prevent="buildTimeClick"
+    >
+      Zbudowano: <b>{{ buildTimeString }}</b><br>
+    </span>
     <template v-if="buildInfo !== null">
       Deploy ID: <b><a
         :href="`https://app.netlify.com/sites/${buildInfo.siteName}/deploys/${buildInfo.deployId}`"
@@ -25,6 +38,8 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 import { typed } from 'src/utils';
+import { useConfigStore } from 'stores/config';
+import { useQuasar } from 'quasar';
 
 interface NetlifyBuildInfo {
   deployId: string,
@@ -37,8 +52,13 @@ interface NetlifyBuildInfo {
 export default defineComponent({
   name: 'BuildInfo',
   setup: () => {
+    const config = useConfigStore();
+    const quasar = useQuasar();
+
     const buildTime = new Date(process.env.BUILD_TIME as string);
-    return ({
+    let buildTimeClickCount = 0;
+    return {
+      config,
       buildTimeString: computed(() => buildTime.toLocaleString()),
       buildInfo: process.env.DEPLOY_ID === undefined ? null : typed<NetlifyBuildInfo>({
         deployId: process.env.DEPLOY_ID,
@@ -47,7 +67,31 @@ export default defineComponent({
         siteName: process.env.SITE_NAME as string,
         branch: process.env.BRANCH as string,
       }),
-    });
+      buildTimeClick: () => {
+        if (config.superSecretSettingsEnabled) return;
+        buildTimeClickCount += 1;
+        if (buildTimeClickCount < 5) return;
+        config.setSuperSecretSettings(true);
+        quasar.notify({
+          message: 'Włączono Super Secret Settings',
+        });
+      },
+    };
   },
 });
 </script>
+
+<style lang="scss">
+.build-info {
+  line-height: 2;
+
+  .build-time {
+    user-select: none;
+    cursor: text;
+  }
+
+  a {
+    color: $primary;
+  }
+}
+</style>

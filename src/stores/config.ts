@@ -24,6 +24,8 @@ export interface Config {
   favouriteTables: Record<string, string[]>;
   startupTable: StartupTable | null;
   dark: boolean | 'auto';
+  superSecretSettingsEnabled: boolean;
+  scrollSnap: boolean;
 }
 
 export const useConfigStore = defineStore('config', {
@@ -33,6 +35,8 @@ export const useConfigStore = defineStore('config', {
     favouriteTables: {},
     startupTable: null,
     dark: 'auto',
+    superSecretSettingsEnabled: false,
+    scrollSnap: true,
   }),
   actions: {
     addHistoryEntry(info: OptivumTimetableInfo) {
@@ -75,6 +79,12 @@ export const useConfigStore = defineStore('config', {
     },
     setDark(dark: boolean | 'auto') {
       this.dark = dark;
+    },
+    setSuperSecretSettings(enabled: boolean) {
+      this.superSecretSettingsEnabled = enabled;
+    },
+    setScrollSnap(enabled: boolean) {
+      this.scrollSnap = enabled;
     },
   },
   persist: true,

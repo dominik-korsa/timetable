@@ -1,5 +1,10 @@
 <template>
-  <div class="timetable-grid__wrapper">
+  <div
+    class="timetable-grid__wrapper"
+    :class="{
+      'timetable-grid__wrapper--scroll-snap': config.scrollSnap,
+    }"
+  >
     <div class="timetable-grid__days">
       <div
         v-for="(day, i) in lessonItems"
@@ -77,6 +82,7 @@ import { adjacentDifference, parseHour, useInterval } from 'src/utils';
 import _ from 'lodash';
 import TimetableItem from 'components/TimetableItem.vue';
 import SubstitutionsButton from 'components/SubstitutionsButton.vue';
+import { useConfigStore } from 'stores/config';
 
 interface TableItem {
   moment: TableLessonMoment;
@@ -168,6 +174,7 @@ export default defineComponent({
     });
 
     return {
+      config: useConfigStore(),
       marker,
       rows: computed(
         () => adjacentDifference(timestamps.value)
@@ -191,7 +198,10 @@ $timetable-gap: 4px;
   grid-template-rows: auto 1fr;
   grid-template-columns: auto 1fr;
   overflow: auto;
-  scroll-snap-type: x mandatory;
+
+  &.timetable-grid__wrapper--scroll-snap {
+    scroll-snap-type: x mandatory;
+  }
 
   --column-count: 5;
   @media (max-width: 840px) { --column-count: 4; }

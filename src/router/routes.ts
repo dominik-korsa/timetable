@@ -29,6 +29,14 @@ const routes: RouteRecordRaw[] = [
           title: 'Wybierz klasę',
         },
       },
+      {
+        name: 'SuperSecretSettings',
+        path: 'super-secret-settings',
+        component: () => import('pages/SuperSecretSettings.vue'),
+        meta: {
+          title: 'Super Secret Settings',
+        },
+      },
     ],
   },
   {
