@@ -1,0 +1,81 @@
+<template>
+  <div
+    :ref="el => group = el"
+    class="select-class-group"
+  >
+    <q-resize-observer @resize="containerWidth = $event.width" />
+    <q-btn
+      v-for="item in items"
+      :key="item.value"
+      :to="item.to"
+      :outline="!$q.dark.isActive"
+      :unelevated="$q.dark.isActive"
+      :color="$q.dark.isActive ? 'grey-9' : undefined"
+      no-caps
+      no-wrap
+    >
+      <div class="select-class-group__button-value">
+        {{ item.name }}
+      </div>
+    </q-btn>
+  </div>
+</template>
+
+<script lang="ts">
+import {
+  computed,
+  defineComponent, nextTick, ref, watch,
+} from 'vue';
+
+const gapWidth = 8;
+const buttonPadding = 40;
+
+export default defineComponent({
+  props: {
+    items: {
+      type: Array,
+      required: true,
+    },
+  },
+  setup: (props) => {
+    const containerWidth = ref(100);
+    const group = ref<HTMLDivElement>();
+    const maxWidth = ref<number>();
+    watch(() => [group.value, props.items] as const, async ([groupValue]) => {
+      if (groupValue === undefined) return;
+      maxWidth.value = undefined;
+      await nextTick();
+      const widths = Array.from(groupValue.getElementsByClassName('select-class-group__button-value'))
+        .map((el) => el.getBoundingClientRect().width);
+      if (widths.length === 0) return;
+      maxWidth.value = Math.max(...widths) + buttonPadding + gapWidth;
+    }, { immediate: true });
+    const columnCount = computed(() => {
+      if (maxWidth.value === undefined) return 1;
+      const maxItemsPerRow = Math.max(
+        1,
+        Math.floor((containerWidth.value + gapWidth) / maxWidth.value),
+      );
+      const rows = Math.ceil(props.items.length / maxItemsPerRow);
+      return Math.ceil(props.items.length / rows);
+    });
+    return ({
+      containerWidth,
+      maxWidth,
+      group,
+      columnCount,
+    });
+  },
+});
+</script>
+
+<style lang="scss">
+.select-class-group {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(v-bind(columnCount), 1fr);
+  grid-gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: hidden;
+}
+</style>

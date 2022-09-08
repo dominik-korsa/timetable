@@ -12,23 +12,11 @@
       v-else
       class="select-class__items"
     >
-      <div
+      <select-class-group
         v-for="(items, i) in classGroups"
         :key="i"
-        class="select-class__items-group"
-      >
-        <q-btn
-          v-for="item in items"
-          :key="item.value"
-          :to="item.to"
-          :outline="!$q.dark.isActive"
-          :unelevated="$q.dark.isActive"
-          :color="$q.dark.isActive ? 'grey-9' : undefined"
-          no-caps
-        >
-          {{ item.name }}
-        </q-btn>
-      </div>
+        :items="items"
+      />
     </div>
   </q-page>
 </template>
@@ -45,6 +33,7 @@ import { loadVLoClassList } from 'src/api/v-lo';
 import { DefaultsMap } from 'src/utils';
 import _ from 'lodash';
 import { useConfigStore } from 'stores/config';
+import SelectClassGroup from 'components/SelectClassGroup.vue';
 
 interface ClassItem {
   value: string;
@@ -57,6 +46,7 @@ const threeGRegex = /^3\w+g$/;
 
 export default defineComponent({
   name: 'SelectClass',
+  components: { SelectClassGroup },
   setup: () => {
     const route = useRoute();
     const quasar = useQuasar();
@@ -131,18 +121,7 @@ export default defineComponent({
 
 <style lang="scss">
 .select-class__items {
-  .select-class__items-group {
-    width: 100%;
-    max-width: 600px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-
-    .q-btn {
-      flex: 1;
-    }
-  }
+  width: 100%;
+  max-width: 600px;
 }
 </style>
