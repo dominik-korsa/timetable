@@ -161,7 +161,7 @@ import { TableData } from 'src/api/common';
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { loadVLoHours, loadVLoLessons, loadVLoSubstitutions } from 'src/api/v-lo';
 import { CacheMode, NotInCacheError } from 'src/api/requests';
 import TimetableGrid from 'components/TimetableGrid.vue';
@@ -170,6 +170,7 @@ import { QBtn, useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
 import ThemePicker from 'components/ThemePicker.vue';
 import { mondayOf } from 'src/date-utils';
+import { getDayOffsetSession } from 'src/session';
 
 interface TableRefVLo {
   classValue: string;
@@ -212,7 +213,10 @@ export default defineComponent({
     let refreshId = 0;
 
     const todayOffset = computed(() => ([0, 6].includes(new Date().getDay()) ? 1 : 0));
-    const vLoOffset = ref(todayOffset.value);
+    const vLoOffset = getDayOffsetSession(todayOffset.value);
+    onBeforeRouteLeave(() => {
+      vLoOffset.value = 0;
+    });
     const tableRef = computed<TableRef | null>(() => {
       if (route.params.class === undefined) return null;
       if (route.params.url === undefined) {
