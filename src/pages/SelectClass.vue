@@ -10,13 +10,17 @@
     />
     <div
       v-else
-      class="select-class__items"
+      class="select-class__items-wrapper"
     >
-      <select-class-group
-        v-for="(items, i) in classGroups"
-        :key="i"
-        :items="items"
-      />
+      <q-resize-observer @resize="containerWidth = $event.width" />
+      <div class="select-class__items">
+        <select-class-group
+          v-for="(items, i) in classGroups"
+          :key="i"
+          :items="items"
+          :container-width="containerWidth"
+        />
+      </div>
     </div>
   </q-page>
 </template>
@@ -51,6 +55,7 @@ export default defineComponent({
     const route = useRoute();
     const quasar = useQuasar();
     const config = useConfigStore();
+    const containerWidth = ref(100);
 
     const classItems = ref<ClassItem[] | null>(null);
     watch(() => route.params.url, async (baseUrl?: string | RouteParamValue[]) => {
@@ -94,6 +99,7 @@ export default defineComponent({
     });
 
     return {
+      containerWidth,
       classItems,
       classGroups: computed(() => {
         if (classItems.value === null) return null;
@@ -120,8 +126,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.select-class__items {
+.select-class__items-wrapper {
   width: 100%;
   max-width: 600px;
+
+  .select-class__items {
+    margin: 0 auto;
+    width: fit-content;
+  }
 }
 </style>

@@ -3,7 +3,6 @@
     :ref="el => group = el"
     class="select-class-group"
   >
-    <q-resize-observer @resize="containerWidth = $event.width" />
     <q-btn
       v-for="item in items"
       :key="item.value"
@@ -36,9 +35,12 @@ export default defineComponent({
       type: Array,
       required: true,
     },
+    containerWidth: {
+      type: Number,
+      required: true,
+    },
   },
   setup: (props) => {
-    const containerWidth = ref(100);
     const group = ref<HTMLDivElement>();
     const maxWidth = ref<number>();
     watch(() => [group.value, props.items] as const, async ([groupValue]) => {
@@ -54,13 +56,12 @@ export default defineComponent({
       if (maxWidth.value === undefined) return 1;
       const maxItemsPerRow = Math.max(
         1,
-        Math.floor((containerWidth.value + gapWidth) / maxWidth.value),
+        Math.floor((props.containerWidth + gapWidth) / maxWidth.value),
       );
       const rows = Math.ceil(props.items.length / maxItemsPerRow);
       return Math.ceil(props.items.length / rows);
     });
     return ({
-      containerWidth,
       maxWidth,
       group,
       columnCount,
