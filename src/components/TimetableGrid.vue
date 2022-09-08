@@ -177,13 +177,10 @@ export default defineComponent({
     const daysEl = ref<HTMLDivElement>();
 
     onMounted(() => {
-      console.log(daysEl.value, dayIndex.value);
       if (!daysEl.value || dayIndex.value === null) return;
       const dayItems = daysEl.value.getElementsByClassName('timetable-grid__day');
-      console.log(dayItems);
       if (!dayItems) return;
       const item = dayItems[dayIndex.value];
-      console.log(item);
       item?.scrollIntoView({
         inline: 'start',
       });
