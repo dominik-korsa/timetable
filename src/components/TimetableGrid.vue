@@ -327,6 +327,16 @@ $timetable-gap: 4px;
       grid-row: 1;
       border-bottom: solid var(--separator-color) 1px;
       padding-right: $timetable-gap;
+      font-size: 0.85rem;
+
+      .timetable-grid__header-name {
+        line-height: 1.4;
+      }
+
+      .timetable-grid__header-date {
+        font-size: 0.9em;
+        line-height: 1;
+      }
 
       &:first-of-type {
         padding-left: $timetable-gap;
