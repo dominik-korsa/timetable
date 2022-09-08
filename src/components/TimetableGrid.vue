@@ -5,7 +5,10 @@
       'timetable-grid__wrapper--scroll-snap': config.scrollSnap,
     }"
   >
-    <div class="timetable-grid__days">
+    <div
+      :ref="el => daysEl = el"
+      class="timetable-grid__days"
+    >
       <div
         v-for="(day, i) in lessonItems"
         :key="i"
@@ -19,7 +22,6 @@
         />
         <div
           v-if="markerPosition !== null && markerPosition.dayIndex === i"
-          :ref="el => marker = el"
           class="timetable-grid__marker"
           :style="`--offset: ${markerPosition.offset}px`"
         />
@@ -121,10 +123,15 @@ export default defineComponent({
 
     const hourPixels = 55;
 
-    const markerPosition = computed(() => {
+    const dayIndex = computed(() => {
       if (!props.isCurrentWeek) return null;
-      const dayIndex = now.value.getDay() - 1;
-      if (dayIndex < 0 || dayIndex >= 5) return null;
+      const index = now.value.getDay() - 1;
+      if (index < 0 || index >= 5) return null;
+      return index;
+    });
+
+    const markerPosition = computed(() => {
+      if (dayIndex.value === null) return null;
 
       const midnight = new Date(now.value);
       midnight.setHours(0, 0, 0, 0);
@@ -135,7 +142,7 @@ export default defineComponent({
         || timePosition > _.last(timestamps.value)!
       ) return null;
       return {
-        dayIndex,
+        dayIndex: dayIndex.value,
         offset: ((timePosition - timestamps.value[0]) * hourPixels) / 60,
       };
     });
@@ -167,15 +174,24 @@ export default defineComponent({
       });
     });
 
-    const marker = ref<HTMLDivElement>();
+    const daysEl = ref<HTMLDivElement>();
 
     onMounted(() => {
-      marker.value?.scrollIntoView();
+      console.log(daysEl.value, dayIndex.value);
+      if (!daysEl.value || dayIndex.value === null) return;
+      const dayItems = daysEl.value.getElementsByClassName('timetable-grid__day');
+      console.log(dayItems);
+      if (!dayItems) return;
+      const item = dayItems[dayIndex.value];
+      console.log(item);
+      item?.scrollIntoView({
+        inline: 'start',
+      });
     });
 
     return {
       config: useConfigStore(),
-      marker,
+      daysEl,
       rows: computed(
         () => adjacentDifference(timestamps.value)
           .map((v) => `${(v * hourPixels) / 60}px`)
