@@ -102,6 +102,8 @@ export default defineComponent({
     isCurrentWeek: Boolean,
   },
   setup: (props) => {
+    const config = useConfigStore();
+
     const timestamps = computed(
       () => {
         const realTimestamps = _.flatMap(
@@ -168,7 +170,9 @@ export default defineComponent({
         const header = headersValue[index];
         return ({
           name,
-          date: header.date.toLocaleDateString(),
+          date: config.iso8601
+            ? header.date.toISOString().split('T')[0]
+            : header.date.toLocaleDateString(),
           substitutions: header.substitutions,
         });
       });

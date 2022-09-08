@@ -41,6 +41,11 @@ export default defineComponent({
           set: config.setScrollSnap,
         },
         {
+          label: 'Używaj formatu ISO8601',
+          value: computed(() => config.iso8601),
+          set: config.setISO8601,
+        },
+        {
           label: 'Przycisk Super Secret Settings',
           value: computed(() => config.superSecretSettingsEnabled),
           set: config.setSuperSecretSettings,
