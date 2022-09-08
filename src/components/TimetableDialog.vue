@@ -70,7 +70,8 @@ export default defineComponent({
       default: undefined,
     },
   },
-  setup: (props) => {
+  emits: ['close'],
+  setup: (props, { emit }) => {
     const config = useConfigStore();
 
     const setFavourite = (value: FavouriteLesson | null | undefined) => {
@@ -79,6 +80,7 @@ export default defineComponent({
 
     return ({
       hideClick: () => {
+        if (props.favourite !== null) emit('close');
         setFavourite(props.favourite === null ? undefined : null);
       },
       items: computed(() => props.moment.lessons.map((lesson) => {
@@ -95,6 +97,7 @@ export default defineComponent({
               subject: lesson.subject,
               group: lesson.group,
             });
+            emit('close');
           },
         });
       })),

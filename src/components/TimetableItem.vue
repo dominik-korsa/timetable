@@ -30,6 +30,7 @@
       <timetable-dialog
         :moment="moment"
         :favourite="favourite"
+        @close="dialogVisible = false"
       />
     </q-dialog>
   </q-card>
