@@ -15,6 +15,7 @@
 
 require('dotenv').config();
 const { configure } = require('quasar/wrappers');
+const { Temporal } = require('@js-temporal/polyfill');
 
 function requireEnv(key) {
   if (!process.env[key]) throw new Error(`Env variable "${key}" not set`);
@@ -94,7 +95,7 @@ module.exports = configure((ctx) => ({
       REPOSITORY_URL: process.env.REPOSITORY_URL,
       COMMIT_REF: process.env.COMMIT_REF,
       SITE_NAME: process.env.SITE_NAME,
-      BUILD_TIME: new Date().toISOString(),
+      BUILD_TIME: Temporal.Now.instant().toString(),
     },
   },
 

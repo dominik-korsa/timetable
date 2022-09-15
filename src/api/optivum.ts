@@ -2,11 +2,7 @@ import {
   ListItem, Table, Timetable, TimetableList,
 } from '@wulkanowy/timetable-parser';
 import { CacheMode, fetchWithCache } from 'src/api/requests';
-import { TableData, toUmid } from 'src/api/common';
-
-function toProxiedUrl(url: URL | string): URL {
-  return new URL(`/${url}`, process.env.PROXY_URL);
-}
+import { TableData, toProxiedUrl, toUmid } from 'src/api/common';
 
 export interface OptivumTimetableInfo {
   title: string;

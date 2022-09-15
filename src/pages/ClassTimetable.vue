@@ -169,6 +169,7 @@ import { useConfigStore } from 'stores/config';
 import ThemePicker from 'components/ThemePicker.vue';
 import { mondayOf } from 'src/date-utils';
 import { getDayOffsetSession } from 'src/session';
+import { Temporal } from '@js-temporal/polyfill';
 
 interface TableRefVLo {
   classValue: string;
@@ -210,7 +211,9 @@ export default defineComponent({
 
     let refreshId = 0;
 
-    const todayOffset = computed(() => ([0, 6].includes(new Date().getDay()) ? 1 : 0));
+    const todayOffset = computed(
+      () => ([6, 7].includes(Temporal.Now.plainDateISO().dayOfWeek) ? 1 : 0),
+    );
     const vLoOffset = getDayOffsetSession(todayOffset.value);
     onBeforeRouteLeave(() => {
       vLoOffset.value = 0;
@@ -234,16 +237,15 @@ export default defineComponent({
       cacheMode: CacheMode,
     ): Promise<TableData> => {
       if (loadedTableRef.baseUrl === undefined) {
-        const date = mondayOf(new Date());
-        date.setDate(date.getDate() + loadedTableRef.offset * 7);
+        const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: loadedTableRef.offset });
         const [hours, days, substitutionDays] = await Promise.all([
           loadVLoHours(cacheMode),
           loadVLoLessons(cacheMode, loadedTableRef.classValue, loadedTableRef.offset),
-          Promise.all([0, 1, 2, 3, 4].map((value) => {
-            const weekdayDate = new Date(date);
-            weekdayDate.setDate(weekdayDate.getDate() + value);
-            return loadVLoSubstitutions(cacheMode, loadedTableRef.classValue, weekdayDate);
-          })),
+          Promise.all([0, 1, 2, 3, 4].map((value) => loadVLoSubstitutions(
+            cacheMode,
+            loadedTableRef.classValue,
+            monday.add({ days: value }),
+          ))),
         ]);
         return {
           hours,

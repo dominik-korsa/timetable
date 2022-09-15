@@ -40,6 +40,7 @@ import { computed, defineComponent } from 'vue';
 import { typed } from 'src/utils';
 import { useConfigStore } from 'stores/config';
 import { useQuasar } from 'quasar';
+import { Temporal } from '@js-temporal/polyfill';
 
 interface NetlifyBuildInfo {
   deployId: string,
@@ -55,7 +56,7 @@ export default defineComponent({
     const config = useConfigStore();
     const quasar = useQuasar();
 
-    const buildTime = new Date(process.env.BUILD_TIME as string);
+    const buildTime = Temporal.Instant.from(process.env.BUILD_TIME as string);
     let buildTimeClickCount = 0;
     return {
       config,

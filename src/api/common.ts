@@ -1,4 +1,5 @@
-import { VLoSubstitution } from 'src/api/v-lo';
+import { Substitution } from '@wulkanowy/asc-timetable-parser';
+import { Temporal } from '@js-temporal/polyfill';
 
 export interface TableHour {
   begin: string;
@@ -25,8 +26,8 @@ export interface TableData {
   lessons: TableLessonMoment[][];
   className: string;
   headers: {
-    date: Date;
-    substitutions: VLoSubstitution[];
+    date: Temporal.PlainDate;
+    substitutions: Substitution[];
   }[] | null;
 }
 
@@ -39,3 +40,7 @@ export const toUmid = (
 ): string => `${
   baseUrl === undefined ? 'v-lo' : encodeURIComponent(baseUrl)
 }|${encodeURIComponent(classValue)}|${day.toString()}|${hour.toString()}`;
+
+export function toProxiedUrl(url: URL | string): URL {
+  return new URL(`/${url}`, process.env.PROXY_URL);
+}

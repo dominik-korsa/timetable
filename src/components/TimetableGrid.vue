@@ -85,6 +85,7 @@ import _ from 'lodash';
 import TimetableItem from 'components/TimetableItem.vue';
 import SubstitutionsButton from 'components/SubstitutionsButton.vue';
 import { useConfigStore } from 'stores/config';
+import { Temporal } from '@js-temporal/polyfill';
 
 interface TableItem {
   moment: TableLessonMoment;
@@ -118,27 +119,25 @@ export default defineComponent({
         ];
       },
     );
-    const now = ref<Date>(new Date());
+    const now = ref<Temporal.ZonedDateTime>(Temporal.Now.zonedDateTimeISO());
     useInterval(() => {
-      now.value = new Date();
+      now.value = Temporal.Now.zonedDateTimeISO();
     }, 5000, true);
 
     const hourPixels = 55;
 
     const dayIndex = computed(() => {
       if (!props.isCurrentWeek) return null;
-      const index = now.value.getDay() - 1;
-      if (index < 0 || index >= 5) return null;
-      return index;
+      if (now.value.dayOfWeek > 5) return null;
+      return now.value.dayOfWeek - 1;
     });
 
     const markerPosition = computed(() => {
       if (dayIndex.value === null) return null;
 
-      const midnight = new Date(now.value);
-      midnight.setHours(0, 0, 0, 0);
+      const midnight = now.value.round({ smallestUnit: 'day', roundingMode: 'floor' });
 
-      const timePosition = (now.value.getTime() - midnight.getTime()) / 1000 / 60;
+      const timePosition = (now.value.epochSeconds - midnight.epochSeconds) / 60;
       if (
         timePosition < timestamps.value[0]
         || timePosition > _.last(timestamps.value)!
@@ -171,8 +170,8 @@ export default defineComponent({
         return ({
           name,
           date: config.iso8601
-            ? header.date.toISOString().split('T')[0]
-            : header.date.toLocaleDateString(),
+            ? header.date.toString()
+            : header.date.toLocaleString(),
           substitutions: header.substitutions,
         });
       });

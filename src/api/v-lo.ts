@@ -1,9 +1,16 @@
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
-  TableHour, TableLessonMoment, toUmid,
+  TableHour, TableLessonMoment, toProxiedUrl, toUmid,
 } from 'src/api/common';
 import _ from 'lodash';
 import { mondayOf } from 'src/date-utils';
+import {
+  Substitution,
+  getSubstitutionsBody,
+  getSubstitutionsUrl,
+  parseSubstitutions,
+} from '@wulkanowy/asc-timetable-parser';
+import { Temporal } from '@js-temporal/polyfill';
 
 export async function loadVLoClassList(cacheMode: CacheMode): Promise<string[]> {
   const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/vlo/listclass');
@@ -29,11 +36,6 @@ interface LessonResponseItem {
   day_index: number;
 }
 
-export interface VLoSubstitution {
-  time_signature: string;
-  comment: string;
-}
-
 export async function loadVLoHours(cacheMode: CacheMode): Promise<TableHour[]> {
   const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/vlo/timestamps');
   const body = await response.json() as TimestampsResponseItem[];
@@ -49,25 +51,22 @@ export async function loadVLoLessons(
   classValue: string,
   offset: number,
 ): Promise<{
-  date: Date,
+  date: Temporal.PlainDate,
   moments: TableLessonMoment[],
 }[]> {
-  const monday = mondayOf(new Date());
-  monday.setDate(monday.getDate() + 7 * offset);
-  const [mondayISO] = monday.toISOString().split('T');
+  const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
   const response = await fetchWithCache(
     cacheMode,
     `https://api.cld.sh/vlo/ttdata/${classValue}?offset=${offset}`,
     undefined,
-    `https://api.cld.sh/vlo/ttdata/${classValue}?date=${mondayISO}`,
+    `https://api.cld.sh/vlo/ttdata/${classValue}?date=${monday.toString()}`,
   );
   const body = await response.json() as LessonResponseItem[][][];
   return body.map((day, dayIndex) => {
     const moments: TableLessonMoment[] = [];
-    let date = new Date(monday);
-    date.setDate(date.getDate() + dayIndex);
+    let date = monday.add({ days: dayIndex });
     _.flatten(day).forEach((lesson) => {
-      date = new Date(lesson.date);
+      date = Temporal.PlainDate.from(lesson.date);
       while (moments.length < lesson.time_index + lesson.duration) {
         moments.push({
           umid: toUmid(undefined, classValue, dayIndex, moments.length),
@@ -95,18 +94,22 @@ export async function loadVLoLessons(
 export async function loadVLoSubstitutions(
   cacheMode: CacheMode,
   classValue: string,
-  date: Date,
-) {
-  const dateUTC = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-  const now = new Date();
-  const nowUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-  const offset = Math.round((dateUTC - nowUTC) / (1000 * 60 * 60 * 24));
-  const [dateIso] = date.toISOString().split('T');
+  date: Temporal.PlainDate,
+): Promise<Substitution[]> {
+  const url = new URL(getSubstitutionsUrl(), 'https://www.v-lo.krakow.pl/');
+  const proxiedUrl = toProxiedUrl(url).toString();
   const response = await fetchWithCache(
     cacheMode,
-    `https://api.cld.sh/vlo/substitutions/${classValue}?offset=${offset}`,
-    undefined,
-    `https://api.cld.sh/vlo/substitutions/${classValue}?date=${dateIso}`,
+    proxiedUrl,
+    {
+      method: 'POST',
+      body: JSON.stringify(getSubstitutionsBody(date.toString(), false)),
+    },
+    `${proxiedUrl}|${date.toString()},`,
   );
-  return await response.json() as VLoSubstitution[];
+  const body = await response.text();
+  const parsed = parseSubstitutions(body);
+  return parsed.sections
+    .filter((value) => value.name.toLowerCase() === classValue.toLowerCase())
+    .flatMap((value) => value.changes);
 }
