@@ -337,6 +337,10 @@ $timetable-gap: 4px;
         line-height: 1;
       }
 
+      .substitutions-button {
+        margin-bottom: -4px;
+      }
+
       &:first-of-type {
         padding-left: $timetable-gap;
       }

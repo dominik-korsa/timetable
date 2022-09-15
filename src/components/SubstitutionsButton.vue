@@ -4,6 +4,7 @@
     color="amber-8"
     size="sm"
     outline
+    class="substitutions-button"
     @click="dialogVisible = true"
   >
     {{ substitutions.length }}
