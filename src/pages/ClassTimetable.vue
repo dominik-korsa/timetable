@@ -216,7 +216,7 @@ export default defineComponent({
     );
     const vLoOffset = getDayOffsetSession(todayOffset.value);
     onBeforeRouteLeave(() => {
-      vLoOffset.value = 0;
+      vLoOffset.value = todayOffset.value;
     });
     const tableRef = computed<TableRef | null>(() => {
       if (route.params.class === undefined) return null;
