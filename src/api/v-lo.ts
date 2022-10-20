@@ -34,6 +34,7 @@ interface LessonResponseItem {
   group: string;
   date: string;
   day_index: number;
+  removed: boolean;
 }
 
 export async function loadVLoHours(cacheMode: CacheMode): Promise<TableHour[]> {
@@ -81,6 +82,7 @@ export async function loadVLoLessons(
           room: lesson.classroom || undefined,
           group: lesson.group || undefined,
           color: lesson.color,
+          removed: lesson.removed ?? false,
         });
       }
     });

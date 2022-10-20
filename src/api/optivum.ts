@@ -60,6 +60,7 @@ export async function loadOptivumTable(
         room: lesson.room,
         teacher: lesson.teacher,
         color: undefined,
+        removed: false,
       })),
     }))),
     headers: null,
