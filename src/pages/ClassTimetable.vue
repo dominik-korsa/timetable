@@ -287,6 +287,7 @@ export default defineComponent({
           const cachedData = await attemptLoad(value, CacheMode.CacheOnly);
           if (currId !== refreshId) return;
           data.value = cachedData;
+          clearTimeout(clearTimeoutId);
         } catch (error) {
           cacheFailed = true;
           if (!(error instanceof NotInCacheError)) console.warn(error);
