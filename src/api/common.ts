@@ -8,12 +8,13 @@ export interface TableHour {
 }
 
 export interface TableLesson {
-  subject: string,
-  subjectShort: string,
-  teacher: string | undefined,
-  room: string | undefined,
-  group: string | undefined,
-  color: string | undefined,
+  subject: string;
+  subjectShort: string;
+  teacher: string | undefined;
+  room: string | undefined;
+  group: string | undefined;
+  color: string | undefined;
+  removed: boolean;
 }
 
 export interface TableLessonMoment {

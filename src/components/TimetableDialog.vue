@@ -113,6 +113,7 @@ export default defineComponent({
   .timetable-dialog__item {
     min-height: 40px;
     width: 100%;
+    border-radius: 4px;
   }
 }
 </style>

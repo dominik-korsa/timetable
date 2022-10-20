@@ -1,5 +1,10 @@
 <template>
-  <div class="timetable-item-single">
+  <div
+    class="timetable-item-single"
+    :class="{
+      'timetable-item-single--removed': lesson.removed
+    }"
+  >
     <div class="timetable-item-single__top">
       <div class="timetable-item-single__subject">
         {{ fullSubject ? lesson.subject : lesson.subjectShort }}
@@ -94,5 +99,27 @@ export default defineComponent({
     overflow-y: clip;
     text-overflow: ellipsis;
   }
+
+  &.timetable-item-single--removed {
+    background: repeating-linear-gradient(
+        -60deg,
+        #00000009 0 10px,
+        #00000018 10px 15px
+    );
+    color: #00000088;
+
+    .timetable-item-single__subject {
+      text-decoration: line-through 1.5px;
+    }
+  }
+}
+
+body.body--dark .timetable-item-single.timetable-item-single--removed {
+  background: repeating-linear-gradient(
+    -60deg,
+    #ffffff09 0 10px,
+    #ffffff20 10px 15px
+  );
+  color: #ffffff88;
 }
 </style>
