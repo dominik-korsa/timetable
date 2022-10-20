@@ -267,7 +267,10 @@ export default defineComponent({
 
         refreshId += 1;
         const currId = refreshId;
-        data.value = null;
+        const clearTimeoutId = setTimeout(() => {
+          if (currId !== refreshId) return;
+          data.value = null;
+        }, 500);
         errorMessage.value = null;
 
         let cacheFailed = false;
@@ -283,9 +286,12 @@ export default defineComponent({
         try {
           const networkData = await attemptLoad(value, CacheMode.NetworkOnly);
           if (currId !== refreshId) return;
+          clearTimeout(clearTimeoutId);
           data.value = networkData;
         } catch (error) {
           console.error(error);
+          clearTimeout(clearTimeoutId);
+          if (currId === refreshId) data.value = null;
           if (cacheFailed) errorMessage.value = 'Nie udało się wczytać planu lekcji';
           else {
             quasar.notify({
