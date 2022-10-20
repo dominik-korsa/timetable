@@ -148,8 +148,15 @@
           v-if="data !== null"
           :data="data"
           :is-current-week="isCurrentWeek"
+          :is-loading="isLoading"
         />
       </q-page>
+      <q-linear-progress
+        v-if="isLoading"
+        indeterminate
+        color="primary"
+        class="class-timetable__progress"
+      />
     </q-page-container>
   </q-layout>
 </template>
@@ -208,6 +215,7 @@ export default defineComponent({
 
     const data = ref<TableData | null>(null);
     const errorMessage = ref<string | null>(null);
+    const isLoading = ref(true);
 
     let refreshId = 0;
 
@@ -265,9 +273,13 @@ export default defineComponent({
       async (value) => {
         if (value === null) return;
 
+        isLoading.value = true;
         refreshId += 1;
         const currId = refreshId;
-        data.value = null;
+        const clearTimeoutId = setTimeout(() => {
+          if (currId !== refreshId) return;
+          data.value = null;
+        }, 750);
         errorMessage.value = null;
 
         let cacheFailed = false;
@@ -283,17 +295,21 @@ export default defineComponent({
         try {
           const networkData = await attemptLoad(value, CacheMode.NetworkOnly);
           if (currId !== refreshId) return;
+          clearTimeout(clearTimeoutId);
           data.value = networkData;
         } catch (error) {
           console.error(error);
+          clearTimeout(clearTimeoutId);
+          if (currId !== refreshId) return;
           if (cacheFailed) errorMessage.value = 'Nie udało się wczytać planu lekcji';
           else {
             quasar.notify({
               type: 'negative',
-              message: 'Nie udało się wczytać planu lekcji, wyświetlanie zapisanej wersji',
+              message: 'Nie udało się wczytać aktualnego planu lekcji, wyświetlanie zapisanej wersji',
             });
           }
         }
+        isLoading.value = false;
       },
       { immediate: true },
     );
@@ -383,6 +399,7 @@ export default defineComponent({
       isCurrentWeek: computed(
         () => !showOffsetPicker.value || vLoOffset.value === todayOffset.value,
       ),
+      isLoading,
     };
   },
 });
@@ -391,5 +408,11 @@ export default defineComponent({
 <style lang="scss">
 .class-timetable__menu {
   min-width: 220px;
+}
+
+.class-timetable__progress {
+  position: fixed;
+  bottom: 0;
+  z-index: 50;
 }
 </style>
