@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="gridWrapper"
     class="timetable-grid__wrapper"
     :class="{
       'timetable-grid__wrapper--scroll-snap': config.scrollSnap,
@@ -80,7 +81,9 @@ import {
   computed, defineComponent, onMounted, PropType, ref,
 } from 'vue';
 import { TableData, TableLessonMoment } from 'src/api/common';
-import { adjacentDifference, parseHour, useInterval } from 'src/utils';
+import {
+  adjacentDifference, parseHour, useDocumentListener, useInterval,
+} from 'src/utils';
 import _ from 'lodash';
 import TimetableItem from 'components/TimetableItem.vue';
 import SubstitutionsButton from 'components/SubstitutionsButton.vue';
@@ -101,6 +104,10 @@ export default defineComponent({
       required: true,
     },
     isCurrentWeek: Boolean,
+    changeOffset: {
+      type: Function as PropType<(direction: -1|1) => boolean>,
+      required: true,
+    },
   },
   setup: (props) => {
     const config = useConfigStore();
@@ -189,6 +196,57 @@ export default defineComponent({
       });
     });
 
+    const wrapper = ref<HTMLDivElement>();
+    useDocumentListener('keydown', (event) => {
+      if (!wrapper.value) return;
+
+      if (event.code === 'Home') {
+        event.preventDefault();
+        wrapper.value.scrollTo({ left: 0, behavior: 'smooth' });
+        return;
+      }
+      if (event.code === 'End') {
+        event.preventDefault();
+        wrapper.value.scrollTo({ left: wrapper.value.scrollWidth, behavior: 'smooth' });
+        return;
+      }
+
+      const mode: readonly [-1|1, boolean] | undefined = ({
+        BracketLeft: [-1, true],
+        BracketRight: [1, true],
+        PageUp: [-1, true],
+        PageDown: [1, true],
+        ArrowLeft: [-1, event.ctrlKey],
+        ArrowRight: [1, event.ctrlKey],
+      } as const)[event.code];
+
+      if (mode === undefined) return;
+      event.preventDefault();
+      const [direction, skip] = mode;
+      const maxScroll = wrapper.value.scrollWidth - wrapper.value.clientWidth;
+      if (skip
+        || (direction === 1 && wrapper.value.scrollLeft >= maxScroll - 3)
+        || (direction === -1 && wrapper.value.scrollLeft <= 3)
+      ) {
+        if (!props.changeOffset(direction)) return;
+        if (!skip && direction === 1) {
+          wrapper.value.scrollTo({ left: 0, behavior: 'smooth' });
+        }
+        if (!skip && direction === -1) {
+          wrapper.value.scrollTo({ left: wrapper.value.scrollWidth, behavior: 'smooth' });
+        }
+        return;
+      }
+
+      const gridDays = wrapper.value.querySelector('.timetable-grid__days') as HTMLDivElement;
+      const gridDaysBoundingBox = gridDays.getBoundingClientRect();
+      const columnCount = parseInt(getComputedStyle(wrapper.value).getPropertyValue('--column-count'), 10);
+      const columnWidth = gridDaysBoundingBox.width / columnCount;
+      const dayPos = wrapper.value.scrollLeft / columnWidth + direction * 0.05;
+      const newDayPos = (direction === -1) ? Math.floor(dayPos) : Math.ceil(dayPos);
+      wrapper.value.scrollTo({ left: newDayPos * columnWidth, behavior: 'smooth' });
+    });
+
     return {
       config: useConfigStore(),
       daysEl,
@@ -200,6 +258,7 @@ export default defineComponent({
       markerPosition,
       lessonItems,
       headers,
+      gridWrapper: wrapper,
     };
   },
 });

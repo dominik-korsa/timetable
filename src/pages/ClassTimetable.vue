@@ -149,6 +149,7 @@
           :data="data"
           :is-current-week="isCurrentWeek"
           :is-loading="isLoading"
+          :change-offset="changeOffset"
         />
       </q-page>
       <q-linear-progress
@@ -345,6 +346,21 @@ export default defineComponent({
       && config.startupTable.classValue === route.params.class,
     );
 
+    const changeOffset = (direction: -1|1) => {
+      if (!showOffsetPicker.value) return false;
+      if (direction === -1 && !offsetChangeDisabled.value.down) {
+        vLoOffset.value -= 1;
+        if (offsetDownButton.value) shake(offsetDownButton.value.$el, false);
+        return true;
+      }
+      if (direction === 1 && !offsetChangeDisabled.value.up) {
+        vLoOffset.value += 1;
+        if (offsetUpButton.value) shake(offsetUpButton.value.$el, true);
+        return true;
+      }
+      return false;
+    };
+
     return {
       data,
       errorMessage,
@@ -364,15 +380,8 @@ export default defineComponent({
       showOffsetPicker,
       offsetChangeDisabled,
       onOffsetSwipe: (event: { direction: 'left' | 'right' }) => {
-        if (!showOffsetPicker.value) return;
-        if (event.direction === 'right' && !offsetChangeDisabled.value.down) {
-          vLoOffset.value -= 1;
-          if (offsetDownButton.value) shake(offsetDownButton.value.$el, false);
-        }
-        if (event.direction === 'left' && !offsetChangeDisabled.value.up) {
-          vLoOffset.value += 1;
-          if (offsetUpButton.value) shake(offsetUpButton.value.$el, true);
-        }
+        if (event.direction === 'right') changeOffset(1);
+        if (event.direction === 'left') changeOffset(-1);
       },
       isFavourite,
       onFavouriteToggle: () => {
@@ -401,6 +410,7 @@ export default defineComponent({
         () => !showOffsetPicker.value || vLoOffset.value === todayOffset.value,
       ),
       isLoading,
+      changeOffset,
     };
   },
 });
