@@ -380,8 +380,8 @@ export default defineComponent({
       showOffsetPicker,
       offsetChangeDisabled,
       onOffsetSwipe: (event: { direction: 'left' | 'right' }) => {
-        if (event.direction === 'right') changeOffset(1);
-        if (event.direction === 'left') changeOffset(-1);
+        if (event.direction === 'right') changeOffset(-1);
+        if (event.direction === 'left') changeOffset(1);
       },
       isFavourite,
       onFavouriteToggle: () => {
