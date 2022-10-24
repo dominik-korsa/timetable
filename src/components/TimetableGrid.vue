@@ -214,8 +214,8 @@ export default defineComponent({
       const mode: readonly [-1|1, boolean] | undefined = ({
         BracketLeft: [-1, true],
         BracketRight: [1, true],
-        PageUp: [-1, true],
-        PageDown: [1, true],
+        PageDown: [-1, true],
+        PageUp: [1, true],
         ArrowLeft: [-1, event.ctrlKey],
         ArrowRight: [1, event.ctrlKey],
       } as const)[event.code];
