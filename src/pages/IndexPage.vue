@@ -266,7 +266,7 @@ export default defineComponent({
                   name: 'UnitTimetable',
                   params: { tri, unitType, unit },
                 },
-              })),
+              })).sort((lhs, rhs) => lhs.name.localeCompare(rhs.name)),
             });
           }),
       );
