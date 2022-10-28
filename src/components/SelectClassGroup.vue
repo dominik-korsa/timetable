@@ -9,7 +9,9 @@
       :to="item.to"
       :outline="!$q.dark.isActive"
       :unelevated="$q.dark.isActive"
-      :color="$q.dark.isActive ? 'grey-9' : undefined"
+      :color="$q.dark.isActive
+        ? (item.isFavourite ? 'amber-8' : 'grey-9')
+        : (item.isFavourite ? 'amber-9' : undefined)"
       no-caps
       no-wrap
     >

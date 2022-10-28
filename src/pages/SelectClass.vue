@@ -103,7 +103,13 @@ export default defineComponent({
       classItems,
       classGroups: computed(() => {
         if (classItems.value === null) return null;
-        const classItemsCopy = [...classItems.value];
+        let baseUrl = route.params.url;
+        if (typeof baseUrl === 'object') [baseUrl] = baseUrl;
+        const favourites = new Set(config.favouriteTables[baseUrl ?? 'v-lo']);
+        const classItemsCopy = classItems.value.map((item) => ({
+          ...item,
+          isFavourite: favourites.has(item.value),
+        }));
         const groups = new DefaultsMap<number, ClassItem[]>(() => []);
         // Special case for third classes in V LO
         const remaining = route.params.url === undefined
