@@ -112,7 +112,15 @@ module.exports = {
     '@typescript-eslint/switch-exhaustiveness-check': 'warn',
     'consistent-return': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
-    'no-underscore-dangle': 'off',
-    'class-methods-use-this': 'warn'
+    'no-underscore-dangle': 'off'
   },
+
+  overrides: [
+    {
+      files: 'src/api/*.ts',
+      rules: {
+        'class-methods-use-this': 'off'
+      }
+    }
+  ]
 };
