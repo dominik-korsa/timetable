@@ -27,7 +27,7 @@ export interface BaseClient {
 
 export type Client = VLoClient | OptivumClient;
 
-export const clientSymbol = Symbol('AP Client Symbol') as InjectionKey<ComputedRef<Client | undefined>>;
+export const clientSymbol = Symbol('API Client Symbol') as InjectionKey<ComputedRef<Client | undefined>>;
 
 export const useClientRef = () => {
   const client = inject(clientSymbol);
