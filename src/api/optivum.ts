@@ -1,6 +1,8 @@
 import { Table, Timetable, TimetableList } from '@wulkanowy/timetable-parser';
 import { CacheMode, fetchWithCache } from 'src/api/requests';
-import { TableData, toProxiedUrl, toUmid } from 'src/api/common';
+import {
+  TableData, toProxiedUrl, toUmid, UnitType,
+} from 'src/api/common';
 import { randomColor, bangEncode } from 'src/utils';
 import { BaseClient, ClassListItem } from 'src/api/client';
 
@@ -11,13 +13,15 @@ export interface OptivumTimetableInfo {
 }
 
 export class OptivumClient implements BaseClient {
-  private readonly baseUrl: string;
+  readonly baseUrl: string;
 
-  private readonly listPath: string;
+  readonly listPath: string;
 
   readonly tri: string;
 
   readonly key: string;
+
+  readonly type = 'optivum';
 
   readonly supportsOffsets = false;
 
@@ -57,8 +61,15 @@ export class OptivumClient implements BaseClient {
     return timetableList.getList().classes;
   }
 
-  async getLessons(cacheMode: CacheMode, classValue: string): Promise<TableData> {
-    const tableUrl = new URL(`plany/o${classValue}.html`, this.baseUrl);
+  async getTitle(cacheMode: CacheMode): Promise<string> {
+    const response = await fetchWithCache(cacheMode, toProxiedUrl(this.baseUrl).toString());
+    const timetable = new Timetable(await response.text());
+    return timetable.getTitle();
+  }
+
+  async getLessons(cacheMode: CacheMode, unitType: UnitType, unit: string): Promise<TableData> {
+    if (unitType !== 'class') throw new Error('Not implemented');
+    const tableUrl = new URL(`plany/o${unit}.html`, this.baseUrl);
     const response = await fetchWithCache(cacheMode, toProxiedUrl(tableUrl).toString());
     const table = new Table(await response.text());
 
@@ -70,7 +81,7 @@ export class OptivumClient implements BaseClient {
         end: timeTo,
       })),
       lessons: table.getDays().map((day, dayIndex) => day.map((moment, momentIndex) => ({
-        umid: toUmid(this.key, classValue, dayIndex, momentIndex),
+        umid: toUmid(this.key, unitType, unit, dayIndex, momentIndex),
         lessons: moment.map((lesson) => ({
           subject: lesson.subject,
           subjectShort: lesson.subject,
@@ -82,6 +93,15 @@ export class OptivumClient implements BaseClient {
         })),
       }))),
       headers: null,
+    };
+  }
+
+  async getUnitNameMapper(cacheMode: CacheMode) {
+    const classList = await this.getClassList(cacheMode);
+    const classMap = Object.fromEntries(classList.map(({ name, value }) => ([value, name])));
+    return (unitType: UnitType, unit: string) => {
+      if (unitType !== 'class') return unit;
+      return classMap[unit] ?? unit;
     };
   }
 }

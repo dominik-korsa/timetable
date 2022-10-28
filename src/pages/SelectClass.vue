@@ -64,14 +64,21 @@ export default defineComponent({
         classItems.value = newClassItems.map((item) => ({
           ...item,
           to: {
-            name: 'ClassTimetable',
-            params: { tri: client.tri, class: item.value },
+            name: 'UnitTimetable',
+            params: {
+              tri: client.tri,
+              unitType: 'class',
+              unit: item.value,
+            },
           },
         }));
-        // TODO: Store history entry for OPTIVUM timetables
-        // const timetable = await loadOptivumTimetable(baseUrl, CacheMode.CacheFirst);
-        // config.addHistoryEntry(timetable);
-        // const classList = await loadOptivumClassList(timetable, CacheMode.LazyUpdate);
+        if (client.type === 'optivum') {
+          config.addHistoryEntry({
+            title: await client.getTitle(CacheMode.CacheFirst),
+            baseUrl: client.baseUrl,
+            listPath: client.listPath,
+          });
+        }
       } catch (error) {
         console.error(error);
         quasar.notify({
@@ -90,10 +97,10 @@ export default defineComponent({
         if (classItems.value === null) return null;
         const favourites = clientRef.value === undefined
           ? new Set()
-          : new Set(config.favouriteTables[clientRef.value.key]);
+          : new Set(config.favouriteUnits[clientRef.value.tri].map(({ unitType, unit }) => `${unitType}|${unit}`));
         const classItemsCopy = classItems.value.map((item) => ({
           ...item,
-          isFavourite: favourites.has(item.value),
+          isFavourite: favourites.has(`class|${item.value}`),
         }));
         const groups = new DefaultsMap<number, ClassItem[]>(() => []);
         const remaining: ClassItem[] = [];

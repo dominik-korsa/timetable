@@ -32,25 +32,19 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    name: 'ClassTimetable',
-    path: '/timetable/:tri/class/:class/',
-    component: () => import('pages/ClassTimetable.vue'),
+    name: 'UnitTimetable',
+    path: '/timetable/:tri/:unitType(class|teacher|room)/:unit/',
+    component: () => import('pages/UnitTimetable.vue'),
   },
   {
     path: '/pwa-home',
     redirect: () => {
       const config = useConfigStore();
 
-      if (config.startupTable === null) return { name: 'Home' };
-      if (config.startupTable.baseUrl === undefined) {
-        return {
-          name: 'VLo/ClassTimetable',
-          params: { class: config.startupTable.classValue },
-        };
-      }
+      if (config.startupUnit === null) return { name: 'Home' };
       return {
-        name: 'Optivum/ClassTimetable',
-        params: { url: config.startupTable.baseUrl, class: config.startupTable.classValue },
+        name: 'UnitTimetable',
+        params: config.startupUnit,
       };
     },
   },

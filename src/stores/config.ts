@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import _ from 'lodash';
 import { Temporal } from '@js-temporal/polyfill';
 import { OptivumTimetableInfo } from 'src/api/optivum';
+import { UnitType } from 'src/api/common';
 
 export interface ConfigHistory {
   title: string;
@@ -15,16 +15,17 @@ export interface FavouriteLesson {
   group: string | undefined;
 }
 
-export interface StartupTable {
-  baseUrl: string | undefined,
-  classValue: string,
+export interface StartupUnit {
+  tri: string,
+  unitType: UnitType;
+  unit: string;
 }
 
 export interface Config {
-  history: ConfigHistory[];
+  optivumHistory: ConfigHistory[];
   favouriteLessons: Record<string, FavouriteLesson | null | undefined>;
-  favouriteTables: Record<string, string[]>;
-  startupTable: StartupTable | null;
+  favouriteUnits: Record<string, { unitType: UnitType; unit: string; }[]>;
+  startupUnit: StartupUnit | null;
   dark: boolean | 'auto';
   superSecretSettingsEnabled: boolean;
   scrollSnap: boolean;
@@ -34,10 +35,10 @@ export interface Config {
 
 export const useConfigStore = defineStore('config', {
   state: (): Config => ({
-    history: [],
+    optivumHistory: [],
     favouriteLessons: {},
-    favouriteTables: {},
-    startupTable: null,
+    favouriteUnits: {},
+    startupUnit: null,
     dark: 'auto',
     superSecretSettingsEnabled: false,
     scrollSnap: true,
@@ -46,18 +47,18 @@ export const useConfigStore = defineStore('config', {
   }),
   actions: {
     addHistoryEntry(info: OptivumTimetableInfo) {
-      this.history = [
+      this.optivumHistory = [
         {
           title: info.title,
           baseUrl: info.baseUrl,
           listPath: info.listPath,
           lastUse: Temporal.Now.instant.toString(),
         },
-        ...this.history.filter((e) => e.baseUrl !== info.baseUrl),
+        ...this.optivumHistory.filter((e) => e.baseUrl !== info.baseUrl),
       ];
     },
     removeHistoryEntry(index: number) {
-      this.history.splice(index, 1);
+      this.optivumHistory.splice(index, 1);
     },
     setFavourite(
       umid: string,
@@ -65,24 +66,22 @@ export const useConfigStore = defineStore('config', {
     ) {
       this.favouriteLessons[umid] = favourite;
     },
-    addFavouriteTable(baseUrl: string | undefined, classValue: string) {
-      const key = baseUrl ?? 'v-lo';
-      let list = this.favouriteTables[key];
+    addFavouriteTable(tri: string, unitType: UnitType, unit: string) {
+      let list = this.favouriteUnits[tri];
       if (list === undefined) {
         list = [];
-        this.favouriteTables[key] = list;
+        this.favouriteUnits[tri] = list;
       }
-      list.push(classValue);
+      list.push({ unitType, unit });
     },
-    removeFavouriteTable(baseUrl: string | undefined, classValue: string) {
-      const key = baseUrl ?? 'v-lo';
-      const list = this.favouriteTables[key];
-      if (list === undefined) return;
-      _.pull(list, classValue);
-      if (list.length === 0) delete this.favouriteTables[key];
+    removeFavouriteTable(tri: string, unitType: UnitType, unit: string) {
+      this.favouriteUnits[tri] = this.favouriteUnits[tri]?.filter(
+        (item) => item.unitType !== unitType || item.unit !== unit,
+      ) ?? [];
+      if (this.favouriteUnits[tri].length === 0) delete this.favouriteUnits[tri];
     },
-    setStartupTable(table: StartupTable | null) {
-      this.startupTable = table;
+    setStartupTable(table: StartupUnit | null) {
+      this.startupUnit = table;
     },
     setDark(dark: boolean | 'auto') {
       this.dark = dark;
@@ -100,5 +99,10 @@ export const useConfigStore = defineStore('config', {
       this.showColors = !this.showColors;
     },
   },
-  persist: true,
+  persist: {
+    beforeRestore: (ctx) => {
+      console.log(ctx);
+      console.log(`about to restore '${ctx.store.$id}'`);
+    },
+  },
 });

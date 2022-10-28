@@ -2,7 +2,7 @@ import { ComputedRef, inject, InjectionKey } from 'vue';
 import { CacheMode } from 'src/api/requests';
 import { DefaultsMap, bangDecode } from 'src/utils';
 import { VLoClient } from 'src/api/v-lo';
-import { TableData } from 'src/api/common';
+import { TableData, UnitType } from 'src/api/common';
 import { OptivumClient } from 'src/api/optivum';
 
 export interface ClassListItem {
@@ -14,12 +14,15 @@ export interface BaseClient {
   tri: string;
   key: string;
   getClassList(cacheMode: CacheMode): Promise<ClassListItem[]>;
+  getTitle(cacheMode: CacheMode): Promise<string>;
   supportsOffsets: boolean;
   getLessons(
     cacheMode: CacheMode,
-    classValue: string,
+    unitType: UnitType,
+    unit: string,
     offset: number,
   ): Promise<TableData>;
+  getUnitNameMapper(cacheMode: CacheMode): Promise<(unitType: UnitType, unit: string) => string>;
 }
 
 export type Client = VLoClient | OptivumClient;

@@ -178,7 +178,7 @@
 </template>
 
 <script lang="ts">
-import { TableData } from 'src/api/common';
+import { TableData, UnitType } from 'src/api/common';
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
@@ -195,7 +195,8 @@ import { Client, useClientRef } from 'src/api/client';
 interface TableRef {
   client: Client;
   offset: number;
-  classValue: string;
+  unitType: UnitType;
+  unit: string;
 }
 
 const shake = (el: Element, reverse: boolean) => {
@@ -212,7 +213,7 @@ const shake = (el: Element, reverse: boolean) => {
 };
 
 export default defineComponent({
-  name: 'ClassTimetable',
+  name: 'UnitTimetable',
   components: { ThemePicker, TimetableGrid },
   setup: () => {
     const route = useRoute();
@@ -235,11 +236,16 @@ export default defineComponent({
       vLoOffset.value = todayOffset.value;
     });
     const tableRef = computed<TableRef | null>(() => {
-      if (clientRef.value === undefined || route.params.class === undefined) return null;
+      if (
+        clientRef.value === undefined
+        || route.params.unitType === undefined
+        || route.params.unit === undefined
+      ) return null;
       return ({
         client: clientRef.value,
         offset: vLoOffset.value,
-        classValue: route.params.class as string,
+        unitType: route.params.unitType as UnitType,
+        unit: route.params.unit as string,
       });
     });
 
@@ -248,7 +254,8 @@ export default defineComponent({
       cacheMode: CacheMode,
     ): Promise<TableData> => loadedTableRef.client.getLessons(
       cacheMode,
-      loadedTableRef.classValue,
+      loadedTableRef.unitType,
+      loadedTableRef.unit,
       loadedTableRef.offset,
     );
 
@@ -320,15 +327,18 @@ export default defineComponent({
     const offsetUpButton = ref<QBtn>();
 
     const isFavourite = computed(() => {
-      if (clientRef.value === undefined) return false;
-      return config.favouriteTables[clientRef.value.key]
-        ?.includes(route.params.class as string)
+      if (tableRef.value === null) return false;
+      const { client, unitType, unit } = tableRef.value;
+      return config.favouriteUnits[client.tri]
+        ?.some((item) => item.unitType === unitType && item.unit === unit)
         ?? false;
     });
     const isStartupTable = computed(
-      () => config.startupTable !== null
-      && config.startupTable.baseUrl === route.params.url
-      && config.startupTable.classValue === route.params.class,
+      () => config.startupUnit !== null
+        && tableRef.value !== null
+        && config.startupUnit.tri === tableRef.value?.client.tri
+        && config.startupUnit.unitType === tableRef.value.unitType
+        && config.startupUnit.unit === tableRef.value.unit,
     );
 
     const changeOffset = (direction: -1|1) => {
@@ -370,23 +380,28 @@ export default defineComponent({
       },
       isFavourite,
       onFavouriteToggle: () => {
+        if (!tableRef.value) return;
         if (isFavourite.value) {
           config.removeFavouriteTable(
-            route.params.url as string | undefined,
-            route.params.class as string,
+            tableRef.value.client.tri,
+            tableRef.value.unitType,
+            tableRef.value.unit,
           );
         } else {
           config.addFavouriteTable(
-            route.params.url as string | undefined,
-            route.params.class as string,
+            tableRef.value.client.tri,
+            tableRef.value.unitType,
+            tableRef.value.unit,
           );
         }
       },
       isStartupTable,
       onStartupToggle: () => {
+        if (!tableRef.value) return;
         config.setStartupTable(isStartupTable.value ? null : {
-          baseUrl: route.params.url as string | undefined,
-          classValue: route.params.class as string,
+          tri: tableRef.value.client.tri,
+          unitType: tableRef.value.unitType,
+          unit: tableRef.value.unit,
         });
       },
       offsetDownButton,
