@@ -102,6 +102,21 @@
                     </q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-item
+                  clickable
+                  class="non-selectable"
+                  @click="onColorsToggle"
+                >
+                  <q-item-section side>
+                    <q-icon
+                      :name="showColors ? 'palette' : 'o_palette'"
+                      :color="showColors ? 'primary' : undefined"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    {{ showColors ? 'Wyłącz kolory' : 'Włącz kolory' }}
+                  </q-item-section>
+                </q-item>
                 <q-separator />
                 <q-item>
                   <q-item-section>
@@ -411,6 +426,10 @@ export default defineComponent({
       ),
       isLoading,
       changeOffset,
+      showColors: computed(() => config.showColors),
+      onColorsToggle: () => {
+        config.toggleColors();
+      },
     };
   },
 });

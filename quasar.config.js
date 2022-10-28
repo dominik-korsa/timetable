@@ -60,6 +60,7 @@ module.exports = configure((ctx) => ({
 
     // 'roboto-font', // optional, you are not bound to it
     'material-icons', // optional, you are not bound to it
+    'material-icons-outlined',
   ],
 
   // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-build

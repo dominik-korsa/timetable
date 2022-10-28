@@ -27,6 +27,7 @@
 <script lang="ts">
 import { PropType } from 'vue/dist/vue';
 import { computed, defineComponent } from 'vue';
+import { useConfigStore } from 'stores/config';
 import { TableLesson } from '../api/common';
 
 export default defineComponent({
@@ -39,11 +40,14 @@ export default defineComponent({
     fullSubject: Boolean,
     showColor: Boolean,
   },
-  setup: (props) => ({
-    background: computed(
-      () => (props.showColor && props.lesson.color ? `${props.lesson.color}77` : 'transparent'),
-    ),
-  }),
+  setup: (props) => {
+    const config = useConfigStore();
+    return ({
+      background: computed(
+        () => (props.showColor && config.showColors && props.lesson.color ? `${props.lesson.color}77` : 'transparent'),
+      ),
+    });
+  },
 });
 </script>
 

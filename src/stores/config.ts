@@ -28,6 +28,7 @@ export interface Config {
   superSecretSettingsEnabled: boolean;
   scrollSnap: boolean;
   iso8601: boolean;
+  showColors: boolean;
 }
 
 export const useConfigStore = defineStore('config', {
@@ -40,6 +41,7 @@ export const useConfigStore = defineStore('config', {
     superSecretSettingsEnabled: false,
     scrollSnap: true,
     iso8601: false,
+    showColors: true,
   }),
   actions: {
     addHistoryEntry(info: OptivumTimetableInfo) {
@@ -91,6 +93,9 @@ export const useConfigStore = defineStore('config', {
     },
     setISO8601(enabled: boolean) {
       this.iso8601 = enabled;
+    },
+    toggleColors() {
+      this.showColors = !this.showColors;
     },
   },
   persist: true,
