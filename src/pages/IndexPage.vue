@@ -101,12 +101,19 @@
             vertical
             dark
           />
-          <q-card-section class="column justify-center index-page__v-lo-section">
+          <q-card-section class="column justify-center index-page__v-lo-section q-pr-sm">
             <div class="text-h6 index-page__v-lo-name text-center">
               V&nbsp;LO
               <span class="index-page__v-lo-patron">im. Augusta Witkowskiego</span>
               w&nbsp;Krakowie
             </div>
+          </q-card-section>
+          <q-card-section class="column justify-center q-pl-none">
+            <q-icon
+              class="index-page__v-lo-arrow"
+              name="arrow_forward"
+              size="sm"
+            />
           </q-card-section>
         </q-card-section>
       </q-card>
@@ -335,13 +342,12 @@ export default defineComponent({
           flex: 1;
         }
 
-        @media (max-width: $breakpoint-xs-max) {
-          .index-page__v-lo-name {
-            font-size: 1rem;
-          }
+        .index-page__v-lo-name {
+          line-height: 1.8rem;
+          font-size: 1rem;
         }
 
-        @media (max-width: 350px) {
+        @media (max-width: 375px) {
           .index-page__v-lo-patron {
             display: none;
           }
