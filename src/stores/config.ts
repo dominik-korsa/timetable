@@ -101,7 +101,12 @@ export const useConfigStore = defineStore('config', {
           scrollSnap: content.scrollSnap,
           showColors: content.showColors,
           superSecretSettingsEnabled: content.superSecretSettingsEnabled,
-          startupUnit: null,
+          startupUnit:
+            content.startupTable !== null && content.startupTable.baseUrl === undefined ? {
+              tri: 'v-lo',
+              unitType: 'class',
+              unit: content.startupTable.classValue,
+            } : null,
           favouriteUnits: {},
         };
       }
