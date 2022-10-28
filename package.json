@@ -1,8 +1,7 @@
 {
   "name": "timetable",
-  "version": "0.0.1",
-  "description": "A Quasar Project",
-  "productName": "Timetable",
+  "description": "Aplikacja do wyświetlania planów lekcji OPTIVUM i planu V LO w Krakowie",
+  "productName": "Plan Lekcji",
   "author": "Dominik Korsa <dominik.korsa@gmail.com>",
   "private": true,
   "scripts": {

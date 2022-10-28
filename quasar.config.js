@@ -164,7 +164,7 @@ module.exports = configure((ctx) => ({
     manifest: {
       name: 'Plan lekcji',
       short_name: 'Plan lekcji',
-      description: 'Aplikacja do planów lekcji OPTIVUM i planu V LO w Krakowie',
+      description: 'Aplikacja do wyświetlania planów lekcji OPTIVUM i planu V LO w Krakowie',
       display: 'standalone',
       orientation: 'any',
       background_color: '#ffffff',
