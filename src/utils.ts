@@ -85,8 +85,8 @@ export function stringHash(input: string, hash: number) {
 
 export const randomColor = (source: string) => rgbToHex(hsvToRgb({
   h: ((stringHash(source, 2137) % 360) + 360) % 360,
-  s: 60 + (((stringHash(source, 997) % 40) + 40) % 40),
-  v: 75 + (((stringHash(source, 1933) % 25) + 25) % 25),
+  s: 50 + (((stringHash(source, 997) % 50) + 50) % 50),
+  v: 70 + (((stringHash(source, 1933) % 30) + 30) % 30),
 }));
 
 export const withOpacity = (color: string, alpha: number) => rgbToHex({
