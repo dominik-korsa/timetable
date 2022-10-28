@@ -32,15 +32,22 @@ export interface TableData {
   }[] | null;
 }
 
+export type UnitType = 'class' | 'teacher' | 'room';
+
+export const unitFullId = (
+  key: string,
+  unitType: UnitType,
+  unit: string,
+) => `${encodeURIComponent(key)}|${encodeURIComponent(unitType)}|${encodeURIComponent(unit)}`;
+
 // Universal moment id
 export const toUmid = (
-  baseUrl: string | undefined,
-  classValue: string,
+  key: string,
+  unitType: UnitType,
+  unit: string,
   day: number,
   hour: number,
-): string => `${
-  baseUrl === undefined ? 'v-lo' : encodeURIComponent(baseUrl)
-}|${encodeURIComponent(classValue)}|${day.toString()}|${hour.toString()}`;
+) => `${unitFullId(key, unitType, unit)}|${day.toString()}|${hour.toString()}`;
 
 export function toProxiedUrl(url: URL | string): URL {
   return new URL(`/${url}`, process.env.PROXY_URL);

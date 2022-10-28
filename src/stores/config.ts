@@ -1,42 +1,27 @@
 import { defineStore } from 'pinia';
-import { OptivumTimetableInfo } from 'src/api/optivum';
-import _ from 'lodash';
 import { Temporal } from '@js-temporal/polyfill';
+import { OptivumTimetableInfo } from 'src/api/optivum';
+import { UnitType } from 'src/api/common';
+import {
+  ConfigHistoryV1, ConfigV1, FavouriteLessonV1, StartupUnitV1,
+} from 'stores/versions/1';
+import { ConfigV0 } from 'stores/versions/0';
+import _ from 'lodash';
 
-export interface ConfigHistory {
-  title: string;
-  baseUrl: string;
-  lastUse: string;
-}
+export type ConfigHistory = ConfigHistoryV1;
+export type StartupUnit = StartupUnitV1;
+export type FavouriteLesson = FavouriteLessonV1;
+export type Config = ConfigV1;
 
-export interface FavouriteLesson {
-  subject: string;
-  group: string | undefined;
-}
-
-export interface StartupTable {
-  baseUrl: string | undefined,
-  classValue: string,
-}
-
-export interface Config {
-  history: ConfigHistory[];
-  favouriteLessons: Record<string, FavouriteLesson | null | undefined>;
-  favouriteTables: Record<string, string[]>;
-  startupTable: StartupTable | null;
-  dark: boolean | 'auto';
-  superSecretSettingsEnabled: boolean;
-  scrollSnap: boolean;
-  iso8601: boolean;
-  showColors: boolean;
-}
+export type ConfigAnyVersion = ConfigV0 | ConfigV1;
 
 export const useConfigStore = defineStore('config', {
   state: (): Config => ({
-    history: [],
+    version: 1,
+    optivumHistory: [],
     favouriteLessons: {},
-    favouriteTables: {},
-    startupTable: null,
+    favouriteUnits: {},
+    startupUnit: null,
     dark: 'auto',
     superSecretSettingsEnabled: false,
     scrollSnap: true,
@@ -45,17 +30,18 @@ export const useConfigStore = defineStore('config', {
   }),
   actions: {
     addHistoryEntry(info: OptivumTimetableInfo) {
-      this.history = [
+      this.optivumHistory = [
         {
           title: info.title,
           baseUrl: info.baseUrl,
+          listPath: info.listPath,
           lastUse: Temporal.Now.instant.toString(),
         },
-        ...this.history.filter((e) => e.baseUrl !== info.baseUrl),
+        ...this.optivumHistory.filter((e) => e.baseUrl !== info.baseUrl),
       ];
     },
     removeHistoryEntry(index: number) {
-      this.history.splice(index, 1);
+      this.optivumHistory.splice(index, 1);
     },
     setFavourite(
       umid: string,
@@ -63,24 +49,22 @@ export const useConfigStore = defineStore('config', {
     ) {
       this.favouriteLessons[umid] = favourite;
     },
-    addFavouriteTable(baseUrl: string | undefined, classValue: string) {
-      const key = baseUrl ?? 'v-lo';
-      let list = this.favouriteTables[key];
+    addFavouriteTable(tri: string, unitType: UnitType, unit: string) {
+      let list = this.favouriteUnits[tri];
       if (list === undefined) {
         list = [];
-        this.favouriteTables[key] = list;
+        this.favouriteUnits[tri] = list;
       }
-      list.push(classValue);
+      list.push({ unitType, unit });
     },
-    removeFavouriteTable(baseUrl: string | undefined, classValue: string) {
-      const key = baseUrl ?? 'v-lo';
-      const list = this.favouriteTables[key];
-      if (list === undefined) return;
-      _.pull(list, classValue);
-      if (list.length === 0) delete this.favouriteTables[key];
+    removeFavouriteTable(tri: string, unitType: UnitType, unit: string) {
+      this.favouriteUnits[tri] = this.favouriteUnits[tri]?.filter(
+        (item) => item.unitType !== unitType || item.unit !== unit,
+      ) ?? [];
+      if (this.favouriteUnits[tri].length === 0) delete this.favouriteUnits[tri];
     },
-    setStartupTable(table: StartupTable | null) {
-      this.startupTable = table;
+    setStartupTable(table: StartupUnit | null) {
+      this.startupUnit = table;
     },
     setDark(dark: boolean | 'auto') {
       this.dark = dark;
@@ -98,5 +82,35 @@ export const useConfigStore = defineStore('config', {
       this.showColors = !this.showColors;
     },
   },
-  persist: true,
+  persist: {
+    beforeRestore: (/* ctx */) => {
+      const json = window.localStorage.getItem('config');
+      if (json === null) return;
+      let content = JSON.parse(json) as ConfigAnyVersion;
+      if ('version' in content && content.version === 1) return;
+      if (!('version' in content)) {
+        content = {
+          version: 1,
+          favouriteLessons: _.mapKeys(content.favouriteLessons, (value, key) => {
+            const [baseUrl, classValue, day, hour] = key.split('|').map((e) => decodeURIComponent(e));
+            return `${encodeURIComponent(baseUrl === 'v-lo' ? 'v-lo' : `o,${baseUrl}`)}|class|${encodeURIComponent(classValue)}|${day}|${hour}|#`;
+          }),
+          optivumHistory: [],
+          dark: content.dark,
+          iso8601: content.iso8601,
+          scrollSnap: content.scrollSnap,
+          showColors: content.showColors,
+          superSecretSettingsEnabled: content.superSecretSettingsEnabled,
+          startupUnit:
+            content.startupTable !== null && content.startupTable.baseUrl === undefined ? {
+              tri: 'v-lo',
+              unitType: 'class',
+              unit: content.startupTable.classValue,
+            } : null,
+          favouriteUnits: {},
+        };
+      }
+      window.localStorage.setItem('config', JSON.stringify(content));
+    },
+  },
 });

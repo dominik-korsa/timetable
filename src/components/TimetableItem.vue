@@ -58,7 +58,7 @@ export default defineComponent({
   setup: (props) => {
     const config = useConfigStore();
     return ({
-      favourite: computed(() => config.favouriteLessons[props.moment.umid]),
+      favourite: computed(() => config.favouriteLessons[`${props.moment.umid}|#`]),
       dialogVisible: ref(false),
     });
   },

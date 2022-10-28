@@ -93,3 +93,10 @@ export const withOpacity = (color: string, alpha: number) => rgbToHex({
   ...textToRgb(color),
   a: alpha,
 });
+
+export const bangEncode = (input: string) => encodeURIComponent(input)
+  .replaceAll('.', '%2E')
+  .replaceAll('!', '%21')
+  .replaceAll('%', '!');
+
+export const bangDecode = (input: string) => decodeURIComponent(input.replaceAll('!', '%'));

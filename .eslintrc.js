@@ -114,4 +114,13 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     'no-underscore-dangle': 'off'
   },
+
+  overrides: [
+    {
+      files: 'src/api/*.ts',
+      rules: {
+        'class-methods-use-this': 'off'
+      }
+    }
+  ]
 };

@@ -75,7 +75,7 @@ export default defineComponent({
     const config = useConfigStore();
 
     const setFavourite = (value: FavouriteLesson | null | undefined) => {
-      config.setFavourite(props.moment.umid, value);
+      config.setFavourite(`${props.moment.umid}|#`, value);
     };
 
     return ({

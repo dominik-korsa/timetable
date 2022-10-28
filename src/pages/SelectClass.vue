@@ -29,15 +29,14 @@
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
-import { RouteLocationRaw, RouteParamValue, useRoute } from 'vue-router';
+import { RouteLocationRaw } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { CacheMode } from 'src/api/requests';
-import { loadOptivumClassList, loadOptivumTimetable } from 'src/api/optivum';
-import { loadVLoClassList } from 'src/api/v-lo';
 import { DefaultsMap } from 'src/utils';
 import _ from 'lodash';
 import { useConfigStore } from 'stores/config';
 import SelectClassGroup from 'components/SelectClassGroup.vue';
+import { useClientRef } from 'src/api/client';
 
 interface ClassItem {
   value: string;
@@ -46,47 +45,40 @@ interface ClassItem {
 }
 
 const classDigitRegex = /^\d+/;
-const threeGRegex = /^3\w+g$/;
 
 export default defineComponent({
   name: 'SelectClass',
   components: { SelectClassGroup },
   setup: () => {
-    const route = useRoute();
     const quasar = useQuasar();
     const config = useConfigStore();
     const containerWidth = ref(100);
+    const clientRef = useClientRef();
 
     const classItems = ref<ClassItem[] | null>(null);
-    watch(() => route.params.url, async (baseUrl?: string | RouteParamValue[]) => {
-      if (typeof baseUrl === 'object') [baseUrl] = baseUrl;
+    watch(() => clientRef.value, async (client) => {
       classItems.value = null;
+      if (client === undefined) return;
       try {
-        let newClassItems: ClassItem[];
-        if (baseUrl === undefined) {
-          const classList = await loadVLoClassList(CacheMode.LazyUpdate);
-          newClassItems = classList.map((value) => ({
-            value,
-            name: value,
-            to: {
-              name: 'VLo/ClassTimetable',
-              params: { class: value },
+        const newClassItems = await client.getClassList(CacheMode.LazyUpdate);
+        classItems.value = newClassItems.map((item) => ({
+          ...item,
+          to: {
+            name: 'UnitTimetable',
+            params: {
+              tri: client.tri,
+              unitType: 'class',
+              unit: item.value,
             },
-          }));
-        } else {
-          const timetable = await loadOptivumTimetable(baseUrl, CacheMode.CacheFirst);
-          config.addHistoryEntry(timetable);
-          const classList = await loadOptivumClassList(timetable, CacheMode.LazyUpdate);
-          newClassItems = classList.map(({ name, value }) => ({
-            value,
-            name,
-            to: {
-              name: 'Optivum/ClassTimetable',
-              params: { url: baseUrl, class: value },
-            },
-          }));
+          },
+        }));
+        if (client.type === 'optivum') {
+          config.addHistoryEntry({
+            title: await client.getTitle(CacheMode.CacheFirst),
+            baseUrl: client.baseUrl,
+            listPath: client.listPath,
+          });
         }
-        if (baseUrl === route.params.url) classItems.value = newClassItems;
       } catch (error) {
         console.error(error);
         quasar.notify({
@@ -103,18 +95,15 @@ export default defineComponent({
       classItems,
       classGroups: computed(() => {
         if (classItems.value === null) return null;
-        let baseUrl = route.params.url;
-        if (typeof baseUrl === 'object') [baseUrl] = baseUrl;
-        const favourites = new Set(config.favouriteTables[baseUrl ?? 'v-lo']);
+        const favourites = clientRef.value === undefined
+          ? new Set()
+          : new Set(config.favouriteUnits[clientRef.value.tri]?.map(({ unitType, unit }) => `${unitType}|${unit}`) ?? []);
         const classItemsCopy = classItems.value.map((item) => ({
           ...item,
-          isFavourite: favourites.has(item.value),
+          isFavourite: favourites.has(`class|${item.value}`),
         }));
         const groups = new DefaultsMap<number, ClassItem[]>(() => []);
-        // Special case for third classes in V LO
-        const remaining = route.params.url === undefined
-          ? _.remove(classItemsCopy, (item) => threeGRegex.test(item.name))
-          : [];
+        const remaining: ClassItem[] = [];
         classItemsCopy.forEach((item) => {
           const result = classDigitRegex.exec(item.name);
           if (result === null) remaining.push(item);

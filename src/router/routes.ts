@@ -14,16 +14,8 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/IndexPage.vue'),
       },
       {
-        name: 'VLo/SelectClass',
-        path: 'timetable/v-lo/',
-        component: () => import('pages/SelectClass.vue'),
-        meta: {
-          title: 'Wybierz klasę',
-        },
-      },
-      {
-        name: 'Optivum/SelectClass',
-        path: 'timetable/optivum/:url/',
+        name: 'SelectClass',
+        path: 'timetable/:tri',
         component: () => import('pages/SelectClass.vue'),
         meta: {
           title: 'Wybierz klasę',
@@ -40,30 +32,19 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    name: 'VLo/ClassTimetable',
-    path: '/timetable/v-lo/class/:class/',
-    component: () => import('pages/ClassTimetable.vue'),
-  },
-  {
-    name: 'Optivum/ClassTimetable',
-    path: '/timetable/optivum/:url/class/:class/',
-    component: () => import('pages/ClassTimetable.vue'),
+    name: 'UnitTimetable',
+    path: '/timetable/:tri/:unitType(class|teacher|room)/:unit/',
+    component: () => import('pages/UnitTimetable.vue'),
   },
   {
     path: '/pwa-home',
     redirect: () => {
       const config = useConfigStore();
 
-      if (config.startupTable === null) return { name: 'Home' };
-      if (config.startupTable.baseUrl === undefined) {
-        return {
-          name: 'VLo/ClassTimetable',
-          params: { class: config.startupTable.classValue },
-        };
-      }
+      if (config.startupUnit === null) return { name: 'Home' };
       return {
-        name: 'Optivum/ClassTimetable',
-        params: { url: config.startupTable.baseUrl, class: config.startupTable.classValue },
+        name: 'UnitTimetable',
+        params: config.startupUnit,
       };
     },
   },
