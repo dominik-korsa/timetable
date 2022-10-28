@@ -94,9 +94,9 @@ export const withOpacity = (color: string, alpha: number) => rgbToHex({
   a: alpha,
 });
 
-export const tildeEncode = (input: string) => encodeURIComponent(input)
-  .replaceAll('~', '%7E')
+export const bangEncode = (input: string) => encodeURIComponent(input)
   .replaceAll('.', '%2E')
-  .replaceAll('%', '~');
+  .replaceAll('!', '%21')
+  .replaceAll('%', '!');
 
-export const tildeDecode = (input: string) => decodeURIComponent(input.replaceAll('~', '%'));
+export const bangDecode = (input: string) => decodeURIComponent(input.replaceAll('!', '%'));

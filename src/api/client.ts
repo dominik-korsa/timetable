@@ -1,6 +1,6 @@
 import { ComputedRef, inject, InjectionKey } from 'vue';
 import { CacheMode } from 'src/api/requests';
-import { DefaultsMap, tildeDecode } from 'src/utils';
+import { DefaultsMap, bangDecode } from 'src/utils';
 import { VLoClient } from 'src/api/v-lo';
 import { TableData } from 'src/api/common';
 import { OptivumClient } from 'src/api/optivum';
@@ -42,8 +42,8 @@ const clientCache = new DefaultsMap<string, Client>((tri: string) => {
     case 'o': {
       if (parts.length !== 4) throw new Error(`Wrong number of parts in TRI "${tri}"`);
       const [, variant, encodedBaseUrl, encodedListPath] = parts;
-      const baseUrl = tildeDecode(encodedBaseUrl);
-      const listPath = tildeDecode(encodedListPath);
+      const baseUrl = bangDecode(encodedBaseUrl);
+      const listPath = bangDecode(encodedListPath);
       switch (variant) {
         case '0': return new OptivumClient(baseUrl, listPath);
         case '1': return new OptivumClient(`http://${baseUrl}`, listPath);

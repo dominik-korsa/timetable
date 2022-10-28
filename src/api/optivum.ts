@@ -1,7 +1,7 @@
 import { Table, Timetable, TimetableList } from '@wulkanowy/timetable-parser';
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import { TableData, toProxiedUrl, toUmid } from 'src/api/common';
-import { randomColor, tildeEncode } from 'src/utils';
+import { randomColor, bangEncode } from 'src/utils';
 import { BaseClient, ClassListItem } from 'src/api/client';
 
 export interface OptivumTimetableInfo {
@@ -22,10 +22,10 @@ export class OptivumClient implements BaseClient {
   readonly supportsOffsets = false;
 
   static createTri(baseUrl: string, listPath: string) {
-    const encodedListPath = tildeEncode(listPath);
-    if (baseUrl.startsWith('https://')) return `o,2,${tildeEncode(baseUrl.substring(8))},${encodedListPath}`;
-    if (baseUrl.startsWith('http://')) return `o,1,${tildeEncode(baseUrl.substring(7))},${encodedListPath}`;
-    return `o,0,${tildeEncode(baseUrl)},${encodedListPath}`;
+    const encodedListPath = bangEncode(listPath);
+    if (baseUrl.startsWith('https://')) return `o,2,${bangEncode(baseUrl.substring(8))},${encodedListPath}`;
+    if (baseUrl.startsWith('http://')) return `o,1,${bangEncode(baseUrl.substring(7))},${encodedListPath}`;
+    return `o,0,${bangEncode(baseUrl)},${encodedListPath}`;
   }
 
   static async attemptLoad(
