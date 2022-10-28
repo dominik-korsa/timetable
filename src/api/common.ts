@@ -34,8 +34,7 @@ export interface TableData {
 
 export type UnitType = 'class' | 'teacher' | 'room';
 
-// Universal unit id
-export const toUnid = (
+export const unitFullId = (
   key: string,
   unitType: UnitType,
   unit: string,
@@ -48,7 +47,7 @@ export const toUmid = (
   unit: string,
   day: number,
   hour: number,
-) => `${toUnid(key, unitType, unit)}|${day.toString()}|${hour.toString()}`;
+) => `${unitFullId(key, unitType, unit)}|${day.toString()}|${hour.toString()}`;
 
 export function toProxiedUrl(url: URL | string): URL {
   return new URL(`/${url}`, process.env.PROXY_URL);

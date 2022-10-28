@@ -2,39 +2,22 @@ import { defineStore } from 'pinia';
 import { Temporal } from '@js-temporal/polyfill';
 import { OptivumTimetableInfo } from 'src/api/optivum';
 import { UnitType } from 'src/api/common';
+import {
+  ConfigHistoryV1, ConfigV1, FavouriteLessonV1, StartupUnitV1,
+} from 'stores/versions/1';
+import { ConfigV0 } from 'stores/versions/0';
+import _ from 'lodash';
 
-export interface ConfigHistory {
-  title: string;
-  baseUrl: string;
-  listPath: string;
-  lastUse: string;
-}
+export type ConfigHistory = ConfigHistoryV1;
+export type StartupUnit = StartupUnitV1;
+export type FavouriteLesson = FavouriteLessonV1;
+export type Config = ConfigV1;
 
-export interface FavouriteLesson {
-  subject: string;
-  group: string | undefined;
-}
-
-export interface StartupUnit {
-  tri: string,
-  unitType: UnitType;
-  unit: string;
-}
-
-export interface Config {
-  optivumHistory: ConfigHistory[];
-  favouriteLessons: Record<string, FavouriteLesson | null | undefined>;
-  favouriteUnits: Record<string, { unitType: UnitType; unit: string; }[]>;
-  startupUnit: StartupUnit | null;
-  dark: boolean | 'auto';
-  superSecretSettingsEnabled: boolean;
-  scrollSnap: boolean;
-  iso8601: boolean;
-  showColors: boolean;
-}
+export type ConfigAnyVersion = ConfigV0 | ConfigV1;
 
 export const useConfigStore = defineStore('config', {
   state: (): Config => ({
+    version: 1,
     optivumHistory: [],
     favouriteLessons: {},
     favouriteUnits: {},
@@ -100,9 +83,29 @@ export const useConfigStore = defineStore('config', {
     },
   },
   persist: {
-    beforeRestore: (ctx) => {
-      console.log(ctx);
-      console.log(`about to restore '${ctx.store.$id}'`);
+    beforeRestore: (/* ctx */) => {
+      const json = window.localStorage.getItem('config');
+      if (json === null) return;
+      let content = JSON.parse(json) as ConfigAnyVersion;
+      if ('version' in content && content.version === 1) return;
+      if (!('version' in content)) {
+        content = {
+          version: 1,
+          favouriteLessons: _.mapKeys(content.favouriteLessons, (value, key) => {
+            const [baseUrl, classValue, day, hour] = key.split('|').map((e) => decodeURIComponent(e));
+            return `${encodeURIComponent(baseUrl === 'v-lo' ? 'v-lo' : `o,${baseUrl}`)}|class|${encodeURIComponent(classValue)}|${day}|${hour}|#`;
+          }),
+          optivumHistory: [],
+          dark: content.dark,
+          iso8601: content.iso8601,
+          scrollSnap: content.scrollSnap,
+          showColors: content.showColors,
+          superSecretSettingsEnabled: content.superSecretSettingsEnabled,
+          startupUnit: null,
+          favouriteUnits: {},
+        };
+      }
+      window.localStorage.setItem('config', JSON.stringify(content));
     },
   },
 });
