@@ -45,6 +45,7 @@
             v-for="(item, i) in historyItems"
             :key="item.baseUrl"
             :to="{ name: 'Optivum/SelectClass', params: { url: item.baseUrl } }"
+            class="q-pr-sm"
           >
             <q-item-section>
               <q-item-label lines="1">
