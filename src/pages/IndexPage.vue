@@ -298,7 +298,6 @@ export default defineComponent({
       historyOverflow: computed(() => configStore.history.length > historyLimit.value),
       increaseHistoryLimit,
       removeHistoryEntry,
-
       favouriteTables,
     };
   },
