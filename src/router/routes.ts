@@ -14,16 +14,8 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/IndexPage.vue'),
       },
       {
-        name: 'VLo/SelectClass',
-        path: 'timetable/v-lo/',
-        component: () => import('pages/SelectClass.vue'),
-        meta: {
-          title: 'Wybierz klasę',
-        },
-      },
-      {
-        name: 'Optivum/SelectClass',
-        path: 'timetable/optivum/:url/',
+        name: 'SelectClass',
+        path: 'timetable/:tri',
         component: () => import('pages/SelectClass.vue'),
         meta: {
           title: 'Wybierz klasę',
@@ -40,13 +32,8 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    name: 'VLo/ClassTimetable',
-    path: '/timetable/v-lo/class/:class/',
-    component: () => import('pages/ClassTimetable.vue'),
-  },
-  {
-    name: 'Optivum/ClassTimetable',
-    path: '/timetable/optivum/:url/class/:class/',
+    name: 'ClassTimetable',
+    path: '/timetable/:tri/class/:class/',
     component: () => import('pages/ClassTimetable.vue'),
   },
   {

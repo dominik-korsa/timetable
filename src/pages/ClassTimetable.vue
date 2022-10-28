@@ -183,29 +183,20 @@ import {
   computed, defineComponent, ref, watch,
 } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
-import { loadVLoHours, loadVLoLessons, loadVLoSubstitutions } from 'src/api/v-lo';
 import { CacheMode, NotInCacheError } from 'src/api/requests';
 import TimetableGrid from 'components/TimetableGrid.vue';
-import { loadOptivumTable } from 'src/api/optivum';
 import { QBtn, useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
 import ThemePicker from 'components/ThemePicker.vue';
-import { mondayOf } from 'src/date-utils';
 import { getDayOffsetSession } from 'src/session';
 import { Temporal } from '@js-temporal/polyfill';
+import { Client, useClientRef } from 'src/api/client';
 
-interface TableRefVLo {
-  classValue: string;
+interface TableRef {
+  client: Client;
   offset: number;
-  baseUrl: undefined,
+  classValue: string;
 }
-
-interface TableRefOptivum {
-  classValue: string,
-  baseUrl: string;
-}
-
-type TableRef = TableRefVLo | TableRefOptivum;
 
 const shake = (el: Element, reverse: boolean) => {
   const keyframes = [
@@ -228,6 +219,7 @@ export default defineComponent({
     const router = useRouter();
     const quasar = useQuasar();
     const config = useConfigStore();
+    const clientRef = useClientRef();
 
     const data = ref<TableData | null>(null);
     const errorMessage = ref<string | null>(null);
@@ -243,46 +235,22 @@ export default defineComponent({
       vLoOffset.value = todayOffset.value;
     });
     const tableRef = computed<TableRef | null>(() => {
-      if (route.params.class === undefined) return null;
-      if (route.params.url === undefined) {
-        return {
-          classValue: route.params.class as string,
-          offset: vLoOffset.value,
-        };
-      }
-      return {
+      if (clientRef.value === undefined || route.params.class === undefined) return null;
+      return ({
+        client: clientRef.value,
+        offset: vLoOffset.value,
         classValue: route.params.class as string,
-        baseUrl: route.params.url as string,
-      };
+      });
     });
 
     const attemptLoad = async (
       loadedTableRef: TableRef,
       cacheMode: CacheMode,
-    ): Promise<TableData> => {
-      if (loadedTableRef.baseUrl === undefined) {
-        const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: loadedTableRef.offset });
-        const [hours, days, substitutionDays] = await Promise.all([
-          loadVLoHours(cacheMode),
-          loadVLoLessons(cacheMode, loadedTableRef.classValue, loadedTableRef.offset),
-          Promise.all([0, 1, 2, 3, 4].map((value) => loadVLoSubstitutions(
-            cacheMode,
-            loadedTableRef.classValue,
-            monday.add({ days: value }),
-          ))),
-        ]);
-        return {
-          hours,
-          lessons: days.map((day) => day.moments),
-          className: loadedTableRef.classValue,
-          headers: days.map((day, dayIndex) => ({
-            date: day.date,
-            substitutions: substitutionDays[dayIndex],
-          })),
-        };
-      }
-      return loadOptivumTable(loadedTableRef.baseUrl, loadedTableRef.classValue, cacheMode);
-    };
+    ): Promise<TableData> => loadedTableRef.client.getLessons(
+      cacheMode,
+      loadedTableRef.classValue,
+      loadedTableRef.offset,
+    );
 
     watch(
       tableRef,
@@ -347,14 +315,16 @@ export default defineComponent({
       down: vLoOffset.value <= -5,
       up: vLoOffset.value >= 5,
     }));
-    const showOffsetPicker = computed(() => route.params.url === undefined);
+    const showOffsetPicker = computed(() => clientRef.value?.supportsOffsets ?? false);
     const offsetDownButton = ref<QBtn>();
     const offsetUpButton = ref<QBtn>();
 
-    const isFavourite = computed(
-      () => config.favouriteTables[(route.params.url as string | undefined) ?? 'v-lo']
-        ?.includes(route.params.class as string) ?? false,
-    );
+    const isFavourite = computed(() => {
+      if (clientRef.value === undefined) return false;
+      return config.favouriteTables[clientRef.value.key]
+        ?.includes(route.params.class as string)
+        ?? false;
+    });
     const isStartupTable = computed(
       () => config.startupTable !== null
       && config.startupTable.baseUrl === route.params.url
@@ -383,7 +353,7 @@ export default defineComponent({
       styleFn: (offset: number, height: number) => ({ height: `${height - offset}px` }),
       goBack: () => {
         const backTo = {
-          name: route.params.url === undefined ? 'VLo/SelectClass' : 'Optivum/SelectClass',
+          name: 'SelectClass',
           params: route.params,
         };
         const resolved = router.resolve(backTo);

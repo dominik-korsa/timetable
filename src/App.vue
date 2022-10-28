@@ -4,10 +4,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, watch } from 'vue';
+import {
+  computed, defineComponent, provide, ref, watch,
+} from 'vue';
 import { useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
 import OldDomainLayout from 'layouts/OldDomainLayout.vue';
+import { useRoute, useRouter } from 'vue-router';
+import { Client, clientSymbol, getClient } from 'src/api/client';
 
 export default defineComponent({
   name: 'App',
@@ -15,6 +19,27 @@ export default defineComponent({
   setup: () => {
     const quasar = useQuasar();
     const config = useConfigStore();
+
+    const router = useRouter();
+    const route = useRoute();
+    const client = ref<Client|undefined>();
+    provide(clientSymbol, client);
+    watch(() => route.params.tri, (tri: string | string[] | undefined, oldTri) => {
+      if (tri === oldTri || tri === undefined) return;
+      if (typeof tri === 'object') [tri] = tri;
+      try {
+        client.value = getClient(tri);
+      } catch (error) {
+        console.error(error);
+        quasar.notify({
+          type: 'negative',
+          message: 'Niepoprawny identyfikator planu lekcji',
+        });
+        router.push({ name: 'Home' });
+        client.value = undefined;
+      }
+    }, { immediate: true });
+
     watch(
       () => config.dark,
       (value) => quasar.dark.set(value),

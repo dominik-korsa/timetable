@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia';
-import { OptivumTimetableInfo } from 'src/api/optivum';
 import _ from 'lodash';
 import { Temporal } from '@js-temporal/polyfill';
+import { OptivumTimetableInfo } from 'src/api/optivum';
 
 export interface ConfigHistory {
   title: string;
   baseUrl: string;
+  listPath: string;
   lastUse: string;
 }
 
@@ -49,6 +50,7 @@ export const useConfigStore = defineStore('config', {
         {
           title: info.title,
           baseUrl: info.baseUrl,
+          listPath: info.listPath,
           lastUse: Temporal.Now.instant.toString(),
         },
         ...this.history.filter((e) => e.baseUrl !== info.baseUrl),

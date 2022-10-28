@@ -34,13 +34,11 @@ export interface TableData {
 
 // Universal moment id
 export const toUmid = (
-  baseUrl: string | undefined,
+  key: string,
   classValue: string,
   day: number,
   hour: number,
-): string => `${
-  baseUrl === undefined ? 'v-lo' : encodeURIComponent(baseUrl)
-}|${encodeURIComponent(classValue)}|${day.toString()}|${hour.toString()}`;
+): string => `${encodeURIComponent(key)}|${encodeURIComponent(classValue)}|${day.toString()}|${hour.toString()}`;
 
 export function toProxiedUrl(url: URL | string): URL {
   return new URL(`/${url}`, process.env.PROXY_URL);

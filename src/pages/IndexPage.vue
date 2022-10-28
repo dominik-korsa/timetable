@@ -44,7 +44,7 @@
           <q-item
             v-for="(item, i) in historyItems"
             :key="item.baseUrl"
-            :to="{ name: 'Optivum/SelectClass', params: { url: item.baseUrl } }"
+            :to="item.to"
             class="q-pr-sm"
           >
             <q-item-section>
@@ -82,7 +82,7 @@
     </q-card>
 
     <router-link
-      :to="{ name: 'VLo/SelectClass' }"
+      :to="{ name: 'SelectClass', params: { tri: 'v-lo' } }"
       class="index-page__v-lo-link q-mb-md"
     >
       <q-card
@@ -170,16 +170,15 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, onMounted, ref, watch,
+  computed, defineComponent, ref, watch,
 } from 'vue';
 import isUrl from 'is-url-superb';
 import { RouteLocationRaw, useRouter } from 'vue-router';
 import { useConfigStore } from 'stores/config';
 import { CacheMode } from 'src/api/requests';
 import { useQuasar } from 'quasar';
-import { loadOptivumClassList, loadOptivumTimetable } from 'src/api/optivum';
+import { OptivumClient } from 'src/api/optivum';
 import BuildInfo from 'components/BuildInfo.vue';
-import { loadVLoClassList } from 'src/api/v-lo';
 import PwaBanner from 'components/PwaBanner.vue';
 
 interface ClassItem {
@@ -208,12 +207,12 @@ export default defineComponent({
     const submitOptivum = async () => {
       optivumLoading.value = true;
       try {
-        const timetableInfo = await loadOptivumTimetable(url.value, CacheMode.NetworkFirst);
+        const timetableInfo = await OptivumClient.attemptLoad(CacheMode.NetworkFirst, url.value);
         configStore.addHistoryEntry(timetableInfo);
         await router.push({
-          name: 'Optivum/SelectClass',
+          name: 'SelectClass',
           params: {
-            url: timetableInfo.baseUrl,
+            tri: OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath),
           },
         });
       } catch (error) {
@@ -246,46 +245,46 @@ export default defineComponent({
 
     const favouriteTables = ref<FavouriteTableItem[] | null>(null);
 
-    onMounted(async () => {
-      favouriteTables.value = await Promise.all(
-        Object.entries(configStore.favouriteTables)
-          .map(async ([key, classes]) => {
-            if (key === 'v-lo') {
-              const classList = await loadVLoClassList(CacheMode.CacheFirst);
-              return ({
-                key,
-                title: 'V LO w Krakowie',
-                subtitle: null,
-                items: classList
-                  .map((value) => ({
-                    value,
-                    name: value,
-                    to: {
-                      name: 'VLo/ClassTimetable',
-                      params: { class: value },
-                    },
-                  }))
-                  .filter((item) => classes.includes(item.value)),
-              });
-            }
-            const timetable = await loadOptivumTimetable(key, CacheMode.CacheFirst);
-            const classList = await loadOptivumClassList(timetable, CacheMode.CacheFirst);
-            return ({
-              key,
-              title: timetable.title,
-              subtitle: timetable.baseUrl,
-              items: classList.map(({ name, value }) => ({
-                value,
-                name,
-                to: {
-                  name: 'Optivum/ClassTimetable',
-                  params: { url: key, class: value },
-                },
-              })).filter((item) => classes.includes(item.value)),
-            });
-          }),
-      );
-    });
+    // onMounted(async () => {
+    //   favouriteTables.value = await Promise.all(
+    //     Object.entries(configStore.favouriteTables)
+    //       .map(async ([key, classes]) => {
+    //         if (key === 'v-lo') {
+    //           const classList = await loadVLoClassList(CacheMode.CacheFirst);
+    //           return ({
+    //             key,
+    //             title: 'V LO w Krakowie',
+    //             subtitle: null,
+    //             items: classList
+    //               .map((value) => ({
+    //                 value,
+    //                 name: value,
+    //                 to: {
+    //                   name: 'VLo/ClassTimetable',
+    //                   params: { class: value },
+    //                 },
+    //               }))
+    //               .filter((item) => classes.includes(item.value)),
+    //           });
+    //         }
+    //         const timetable = await loadOptivumTimetable(key, CacheMode.CacheFirst);
+    //         const classList = await loadOptivumClassList(timetable, CacheMode.CacheFirst);
+    //         return ({
+    //           key,
+    //           title: timetable.title,
+    //           subtitle: timetable.baseUrl,
+    //           items: classList.map(({ name, value }) => ({
+    //             value,
+    //             name,
+    //             to: {
+    //               name: 'Optivum/ClassTimetable',
+    //               params: { url: key, class: value },
+    //             },
+    //           })).filter((item) => classes.includes(item.value)),
+    //         });
+    //       }),
+    //   );
+    // });
 
     return {
       url,
@@ -294,8 +293,12 @@ export default defineComponent({
       ],
       optivumLoading,
       submitOptivum,
-
-      historyItems: computed(() => configStore.history.slice(0, historyLimit.value)),
+      historyItems: computed(() => configStore.history
+        .slice(0, historyLimit.value)
+        .map((item) => ({
+          ...item,
+          to: { name: 'SelectClass', params: { tri: OptivumClient.createTri(item.baseUrl, item.listPath) } },
+        }))),
       historyOverflow: computed(() => configStore.history.length > historyLimit.value),
       increaseHistoryLimit,
       removeHistoryEntry,

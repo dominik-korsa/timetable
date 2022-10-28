@@ -93,3 +93,10 @@ export const withOpacity = (color: string, alpha: number) => rgbToHex({
   ...textToRgb(color),
   a: alpha,
 });
+
+export const tildeEncode = (input: string) => encodeURIComponent(input)
+  .replaceAll('~', '%7E')
+  .replaceAll('.', '%2E')
+  .replaceAll('%', '~');
+
+export const tildeDecode = (input: string) => decodeURIComponent(input.replaceAll('~', '%'));
