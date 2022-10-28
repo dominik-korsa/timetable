@@ -3,6 +3,7 @@ import {
 } from '@wulkanowy/timetable-parser';
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import { TableData, toProxiedUrl, toUmid } from 'src/api/common';
+import { randomColor } from 'src/utils';
 
 export interface OptivumTimetableInfo {
   title: string;
@@ -59,7 +60,7 @@ export async function loadOptivumTable(
         group: lesson.groupName,
         room: lesson.room,
         teacher: lesson.teacher,
-        color: undefined,
+        color: randomColor(`${lesson.subject}|${lesson.teacher}`),
         removed: false,
       })),
     }))),

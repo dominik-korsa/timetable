@@ -1,4 +1,8 @@
 import { onBeforeUnmount, onMounted } from 'vue';
+import { colors } from 'quasar';
+import textToRgb = colors.textToRgb;
+import rgbToHex = colors.rgbToHex;
+import hsvToRgb = colors.hsvToRgb;
 
 export function useDocumentListener<K extends keyof DocumentEventMap>(
   type: K,
@@ -69,3 +73,23 @@ export function getTypeValidator<T extends unknown[]>() {
 }
 
 export const typed = <T>(x: T): T => x;
+
+export function stringHash(input: string, hash: number) {
+  for (let i = 0; i < input.length; i += 1) {
+    hash *= 709;
+    hash += input.charCodeAt(i);
+    hash %= 1000859;
+  }
+  return hash;
+}
+
+export const randomColor = (source: string) => rgbToHex(hsvToRgb({
+  h: ((stringHash(source, 2137) % 360) + 360) % 360,
+  s: 60 + (((stringHash(source, 997) % 40) + 40) % 40),
+  v: 75 + (((stringHash(source, 1933) % 25) + 25) % 25),
+}));
+
+export const withOpacity = (color: string, alpha: number) => rgbToHex({
+  ...textToRgb(color),
+  a: alpha,
+});

@@ -311,6 +311,7 @@ export default defineComponent({
 
         try {
           const networkData = await attemptLoad(value, CacheMode.NetworkOnly);
+          console.log(networkData);
           if (currId !== refreshId) return;
           clearTimeout(clearTimeoutId);
           data.value = networkData;

@@ -28,6 +28,7 @@
 import { PropType } from 'vue/dist/vue';
 import { computed, defineComponent } from 'vue';
 import { useConfigStore } from 'stores/config';
+import { withOpacity } from 'src/utils';
 import { TableLesson } from '../api/common';
 
 export default defineComponent({
@@ -44,7 +45,7 @@ export default defineComponent({
     const config = useConfigStore();
     return ({
       background: computed(
-        () => (props.showColor && config.showColors && props.lesson.color ? `${props.lesson.color}77` : 'transparent'),
+        () => (props.showColor && config.showColors && props.lesson.color ? withOpacity(props.lesson.color, 45) : 'transparent'),
       ),
     });
   },
