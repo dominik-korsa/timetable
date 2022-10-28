@@ -6,18 +6,21 @@
     <q-btn
       v-for="item in items"
       :key="item.value"
+      class="select-class-group__button"
       :to="item.to"
       :outline="!$q.dark.isActive"
       :unelevated="$q.dark.isActive"
-      :color="$q.dark.isActive
-        ? (item.isFavourite ? 'amber-8' : 'grey-9')
-        : (item.isFavourite ? 'amber-9' : undefined)"
+      :color="$q.dark.isActive ? 'grey-9' : undefined"
       no-caps
       no-wrap
     >
       <div class="select-class-group__button-value">
         {{ item.name }}
       </div>
+      <div
+        v-if="item.isFavourite"
+        class="select-class-group__favourite"
+      />
     </q-btn>
   </div>
 </template>
@@ -80,5 +83,23 @@ export default defineComponent({
   grid-gap: 8px;
   margin-bottom: 20px;
   overflow-x: hidden;
+
+  .select-class-group__button {
+    position: relative;
+    overflow: hidden;
+
+    &:before {
+      z-index: 1;
+    }
+
+    .select-class-group__favourite {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 12px;
+      height: 12px;
+      background: linear-gradient(45deg, transparent 50%, $amber-7 50%);
+    }
+  }
 }
 </style>
