@@ -8,7 +8,7 @@
           class="combined-timetable-grid__unit-name"
         >
           {{ unit.unitName }}
-          <div class="q-ml-sm q-my-xs">
+          <div class="q-ml-sm">
             <substitutions-button
               v-if="unit.substitutions.length > 0"
               :substitutions="unit.substitutions"
@@ -108,10 +108,6 @@ $column-width: 75px;
     }
   }
 
-  .combined-timetable-grid__header-bottom {
-    width: fit-content;
-  }
-
   .combined-timetable-grid__header-classes {
     display: flex;
     flex-direction: row;
@@ -126,6 +122,7 @@ $column-width: 75px;
       flex-direction: row;
       align-items: center;
       justify-content: center;
+      min-height: 32px;
     }
   }
 

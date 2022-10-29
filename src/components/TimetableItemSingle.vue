@@ -165,6 +165,8 @@ export default defineComponent({
 
     .timetable-item-single__group {
       text-align: center;
+      padding-left: 2px;
+      padding-right: 2px;
     }
 
     .timetable-item-single__teacher {
