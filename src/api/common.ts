@@ -1,5 +1,7 @@
 import { Substitution } from '@wulkanowy/asc-timetable-parser';
 import { Temporal } from '@js-temporal/polyfill';
+import _ from 'lodash';
+import { adjacentDifference, parseHour } from 'src/utils';
 
 export interface TableHour {
   begin: string;
@@ -62,3 +64,20 @@ export const toUmid = (
 export function toProxiedUrl(url: URL | string): URL {
   return new URL(`/${url}`, process.env.PROXY_URL);
 }
+
+export const calculateTimestamps = (hours: TableHour[], marginMinutes: number) => {
+  const realTimestamps = _.flatMap(
+    hours,
+    ({ begin, end }) => [begin, end],
+  )
+    .map(parseHour);
+  return [
+    realTimestamps[0] - marginMinutes,
+    ...realTimestamps,
+    _.last(realTimestamps)! + marginMinutes,
+  ];
+};
+
+export const calculateRows = (timestamps: number[], hourPixels: number) => adjacentDifference(timestamps)
+  .map((v) => `${(v * hourPixels) / 60}px`)
+  .join(' ');

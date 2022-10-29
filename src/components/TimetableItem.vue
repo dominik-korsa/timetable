@@ -54,6 +54,7 @@ export default defineComponent({
       type: Object as PropType<TableLessonMoment>,
       required: true,
     },
+    small: Boolean,
   },
   setup: (props) => {
     const config = useConfigStore();

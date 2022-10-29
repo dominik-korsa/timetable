@@ -17,6 +17,7 @@
           v-for="(weekday, i) in weekdays"
           :key="i"
           :weekday="weekday"
+          :hours="data.hours"
         />
       </div>
     </template>
@@ -29,7 +30,7 @@ import {
 import { useOffset, weekdayNames } from 'src/shared';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useClientRef } from 'src/api/client';
-import { AllClassesLessons } from 'src/api/common';
+import { AllClassesLessons, TableLessonMoment } from 'src/api/common';
 import { NotInCacheError } from 'src/api/requests';
 import { useQuasar } from 'quasar';
 import CombinedTimetableGrid from 'components/CombinedTimetableGrid.vue';
@@ -41,6 +42,7 @@ export interface Weekday {
     unitType: string;
     unit: string;
     unitName: string;
+    moments: TableLessonMoment[];
   }[];
 }
 
@@ -131,7 +133,7 @@ export default defineComponent({
 
     const weekdays = computed<Weekday[] | null>(() => {
       if (data.value === null) return null;
-      const { hours, units } = data.value;
+      const { units } = data.value;
       return weekdayNames.map((weekdayName, index) => ({
         name: weekdayName,
         units: units.map(({
@@ -140,7 +142,7 @@ export default defineComponent({
           unitType,
           unit,
           unitName,
-          lessons: lessons[index],
+          moments: lessons[index],
         })),
       }));
     });
