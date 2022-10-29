@@ -26,11 +26,17 @@ export interface TableLessonMoment {
 
 export type UnitType = 'class' | 'teacher' | 'room';
 
-export interface TableData {
+export interface TableDataBase {
   lessons: TableLessonMoment[][];
   unitName: string;
   unitType: UnitType;
   unit: string;
+  headers: {
+    date: Temporal.PlainDate;
+  }[] | null;
+}
+
+export interface TableData extends TableDataBase {
   headers: {
     date: Temporal.PlainDate;
     substitutions: Substitution[];
