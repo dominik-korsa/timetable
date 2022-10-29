@@ -20,6 +20,21 @@
           :items="items"
           :container-width="containerWidth"
         />
+        <q-btn
+          no-caps
+          outline
+          class="full-width"
+          color="primary"
+          :to="combinedRoute"
+        >
+          Zestawienie klas
+          <q-badge
+            color="red"
+            floating
+          >
+            Beta
+          </q-badge>
+        </q-btn>
       </div>
     </div>
   </q-page>
@@ -29,7 +44,7 @@
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
-import { RouteLocationRaw } from 'vue-router';
+import { RouteLocationRaw, useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { CacheMode } from 'src/api/requests';
 import { DefaultsMap } from 'src/utils';
@@ -39,7 +54,7 @@ import SelectClassGroup from 'components/SelectClassGroup.vue';
 import { useClientRef } from 'src/api/client';
 
 interface ClassItem {
-  value: string;
+  unit: string;
   name: string;
   to: RouteLocationRaw;
 }
@@ -52,8 +67,10 @@ export default defineComponent({
   setup: () => {
     const quasar = useQuasar();
     const config = useConfigStore();
-    const containerWidth = ref(100);
     const clientRef = useClientRef();
+    const route = useRoute();
+
+    const containerWidth = ref(100);
 
     const classItems = ref<ClassItem[] | null>(null);
     watch(() => clientRef.value, async (client) => {
@@ -68,7 +85,7 @@ export default defineComponent({
             params: {
               tri: client.tri,
               unitType: 'class',
-              unit: item.value,
+              unit: item.unit,
             },
           },
         }));
@@ -102,7 +119,7 @@ export default defineComponent({
         );
         const classItemsCopy = classItems.value.map((item) => ({
           ...item,
-          isFavourite: favourites.has(`class|${item.value}`),
+          isFavourite: favourites.has(`class|${item.unit}`),
         }));
         const groups = new DefaultsMap<number, ClassItem[]>(() => []);
         const remaining: ClassItem[] = [];
@@ -112,11 +129,15 @@ export default defineComponent({
           else groups.get(parseInt(result[0], 10)).push(item);
         });
         const groupArray = _.sortBy(Array.from(groups.entries()), 0).map(([, v]) => v);
-        return [
+        return remaining.length > 0 ? [
           ...groupArray,
           remaining,
-        ];
+        ] : groupArray;
       }),
+      combinedRoute: computed(() => ({
+        name: 'CombinedTimetable',
+        params: route.params,
+      })),
     };
   },
 });

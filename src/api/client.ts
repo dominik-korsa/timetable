@@ -6,7 +6,7 @@ import { TableData, UnitType } from 'src/api/common';
 import { OptivumClient } from 'src/api/optivum';
 
 export interface ClassListItem {
-  value: string;
+  unit: string;
   name: string;
 }
 
@@ -22,6 +22,7 @@ export interface BaseClient {
     unit: string,
     offset: number,
   ): Promise<TableData>;
+  getLessonsOfAllClasses(cacheMode: CacheMode, offset: number): Promise<TableData[]>;
   getUnitNameMapper(cacheMode: CacheMode): Promise<(unitType: UnitType, unit: string) => string>;
 }
 

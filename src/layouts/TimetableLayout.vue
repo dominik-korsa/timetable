@@ -168,7 +168,8 @@ export default defineComponent({
     },
     offset: {
       type: Object as PropType<Offset | null>,
-      required: true,
+      required: false,
+      default: null,
     },
   },
   emits: ['retryLoad'],

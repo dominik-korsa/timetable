@@ -1,6 +1,6 @@
 <template>
   <timetable-layout
-    :title="data?.className ?? null"
+    :title="data?.unitName ?? null"
     :has-data="data !== null"
     :is-loading="isLoading"
     :offset="offset"
@@ -61,7 +61,7 @@ import { TableData, UnitType } from 'src/api/common';
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
-import { useRoute } from 'vue-router';
+import { onBeforeRouteLeave, useRoute } from 'vue-router';
 import { CacheMode, NotInCacheError } from 'src/api/requests';
 import TimetableGrid from 'components/TimetableGrid.vue';
 import { useQuasar } from 'quasar';
@@ -96,6 +96,7 @@ export default defineComponent({
       if (clientRef.value !== undefined && clientRef.value.supportsOffsets) return useOffset();
       return null;
     });
+    onBeforeRouteLeave(() => { offset.value?.reset(); });
 
     const tableRef = computed<TableRef | null>(() => {
       if (

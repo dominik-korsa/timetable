@@ -58,7 +58,7 @@ export class OptivumClient implements BaseClient {
     const listUrl = new URL(this.listPath, this.baseUrl);
     const response = await fetchWithCache(cacheMode, toProxiedUrl(listUrl).toString());
     const timetableList = new TimetableList(await response.text());
-    return timetableList.getList().classes;
+    return timetableList.getList().classes.map((item) => ({ name: item.name, unit: item.value }));
   }
 
   async getTitle(cacheMode: CacheMode): Promise<string> {
@@ -74,7 +74,9 @@ export class OptivumClient implements BaseClient {
     const table = new Table(await response.text());
 
     return {
-      className: table.getTitle(),
+      unitName: table.getTitle(),
+      unitType,
+      unit,
       hours: Object.values(table.getHours()).map(({ number, timeFrom, timeTo }) => ({
         display: number.toString(),
         begin: timeFrom,
@@ -96,9 +98,16 @@ export class OptivumClient implements BaseClient {
     };
   }
 
+  async getLessonsOfAllClasses(cacheMode: CacheMode): Promise<TableData[]> {
+    const classList = await this.getClassList(cacheMode);
+    return Promise.all(
+      classList.map((item) => this.getLessons(cacheMode, 'class', item.unit)),
+    );
+  }
+
   async getUnitNameMapper(cacheMode: CacheMode) {
     const classList = await this.getClassList(cacheMode);
-    const classMap = Object.fromEntries(classList.map(({ name, value }) => ([value, name])));
+    const classMap = Object.fromEntries(classList.map(({ name, unit }) => ([unit, name])));
     return (unitType: UnitType, unit: string) => {
       if (unitType !== 'class') return unit;
       return classMap[unit] ?? unit;

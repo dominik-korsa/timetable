@@ -57,7 +57,7 @@ export class VLoClient implements BaseClient {
     const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/vlo/listclass');
     const classes = await response.json() as string[];
     return classes.map((value) => ({
-      value,
+      unit: value,
       name: value,
     }));
   }
@@ -152,12 +152,21 @@ export class VLoClient implements BaseClient {
     return {
       hours,
       lessons: days.map((day) => day.moments),
-      className: unit,
+      unitName: unit,
+      unitType,
+      unit,
       headers: days.map((day, dayIndex) => ({
         date: day.date,
         substitutions: substitutionDays[dayIndex],
       })),
     };
+  }
+
+  async getLessonsOfAllClasses(cacheMode: CacheMode, offset: number): Promise<TableData[]> {
+    const classList = await this.getClassList(cacheMode);
+    return Promise.all(
+      classList.map((item) => this.getLessons(cacheMode, 'class', item.unit, offset)),
+    );
   }
 
   getUnitNameMapper = async () => (unitType: string, unitValue: string) => unitValue;

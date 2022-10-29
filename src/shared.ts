@@ -1,4 +1,4 @@
-import { onBeforeRouteLeave, RouteLocationRaw, Router } from 'vue-router';
+import { RouteLocationRaw, Router } from 'vue-router';
 import { computed, reactive } from 'vue';
 import { Temporal } from '@js-temporal/polyfill';
 import { getDayOffsetSession } from 'src/session';
@@ -35,9 +35,6 @@ export const useOffset = (): Offset => {
     () => ([6, 7].includes(Temporal.Now.plainDateISO().dayOfWeek) ? 1 : 0),
   );
   const currentOffset = getDayOffsetSession(todayOffset.value);
-  onBeforeRouteLeave(() => {
-    currentOffset.value = todayOffset.value;
-  });
   const decreaseDisabled = computed(() => currentOffset.value <= -5);
   const increaseDisabled = computed(() => currentOffset.value >= 5);
   return reactive({
