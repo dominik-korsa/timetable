@@ -95,9 +95,11 @@ export default defineComponent({
       classItems,
       classGroups: computed(() => {
         if (classItems.value === null) return null;
-        const favourites = clientRef.value === undefined
-          ? new Set()
-          : new Set(config.favouriteUnits[clientRef.value.tri]?.map(({ unitType, unit }) => `${unitType}|${unit}`) ?? []);
+        const favourites = clientRef.value === undefined ? new Set() : new Set(
+          config.favouriteUnits[clientRef.value.tri]
+            ?.map(({ unitType, unit }) => `${unitType}|${unit}`)
+            ?? [],
+        );
         const classItemsCopy = classItems.value.map((item) => ({
           ...item,
           isFavourite: favourites.has(`class|${item.value}`),

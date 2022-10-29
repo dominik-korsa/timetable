@@ -89,6 +89,7 @@ import TimetableItem from 'components/TimetableItem.vue';
 import SubstitutionsButton from 'components/SubstitutionsButton.vue';
 import { useConfigStore } from 'stores/config';
 import { Temporal } from '@js-temporal/polyfill';
+import { ChangeOffsetFn } from 'layouts/TimetableLayout.vue';
 
 interface TableItem {
   moment: TableLessonMoment;
@@ -105,7 +106,7 @@ export default defineComponent({
     },
     isCurrentWeek: Boolean,
     changeOffset: {
-      type: Function as PropType<(direction: -1|1) => boolean>,
+      type: Function as PropType<ChangeOffsetFn>,
       required: true,
     },
   },
