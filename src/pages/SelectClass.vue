@@ -22,9 +22,9 @@
         />
         <q-btn
           no-caps
-          outline
+          :outline="!$q.dark.isActive"
+          :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
           class="full-width"
-          color="primary"
           :to="combinedRoute"
         >
           Zestawienie klas

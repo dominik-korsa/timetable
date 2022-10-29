@@ -25,7 +25,7 @@
       show-color
       small
     >
-      <div class="timetable-item-multiple__more-small">
+      <div class="timetable-item-multiple__more-small bg-page">
         +{{ lessons.length-1 }}
       </div>
     </timetable-item-single>
@@ -150,7 +150,6 @@ export default defineComponent({
   }
 
   .timetable-item-multiple__more-small {
-    background: white;
     overflow: hidden;
     border: var(--separator-color) 1px;
     border-top-style: solid;
