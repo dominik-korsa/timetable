@@ -62,7 +62,7 @@ import {
   computed, defineComponent, ref, watch,
 } from 'vue';
 import { onBeforeRouteLeave, useRoute } from 'vue-router';
-import { CacheMode, NotInCacheError } from 'src/api/requests';
+import { NotInCacheError } from 'src/api/requests';
 import TimetableGrid from 'components/TimetableGrid.vue';
 import { useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
@@ -114,9 +114,9 @@ export default defineComponent({
 
     const attemptLoad = async (
       loadedTableRef: TableRef,
-      cacheMode: CacheMode,
+      fromCache: boolean,
     ): Promise<TableData> => loadedTableRef.client.getLessons(
-      cacheMode,
+      fromCache,
       loadedTableRef.unitType,
       loadedTableRef.unit,
       loadedTableRef.offset,
@@ -138,7 +138,7 @@ export default defineComponent({
 
         let cacheFailed = false;
         try {
-          const cachedData = await attemptLoad(value, CacheMode.CacheOnly);
+          const cachedData = await attemptLoad(value, true);
           if (currId !== refreshId) return;
           data.value = cachedData;
           clearTimeout(clearTimeoutId);
@@ -148,7 +148,7 @@ export default defineComponent({
         }
 
         try {
-          const networkData = await attemptLoad(value, CacheMode.NetworkOnly);
+          const networkData = await attemptLoad(value, false);
           if (currId !== refreshId) return;
           clearTimeout(clearTimeoutId);
           data.value = networkData;
@@ -174,7 +174,7 @@ export default defineComponent({
       data.value = null;
       errorMessage.value = null;
       try {
-        data.value = await attemptLoad(tableRef.value, CacheMode.NetworkOnly);
+        data.value = await attemptLoad(tableRef.value, false);
       } catch (error) {
         console.error(error);
         errorMessage.value = 'Nie udało się wczytać planu lekcji';

@@ -1,15 +1,19 @@
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   TableData,
-  TableHour, TableLessonMoment, toProxiedUrl, toUmid, UnitType,
+  TableHour,
+  TableLessonMoment,
+  toProxiedUrl,
+  toUmid,
+  UnitType,
 } from 'src/api/common';
 import _ from 'lodash';
 import { mondayOf } from 'src/date-utils';
 import {
-  Substitution,
   getSubstitutionsBody,
   getSubstitutionsUrl,
   parseSubstitutions,
+  Substitution,
 } from '@wulkanowy/asc-timetable-parser';
 import { Temporal } from '@js-temporal/polyfill';
 import { BaseClient, ClassListItem } from 'src/api/client';
@@ -62,7 +66,7 @@ export class VLoClient implements BaseClient {
     }));
   }
 
-  static async loadVLoSubstitutions(
+  private static async loadVLoSubstitutions(
     cacheMode: CacheMode,
     classValue: string,
     date: Temporal.PlainDate,
@@ -134,11 +138,12 @@ export class VLoClient implements BaseClient {
   }
 
   async getLessons(
-    cacheMode: CacheMode,
+    fromCache: boolean,
     unitType: UnitType,
     unit: string,
     offset: number,
   ): Promise<TableData> {
+    const cacheMode = fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly;
     const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
     const [hours, days, substitutionDays] = await Promise.all([
       loadVLoHours(cacheMode),
@@ -162,10 +167,10 @@ export class VLoClient implements BaseClient {
     };
   }
 
-  async getLessonsOfAllClasses(cacheMode: CacheMode, offset: number): Promise<TableData[]> {
-    const classList = await this.getClassList(cacheMode);
+  async getLessonsOfAllClasses(fromCache: boolean, offset: number): Promise<TableData[]> {
+    const classList = await this.getClassList(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
     return Promise.all(
-      classList.map((item) => this.getLessons(cacheMode, 'class', item.unit, offset)),
+      classList.map((item) => this.getLessons(fromCache, 'class', item.unit, offset)),
     );
   }
 

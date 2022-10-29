@@ -17,12 +17,12 @@ export interface BaseClient {
   getTitle(cacheMode: CacheMode): Promise<string>;
   supportsOffsets: boolean;
   getLessons(
-    cacheMode: CacheMode,
+    fromCache: boolean,
     unitType: UnitType,
     unit: string,
     offset: number,
   ): Promise<TableData>;
-  getLessonsOfAllClasses(cacheMode: CacheMode, offset: number): Promise<TableData[]>;
+  getLessonsOfAllClasses(fromCache: boolean, offset: number): Promise<TableData[]>;
   getUnitNameMapper(cacheMode: CacheMode): Promise<(unitType: UnitType, unit: string) => string>;
 }
 

@@ -16,7 +16,7 @@ import { useOffset } from 'src/shared';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useClientRef } from 'src/api/client';
 import { TableData } from 'src/api/common';
-import { CacheMode, NotInCacheError } from 'src/api/requests';
+import { NotInCacheError } from 'src/api/requests';
 import { useQuasar } from 'quasar';
 import TimetableLayout from '../layouts/TimetableLayout.vue';
 
@@ -62,7 +62,7 @@ export default defineComponent({
 
         let cacheFailed = false;
         try {
-          const cachedData = await value.client.getLessonsOfAllClasses(CacheMode.CacheOnly, value.offset);
+          const cachedData = await value.client.getLessonsOfAllClasses(true, value.offset);
           if (currId !== refreshId) return;
           data.value = cachedData;
           clearTimeout(clearTimeoutId);
@@ -72,7 +72,7 @@ export default defineComponent({
         }
 
         try {
-          const networkData = await value.client.getLessonsOfAllClasses(CacheMode.NetworkOnly, value.offset);
+          const networkData = await value.client.getLessonsOfAllClasses(false, value.offset);
           if (currId !== refreshId) return;
           clearTimeout(clearTimeoutId);
           data.value = networkData;
@@ -98,7 +98,7 @@ export default defineComponent({
       data.value = null;
       errorMessage.value = null;
       try {
-        data.value = await dataRef.value.client.getLessonsOfAllClasses(CacheMode.NetworkOnly, dataRef.value.offset);
+        data.value = await dataRef.value.client.getLessonsOfAllClasses(false, dataRef.value.offset);
       } catch (error) {
         console.error(error);
         errorMessage.value = 'Nie udało się wczytać planu lekcji';

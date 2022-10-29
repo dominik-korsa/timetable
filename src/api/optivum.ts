@@ -3,7 +3,7 @@ import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   TableData, toProxiedUrl, toUmid, UnitType,
 } from 'src/api/common';
-import { randomColor, bangEncode } from 'src/utils';
+import { bangEncode, randomColor } from 'src/utils';
 import { BaseClient, ClassListItem } from 'src/api/client';
 
 export interface OptivumTimetableInfo {
@@ -67,10 +67,13 @@ export class OptivumClient implements BaseClient {
     return timetable.getTitle();
   }
 
-  async getLessons(cacheMode: CacheMode, unitType: UnitType, unit: string): Promise<TableData> {
+  async getLessons(fromCache: boolean, unitType: UnitType, unit: string): Promise<TableData> {
     if (unitType !== 'class') throw new Error('Not implemented');
     const tableUrl = new URL(`plany/o${unit}.html`, this.baseUrl);
-    const response = await fetchWithCache(cacheMode, toProxiedUrl(tableUrl).toString());
+    const response = await fetchWithCache(
+      fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly,
+      toProxiedUrl(tableUrl).toString(),
+    );
     const table = new Table(await response.text());
 
     return {
@@ -98,10 +101,10 @@ export class OptivumClient implements BaseClient {
     };
   }
 
-  async getLessonsOfAllClasses(cacheMode: CacheMode): Promise<TableData[]> {
-    const classList = await this.getClassList(cacheMode);
+  async getLessonsOfAllClasses(fromCache: boolean): Promise<TableData[]> {
+    const classList = await this.getClassList(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
     return Promise.all(
-      classList.map((item) => this.getLessons(cacheMode, 'class', item.unit)),
+      classList.map((item) => this.getLessons(fromCache, 'class', item.unit)),
     );
   }
 
