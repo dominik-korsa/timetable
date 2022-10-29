@@ -57,3 +57,5 @@ export const useOffset = (): Offset => {
     isCurrentWeek: computed(() => currentOffset.value === todayOffset.value),
   });
 };
+
+export const weekdayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];

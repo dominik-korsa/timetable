@@ -1,6 +1,8 @@
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
+  AllClassesLessons,
   TableData,
+  TableDataWithHours,
   TableHour,
   TableLessonMoment,
   toProxiedUrl,
@@ -137,7 +139,7 @@ export class VLoClient implements BaseClient {
     });
   }
 
-  async getLessons(
+  private async getLessonsPartial(
     fromCache: boolean,
     unitType: UnitType,
     unit: string,
@@ -145,8 +147,7 @@ export class VLoClient implements BaseClient {
   ): Promise<TableData> {
     const cacheMode = fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly;
     const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
-    const [hours, days, substitutionDays] = await Promise.all([
-      loadVLoHours(cacheMode),
+    const [days, substitutionDays] = await Promise.all([
       this.loadLessons(cacheMode, unitType, unit, offset),
       Promise.all([0, 1, 2, 3, 4].map((value) => VLoClient.loadVLoSubstitutions(
         cacheMode,
@@ -155,7 +156,6 @@ export class VLoClient implements BaseClient {
       ))),
     ]);
     return {
-      hours,
       lessons: days.map((day) => day.moments),
       unitName: unit,
       unitType,
@@ -167,11 +167,24 @@ export class VLoClient implements BaseClient {
     };
   }
 
-  async getLessonsOfAllClasses(fromCache: boolean, offset: number): Promise<TableData[]> {
+  async getLessons(fromCache: boolean, unitType: UnitType, unit: string, offset: number): Promise<TableDataWithHours> {
+    const [hours, partialData] = await Promise.all([
+      loadVLoHours(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
+      this.getLessonsPartial(fromCache, unitType, unit, offset),
+    ]);
+    return {
+      ...partialData,
+      hours,
+    };
+  }
+
+  async getLessonsOfAllClasses(fromCache: boolean, offset: number): Promise<AllClassesLessons> {
     const classList = await this.getClassList(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
-    return Promise.all(
-      classList.map((item) => this.getLessons(fromCache, 'class', item.unit, offset)),
-    );
+    const [hours, lessons] = await Promise.all([
+      loadVLoHours(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly),
+      Promise.all(classList.map((item) => this.getLessonsPartial(fromCache, 'class', item.unit, offset))),
+    ]);
+    return { hours, units: lessons };
   }
 
   getUnitNameMapper = async () => (unitType: string, unitValue: string) => unitValue;

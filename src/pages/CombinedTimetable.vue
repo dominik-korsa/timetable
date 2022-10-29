@@ -3,30 +3,54 @@
     title="Zestawienie"
     :offset="offset"
     :is-loading="isLoading"
-    :has-data="data !== null"
+    :has-data="weekdays !== null"
     :error-message="errorMessage"
     @retry-load="retryLoad()"
-  />
+  >
+    <template #default>
+      <div class="combined-timetable__wrapper overflow-auto">
+        <q-scroll-observer
+          axis="horizontal"
+          @scroll="onScroll"
+        />
+        <combined-timetable-grid
+          v-for="(weekday, i) in weekdays"
+          :key="i"
+          :weekday="weekday"
+        />
+      </div>
+    </template>
+  </timetable-layout>
 </template>
 <script lang="ts">
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
-import { useOffset } from 'src/shared';
+import { useOffset, weekdayNames } from 'src/shared';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useClientRef } from 'src/api/client';
-import { TableData } from 'src/api/common';
+import { AllClassesLessons } from 'src/api/common';
 import { NotInCacheError } from 'src/api/requests';
 import { useQuasar } from 'quasar';
+import CombinedTimetableGrid from 'components/CombinedTimetableGrid.vue';
 import TimetableLayout from '../layouts/TimetableLayout.vue';
 
+export interface Weekday {
+  name: string;
+  units: {
+    unitType: string;
+    unit: string;
+    unitName: string;
+  }[];
+}
+
 export default defineComponent({
-  components: { TimetableLayout },
+  components: { CombinedTimetableGrid, TimetableLayout },
   setup: () => {
     const clientRef = useClientRef();
     const quasar = useQuasar();
 
-    const data = ref<TableData[] | null>(null);
+    const data = ref<AllClassesLessons | null>(null);
     const errorMessage = ref<string | null>(null);
     const isLoading = ref(true);
 
@@ -105,13 +129,43 @@ export default defineComponent({
       }
     };
 
+    const weekdays = computed<Weekday[] | null>(() => {
+      if (data.value === null) return null;
+      const { hours, units } = data.value;
+      return weekdayNames.map((weekdayName, index) => ({
+        name: weekdayName,
+        units: units.map(({
+          lessons, unit, unitName, unitType,
+        }) => ({
+          unitType,
+          unit,
+          unitName,
+          lessons: lessons[index],
+        })),
+      }));
+    });
+
+    const scrollPosition = ref('0px');
+
     return {
       offset,
       retryLoad,
       isLoading,
       data,
       errorMessage,
+      weekdays,
+      onScroll: (event: { position: { top: number; left: number; } }) => {
+        scrollPosition.value = `${event.position.left}px`;
+      },
+      scrollPosition,
     };
   },
 });
 </script>
+
+<style lang="scss">
+.combined-timetable__wrapper {
+  height: 100%;
+  --timetable-scroll-left: v-bind(scrollPosition);
+}
+</style>

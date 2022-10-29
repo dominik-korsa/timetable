@@ -1,7 +1,11 @@
 import { Table, Timetable, TimetableList } from '@wulkanowy/timetable-parser';
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
-  TableData, toProxiedUrl, toUmid, UnitType,
+  AllClassesLessons,
+  TableDataWithHours,
+  toProxiedUrl,
+  toUmid,
+  UnitType,
 } from 'src/api/common';
 import { bangEncode, randomColor } from 'src/utils';
 import { BaseClient, ClassListItem } from 'src/api/client';
@@ -67,7 +71,7 @@ export class OptivumClient implements BaseClient {
     return timetable.getTitle();
   }
 
-  async getLessons(fromCache: boolean, unitType: UnitType, unit: string): Promise<TableData> {
+  async getLessons(fromCache: boolean, unitType: UnitType, unit: string): Promise<TableDataWithHours> {
     if (unitType !== 'class') throw new Error('Not implemented');
     const tableUrl = new URL(`plany/o${unit}.html`, this.baseUrl);
     const response = await fetchWithCache(
@@ -101,11 +105,12 @@ export class OptivumClient implements BaseClient {
     };
   }
 
-  async getLessonsOfAllClasses(fromCache: boolean): Promise<TableData[]> {
-    const classList = await this.getClassList(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
-    return Promise.all(
-      classList.map((item) => this.getLessons(fromCache, 'class', item.unit)),
-    );
+  async getLessonsOfAllClasses(fromCache: boolean): Promise<AllClassesLessons> {
+    throw new Error('Not implemented');
+    // const classList = await this.getClassList(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
+    // return Promise.all(
+    //   classList.map((item) => this.getLessons(fromCache, 'class', item.unit)),
+    // );
   }
 
   async getUnitNameMapper(cacheMode: CacheMode) {

@@ -80,7 +80,7 @@
 import {
   computed, defineComponent, onMounted, PropType, ref,
 } from 'vue';
-import { TableData, TableLessonMoment } from 'src/api/common';
+import { TableDataWithHours, TableLessonMoment } from 'src/api/common';
 import {
   adjacentDifference, parseHour, useDocumentListener, useInterval,
 } from 'src/utils';
@@ -90,6 +90,7 @@ import SubstitutionsButton from 'components/SubstitutionsButton.vue';
 import { useConfigStore } from 'stores/config';
 import { Temporal } from '@js-temporal/polyfill';
 import { ChangeOffsetFn } from 'layouts/TimetableLayout.vue';
+import { weekdayNames } from 'src/shared';
 
 interface TableItem {
   moment: TableLessonMoment;
@@ -101,7 +102,7 @@ export default defineComponent({
   components: { SubstitutionsButton, TimetableItem },
   props: {
     data: {
-      type: Object as PropType<TableData>,
+      type: Object as PropType<TableDataWithHours>,
       required: true,
     },
     isCurrentWeek: Boolean,
@@ -168,7 +169,6 @@ export default defineComponent({
       return items;
     }));
 
-    const weekdayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
     const headers = computed(() => {
       const headersValue = props.data.headers;
       if (headersValue === null) return weekdayNames.map((name) => ({ name }));

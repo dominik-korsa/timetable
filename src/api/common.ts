@@ -25,7 +25,6 @@ export interface TableLessonMoment {
 export type UnitType = 'class' | 'teacher' | 'room';
 
 export interface TableData {
-  hours: TableHour[];
   lessons: TableLessonMoment[][];
   unitName: string;
   unitType: UnitType;
@@ -34,6 +33,15 @@ export interface TableData {
     date: Temporal.PlainDate;
     substitutions: Substitution[];
   }[] | null;
+}
+
+export interface TableDataWithHours extends TableData {
+  hours: TableHour[];
+}
+
+export interface AllClassesLessons {
+  units: TableData[];
+  hours: TableHour[];
 }
 
 export const unitFullId = (

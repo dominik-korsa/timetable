@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts">
-import { TableData, UnitType } from 'src/api/common';
+import { TableDataWithHours, UnitType } from 'src/api/common';
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
@@ -86,7 +86,7 @@ export default defineComponent({
     const config = useConfigStore();
     const clientRef = useClientRef();
 
-    const data = ref<TableData | null>(null);
+    const data = ref<TableDataWithHours | null>(null);
     const errorMessage = ref<string | null>(null);
     const isLoading = ref(true);
 
@@ -115,7 +115,7 @@ export default defineComponent({
     const attemptLoad = async (
       loadedTableRef: TableRef,
       fromCache: boolean,
-    ): Promise<TableData> => loadedTableRef.client.getLessons(
+    ): Promise<TableDataWithHours> => loadedTableRef.client.getLessons(
       fromCache,
       loadedTableRef.unitType,
       loadedTableRef.unit,
