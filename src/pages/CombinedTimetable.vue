@@ -8,15 +8,9 @@
     @retry-load="retryLoad()"
   >
     <template #default>
-      <div class="combined-timetable__wrapper overflow-auto">
-        <q-scroll-observer
-          axis="horizontal"
-          @scroll="onScroll"
-        />
+      <div class="combined-timetable__wrapper">
         <combined-timetable-grid
-          v-for="(weekday, i) in weekdays"
-          :key="i"
-          :weekday="weekday"
+          :weekday="weekdays[0]"
           :hours="data.hours"
         />
       </div>
@@ -34,6 +28,7 @@ import { AllClassesLessons, TableLessonMoment } from 'src/api/common';
 import { NotInCacheError } from 'src/api/requests';
 import { useQuasar } from 'quasar';
 import CombinedTimetableGrid from 'components/CombinedTimetableGrid.vue';
+import { Substitution } from '@wulkanowy/asc-timetable-parser';
 import TimetableLayout from '../layouts/TimetableLayout.vue';
 
 export interface Weekday {
@@ -43,6 +38,7 @@ export interface Weekday {
     unit: string;
     unitName: string;
     moments: TableLessonMoment[];
+    substitutions: Substitution[];
   }[];
 }
 
@@ -137,17 +133,16 @@ export default defineComponent({
       return weekdayNames.map((weekdayName, index) => ({
         name: weekdayName,
         units: units.map(({
-          lessons, unit, unitName, unitType,
+          lessons, unit, unitName, unitType, headers,
         }) => ({
           unitType,
           unit,
           unitName,
           moments: lessons[index],
+          substitutions: headers?.[index]?.substitutions ?? [],
         })),
       }));
     });
-
-    const scrollPosition = ref('0px');
 
     return {
       offset,
@@ -156,10 +151,6 @@ export default defineComponent({
       data,
       errorMessage,
       weekdays,
-      onScroll: (event: { position: { top: number; left: number; } }) => {
-        scrollPosition.value = `${event.position.left}px`;
-      },
-      scrollPosition,
     };
   },
 });
@@ -168,6 +159,5 @@ export default defineComponent({
 <style lang="scss">
 .combined-timetable__wrapper {
   height: 100%;
-  --timetable-scroll-left: v-bind(scrollPosition);
 }
 </style>

@@ -1,25 +1,21 @@
 <template>
   <div class="combined-timetable-grid">
-    <div class="combined-timetable-grid__header">
-      <div class="combined-timetable-grid__header-top">
-        <div class="combined-timetable-grid__weekday">
-          {{ weekday.name }}
-        </div>
-        <div class="combined-timetable-grid__date">
-          DATA
-        </div>
-      </div>
-      <div class="combined-timetable-grid__header-bottom">
-        <div class="combined-timetable-grid__header-classes">
-          <div
-            v-for="unit in weekday.units"
-            :key="`${unit.unitType},${unit.unitName}`"
-            class="combined-timetable-grid__class"
-          >
-            Class {{ unit.unitName }}
+    <div class="combined-timetable-grid__header bg-page">
+      <div class="combined-timetable-grid__header-classes">
+        <div
+          v-for="unit in weekday.units"
+          :key="`${unit.unitType},${unit.unitName}`"
+          class="combined-timetable-grid__unit-name"
+        >
+          {{ unit.unitName }}
+          <div class="q-ml-sm q-my-xs">
+            <substitutions-button
+              v-if="unit.substitutions.length > 0"
+              :substitutions="unit.substitutions"
+              small
+            />
           </div>
         </div>
-        <q-separator />
       </div>
     </div>
     <div class="combined-timetable-grid__grid">
@@ -42,10 +38,11 @@ import {
   calculateRows, calculateTimestamps, TableHour, TableLessonMoment,
 } from 'src/api/common';
 import TimetableItem from 'components/TimetableItem.vue';
+import SubstitutionsButton from 'components/SubstitutionsButton.vue';
 
 export default defineComponent({
   name: 'CombinedTimetableGrid',
-  components: { TimetableItem },
+  components: { SubstitutionsButton, TimetableItem },
   props: {
     weekday: {
       type: Object as PropType<Weekday>,
@@ -88,21 +85,19 @@ export default defineComponent({
 $column-width: 75px;
 
 .combined-timetable-grid {
+  overflow: auto;
+  height: 100%;
+
   .combined-timetable-grid__header {
     position: sticky;
     top: 0;
-    width: 100%;
-  }
-
-  .combined-timetable-grid__header-top {
+    width: fit-content;
     display: flex;
     flex-direction: row;
     align-items: baseline;
     justify-content: space-between;
-    position: relative;
-    left: var(--timetable-scroll-left);
-    right: 0;
-    width: 100%;
+    z-index: 2;
+    border-bottom: 1px solid var(--separator-color);
 
     .combined-timetable-grid__weekday {
 
@@ -121,10 +116,16 @@ $column-width: 75px;
     display: flex;
     flex-direction: row;
 
-    .combined-timetable-grid__class {
+    .combined-timetable-grid__unit-name {
       width: $column-width;
       min-width: $column-width;
       max-width: $column-width;
+      text-align: center;
+      font-size: 1rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
     }
   }
 
