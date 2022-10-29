@@ -58,7 +58,7 @@ export default defineComponent({
   },
   setup: (props) => {
     const timestamps = computed(() => calculateTimestamps(props.hours, 10));
-    const hourPixels = 55;
+    const hourPixels = 50;
     return {
       rows: computed(() => calculateRows(timestamps.value, hourPixels)),
       items: computed(() => props.weekday.units.flatMap(({ moments }, unitIndex) => {
@@ -85,7 +85,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-$column-width: 100px;
+$column-width: 75px;
 
 .combined-timetable-grid {
   .combined-timetable-grid__header {
