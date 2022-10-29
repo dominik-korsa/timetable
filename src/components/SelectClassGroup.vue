@@ -5,7 +5,7 @@
   >
     <q-btn
       v-for="item in items"
-      :key="item.value"
+      :key="item.unit"
       class="select-class-group__button"
       :to="item.to"
       :outline="!$q.dark.isActive"

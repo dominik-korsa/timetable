@@ -1,12 +1,12 @@
 import { ComputedRef, inject, InjectionKey } from 'vue';
 import { CacheMode } from 'src/api/requests';
-import { DefaultsMap, bangDecode } from 'src/utils';
+import { bangDecode, DefaultsMap } from 'src/utils';
 import { VLoClient } from 'src/api/v-lo';
-import { TableData, UnitType } from 'src/api/common';
+import { AllClassesLessons, TableDataWithHours, UnitType } from 'src/api/common';
 import { OptivumClient } from 'src/api/optivum';
 
 export interface ClassListItem {
-  value: string;
+  unit: string;
   name: string;
 }
 
@@ -17,11 +17,12 @@ export interface BaseClient {
   getTitle(cacheMode: CacheMode): Promise<string>;
   supportsOffsets: boolean;
   getLessons(
-    cacheMode: CacheMode,
+    fromCache: boolean,
     unitType: UnitType,
     unit: string,
     offset: number,
-  ): Promise<TableData>;
+  ): Promise<TableDataWithHours>;
+  getLessonsOfAllClasses(fromCache: boolean, offset: number): Promise<AllClassesLessons>;
   getUnitNameMapper(cacheMode: CacheMode): Promise<(unitType: UnitType, unit: string) => string>;
 }
 

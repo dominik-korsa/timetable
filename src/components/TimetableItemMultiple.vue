@@ -1,20 +1,12 @@
 <template>
-  <div class="timetable-item-multiple">
+  <div
+    class="timetable-item-multiple"
+    :class="{
+      'timetable-item-multiple--small': small,
+    }"
+  >
     <div
-      v-if="favouriteLesson !== null"
-      class="timetable-item-multiple__favourite"
-    >
-      <timetable-item-single
-        :lesson="favouriteLesson"
-        show-color
-      />
-      <q-separator vertical />
-      <div class="timetable-item-multiple__more">
-        +{{ lessons.length-1 }}
-      </div>
-    </div>
-    <div
-      v-else
+      v-if="favouriteLesson === null"
       class="timetable-item-multiple__generic"
     >
       <div
@@ -25,6 +17,29 @@
       </div>
       <div class="timetable-item-multiple__count">
         <b>{{ lessons.length }}</b> {{ groupsText }}
+      </div>
+    </div>
+    <timetable-item-single
+      v-else-if="small"
+      :lesson="favouriteLesson"
+      show-color
+      small
+    >
+      <div class="timetable-item-multiple__more-small">
+        +{{ lessons.length-1 }}
+      </div>
+    </timetable-item-single>
+    <div
+      v-else
+      class="timetable-item-multiple__favourite"
+    >
+      <timetable-item-single
+        :lesson="favouriteLesson"
+        show-color
+      />
+      <q-separator vertical />
+      <div class="timetable-item-multiple__more">
+        +{{ lessons.length-1 }}
       </div>
     </div>
   </div>
@@ -54,6 +69,7 @@ export default defineComponent({
       required: false,
       default: undefined,
     },
+    small: Boolean,
   },
   setup: (props) => ({
     groupsText: computed(() => ({
@@ -90,6 +106,7 @@ export default defineComponent({
     padding: 2px;
     width: 100%;
     height: 100%;
+    font-size: 0.8rem;
 
     .timetable-item-multiple__common-subject {
       font-weight: 500;
@@ -97,11 +114,12 @@ export default defineComponent({
       text-overflow: ellipsis;
       overflow: hidden;
       margin-bottom: 3px;
+      font-size: 1em;
     }
 
     .timetable-item-multiple__count {
       font-style: italic;
-      font-size: 0.75rem;
+      font-size: 0.9em;
     }
   }
 
@@ -119,6 +137,28 @@ export default defineComponent({
       font-size: 0.7rem;
       align-self: center;
     }
+  }
+
+  &.timetable-item-multiple--small {
+    .timetable-item-multiple__generic {
+      font-size: 0.7rem;
+
+      .timetable-item-multiple__common-subject {
+        font-size: 0.85em
+      }
+    }
+  }
+
+  .timetable-item-multiple__more-small {
+    background: white;
+    overflow: hidden;
+    border: var(--separator-color) 1px;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-top-left-radius: $generic-border-radius;
+    padding: 1px 1px 0;
+    line-height: 1;
+    margin-left: 2px;
   }
 }
 </style>

@@ -37,6 +37,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('pages/UnitTimetable.vue'),
   },
   {
+    name: 'CombinedTimetable',
+    path: '/timetable/:tri/combined/',
+    component: () => import('pages/CombinedTimetable.vue'),
+  },
+  {
     path: '/pwa-home',
     redirect: () => {
       const config = useConfigStore();

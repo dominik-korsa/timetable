@@ -2,7 +2,7 @@
   <q-btn
     round
     color="amber-8"
-    size="sm"
+    :size="small ? 'xs' : 'sm'"
     outline
     class="substitutions-button"
     @click="dialogVisible = true"
@@ -51,6 +51,7 @@ export default defineComponent({
       type: Array as PropType<Substitution[]>,
       required: true,
     },
+    small: Boolean,
   },
   setup: (props) => ({
     dialogVisible: ref(false),

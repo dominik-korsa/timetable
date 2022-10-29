@@ -17,11 +17,13 @@
       v-if="moment.lessons.length === 1"
       :lesson="moment.lessons[0]"
       :show-color="favourite !== null"
+      :small="small"
     />
     <timetable-item-multiple
       v-else
       :lessons="moment.lessons"
       :favourite="favourite"
+      :small="small"
     />
     <q-dialog
       v-model="dialogVisible"
@@ -54,6 +56,7 @@ export default defineComponent({
       type: Object as PropType<TableLessonMoment>,
       required: true,
     },
+    small: Boolean,
   },
   setup: (props) => {
     const config = useConfigStore();

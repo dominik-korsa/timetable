@@ -2,7 +2,8 @@
   <div
     class="timetable-item-single"
     :class="{
-      'timetable-item-single--removed': lesson.removed
+      'timetable-item-single--removed': lesson.removed,
+      'timetable-item-single--small': small,
     }"
   >
     <div class="timetable-item-single__top">
@@ -13,13 +14,23 @@
         {{ lesson.room }}
       </div>
     </div>
+    <div
+      v-if="small"
+      class="timetable-item-single__group"
+    >
+      {{ lesson.group }}
+    </div>
     <div class="timetable-item-single__bottom">
-      <div class="timetable-item-single__group">
+      <div
+        v-if="!small"
+        class="timetable-item-single__group"
+      >
         {{ lesson.group }}
       </div>
       <div class="timetable-item-single__teacher">
         {{ lesson.teacher }}
       </div>
+      <slot />
     </div>
   </div>
 </template>
@@ -40,12 +51,15 @@ export default defineComponent({
     },
     fullSubject: Boolean,
     showColor: Boolean,
+    small: Boolean,
   },
   setup: (props) => {
     const config = useConfigStore();
     return ({
       background: computed(
-        () => (props.showColor && config.showColors && props.lesson.color ? withOpacity(props.lesson.color, 45) : 'transparent'),
+        () => (props.showColor && config.showColors && props.lesson.color
+          ? withOpacity(props.lesson.color, 45)
+          : 'transparent'),
       ),
     });
   },
@@ -57,18 +71,28 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 4px;
   font-size: 0.75rem;
   line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   background: v-bind(background);
 
+  .timetable-item-single__top {
+    padding-top: 4px;
+  }
+
+  .timetable-item-single__bottom {
+    padding-bottom: 4px;
+  }
+
   .timetable-item-single__top, .timetable-item-single__bottom {
     display: flex;
     justify-content: space-between;
     overflow-x: hidden;
     width: 100%;
+    box-sizing: border-box;
+    padding-left: 4px;
+    padding-right: 4px;
   }
 
   .timetable-item-single__subject {
@@ -115,6 +139,40 @@ export default defineComponent({
 
     .timetable-item-single__subject {
       text-decoration: line-through 1.5px;
+    }
+  }
+
+  &.timetable-item-single--small {
+    font-size: 0.5rem;
+
+    .timetable-item-single__top {
+      padding-top: 2px;
+      padding-left: 2px;
+      padding-right: 2px;
+    }
+
+    .timetable-item-single__bottom {
+      padding-left: 2px;
+      padding-right: 0;
+      padding-bottom: 0;
+    }
+
+    .timetable-item-single__room {
+      font-size: 1.3em;
+      flex-basis: fit-content;
+      flex-shrink: 0;
+    }
+
+    .timetable-item-single__group {
+      text-align: center;
+      padding-left: 2px;
+      padding-right: 2px;
+    }
+
+    .timetable-item-single__teacher {
+      flex-grow: 1;
+      padding-bottom: 2px;
+      text-align: left;
     }
   }
 }

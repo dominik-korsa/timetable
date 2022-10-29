@@ -1,18 +1,25 @@
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
-  TableData,
-  TableHour, TableLessonMoment, toProxiedUrl, toUmid, UnitType,
+  AllClassesLessons,
+  TableDataBase,
+  TableDataWithHours,
+  TableHour,
+  TableLessonMoment,
+  toProxiedUrl,
+  toUmid,
+  UnitType,
 } from 'src/api/common';
 import _ from 'lodash';
 import { mondayOf } from 'src/date-utils';
 import {
-  Substitution,
   getSubstitutionsBody,
   getSubstitutionsUrl,
   parseSubstitutions,
+  Substitution,
 } from '@wulkanowy/asc-timetable-parser';
 import { Temporal } from '@js-temporal/polyfill';
 import { BaseClient, ClassListItem } from 'src/api/client';
+import { DefaultsMap } from 'src/utils';
 
 interface TimestampsResponseItem {
   begin: string;
@@ -57,16 +64,15 @@ export class VLoClient implements BaseClient {
     const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/vlo/listclass');
     const classes = await response.json() as string[];
     return classes.map((value) => ({
-      value,
+      unit: value,
       name: value,
     }));
   }
 
-  static async loadVLoSubstitutions(
+  private static async loadVLoSubstitutions(
     cacheMode: CacheMode,
-    classValue: string,
     date: Temporal.PlainDate,
-  ): Promise<Substitution[]> {
+  ): Promise<(classValue: string) => Substitution[]> {
     const url = new URL(getSubstitutionsUrl(), 'https://www.v-lo.krakow.pl/');
     const proxiedUrl = toProxiedUrl(url).toString();
     const response = await fetchWithCache(
@@ -80,9 +86,11 @@ export class VLoClient implements BaseClient {
     );
     const body = await response.text();
     const parsed = parseSubstitutions(body);
-    return parsed.sections
-      .filter((value) => value.name.toLowerCase() === classValue.toLowerCase())
-      .flatMap((value) => value.changes);
+    const substitutions = new DefaultsMap<string, Substitution[]>(() => []);
+    parsed.sections.forEach((section) => {
+      substitutions.get(section.name.toLowerCase()).push(...section.changes);
+    });
+    return (classValue: string) => substitutions.get(classValue.toLowerCase());
   }
 
   private async loadLessons(
@@ -133,29 +141,66 @@ export class VLoClient implements BaseClient {
     });
   }
 
-  async getLessons(
-    cacheMode: CacheMode,
+  private async getLessonsPartial(
+    fromCache: boolean,
     unitType: UnitType,
     unit: string,
     offset: number,
-  ): Promise<TableData> {
+  ): Promise<TableDataBase> {
+    const cacheMode = fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly;
+    const days = await this.loadLessons(cacheMode, unitType, unit, offset);
+    return {
+      lessons: days.map((day) => day.moments),
+      unitName: unit,
+      unitType,
+      unit,
+      headers: days.map((day) => ({
+        date: day.date,
+      })),
+    };
+  }
+
+  async getLessons(fromCache: boolean, unitType: UnitType, unit: string, offset: number): Promise<TableDataWithHours> {
+    const cacheMode = fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate;
     const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
-    const [hours, days, substitutionDays] = await Promise.all([
+    const [hours, partialData, substitutions] = await Promise.all([
       loadVLoHours(cacheMode),
-      this.loadLessons(cacheMode, unitType, unit, offset),
+      this.getLessonsPartial(fromCache, unitType, unit, offset),
       Promise.all([0, 1, 2, 3, 4].map((value) => VLoClient.loadVLoSubstitutions(
         cacheMode,
-        unit,
+        monday.add({ days: value }),
+      ))),
+    ]);
+    return {
+      ...partialData,
+      hours,
+      headers: partialData.headers?.map((header, dayIndex) => ({
+        ...header,
+        substitutions: substitutions[dayIndex](unit),
+      })) ?? null,
+    };
+  }
+
+  async getLessonsOfAllClasses(fromCache: boolean, offset: number): Promise<AllClassesLessons> {
+    const classList = await this.getClassList(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
+    const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
+    const cacheMode = fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly;
+    const [hours, lessons, substitutions] = await Promise.all([
+      loadVLoHours(cacheMode),
+      Promise.all(classList.map((item) => this.getLessonsPartial(fromCache, 'class', item.unit, offset))),
+      Promise.all([0, 1, 2, 3, 4].map((value) => VLoClient.loadVLoSubstitutions(
+        cacheMode,
         monday.add({ days: value }),
       ))),
     ]);
     return {
       hours,
-      lessons: days.map((day) => day.moments),
-      className: unit,
-      headers: days.map((day, dayIndex) => ({
-        date: day.date,
-        substitutions: substitutionDays[dayIndex],
+      units: lessons.map((unit) => ({
+        ...unit,
+        headers: unit.headers?.map((header, dayIndex) => ({
+          ...header,
+          substitutions: substitutions[dayIndex](unit.unit),
+        })) ?? null,
       })),
     };
   }

@@ -80,15 +80,17 @@
 import {
   computed, defineComponent, onMounted, PropType, ref,
 } from 'vue';
-import { TableData, TableLessonMoment } from 'src/api/common';
 import {
-  adjacentDifference, parseHour, useDocumentListener, useInterval,
-} from 'src/utils';
+  calculateRows, calculateTimestamps, TableDataWithHours, TableLessonMoment,
+} from 'src/api/common';
+import { useDocumentListener, useInterval } from 'src/utils';
 import _ from 'lodash';
 import TimetableItem from 'components/TimetableItem.vue';
 import SubstitutionsButton from 'components/SubstitutionsButton.vue';
 import { useConfigStore } from 'stores/config';
 import { Temporal } from '@js-temporal/polyfill';
+import { ChangeOffsetFn } from 'layouts/TimetableLayout.vue';
+import { weekdayNames } from 'src/shared';
 
 interface TableItem {
   moment: TableLessonMoment;
@@ -100,32 +102,19 @@ export default defineComponent({
   components: { SubstitutionsButton, TimetableItem },
   props: {
     data: {
-      type: Object as PropType<TableData>,
+      type: Object as PropType<TableDataWithHours>,
       required: true,
     },
     isCurrentWeek: Boolean,
     changeOffset: {
-      type: Function as PropType<(direction: -1|1) => boolean>,
+      type: Function as PropType<ChangeOffsetFn>,
       required: true,
     },
   },
   setup: (props) => {
     const config = useConfigStore();
 
-    const timestamps = computed(
-      () => {
-        const realTimestamps = _.flatMap(
-          props.data.hours,
-          ({ begin, end }) => [begin, end],
-        )
-          .map(parseHour);
-        return [
-          realTimestamps[0] - 30,
-          ...realTimestamps,
-          _.last(realTimestamps)! + 30,
-        ];
-      },
-    );
+    const timestamps = computed(() => calculateTimestamps(props.data.hours, 30));
     const now = ref<Temporal.ZonedDateTime>(Temporal.Now.zonedDateTimeISO());
     useInterval(() => {
       now.value = Temporal.Now.zonedDateTimeISO();
@@ -167,7 +156,6 @@ export default defineComponent({
       return items;
     }));
 
-    const weekdayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
     const headers = computed(() => {
       const headersValue = props.data.headers;
       if (headersValue === null) return weekdayNames.map((name) => ({ name }));
@@ -250,11 +238,7 @@ export default defineComponent({
     return {
       config: useConfigStore(),
       daysEl,
-      rows: computed(
-        () => adjacentDifference(timestamps.value)
-          .map((v) => `${(v * hourPixels) / 60}px`)
-          .join(' '),
-      ),
+      rows: computed(() => calculateRows(timestamps.value, hourPixels)),
       markerPosition,
       lessonItems,
       headers,
