@@ -92,6 +92,9 @@
           </q-menu>
         </q-btn>
       </q-toolbar>
+      <div>
+        <slot name="tabs" />
+      </div>
     </q-header>
 
     <q-page-container>

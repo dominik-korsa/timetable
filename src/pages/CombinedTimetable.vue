@@ -1,6 +1,6 @@
 <template>
   <timetable-layout
-    title="Zestawienie"
+    title=""
     :offset="offset"
     :is-loading="isLoading"
     :has-data="weekdays !== null"
@@ -10,10 +10,38 @@
     <template #default>
       <div class="combined-timetable__wrapper">
         <combined-timetable-grid
-          :weekday="weekdays[0]"
+          :weekday="weekdays[dayIndex]"
           :hours="data.hours"
         />
       </div>
+    </template>
+    <template #tabs>
+      <q-tabs
+        v-model="dayIndex"
+        align="justify"
+        class="text-grey combined-timetable__tabs"
+        active-color="primary"
+        indicator-color="primary"
+        dense
+        narrow-indicator
+        no-caps
+      >
+        <q-tab
+          v-for="(tab, i) in tabs"
+          :key="i"
+          :name="i"
+        >
+          <div class="text-weight-medium">
+            {{ tab.name }}
+          </div>
+          <div
+            v-if="tab.date !== null"
+            class="text-caption combined-timetable__tab-date"
+          >
+            {{ tab.date }}
+          </div>
+        </q-tab>
+      </q-tabs>
     </template>
   </timetable-layout>
 </template>
@@ -21,7 +49,7 @@
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
-import { useOffset, weekdayNames } from 'src/shared';
+import { useOffset, weekdayNames, weekdayNamesShort } from 'src/shared';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useClientRef } from 'src/api/client';
 import { AllClassesLessons, TableLessonMoment } from 'src/api/common';
@@ -29,6 +57,9 @@ import { NotInCacheError } from 'src/api/requests';
 import { useQuasar } from 'quasar';
 import CombinedTimetableGrid from 'components/CombinedTimetableGrid.vue';
 import { Substitution } from '@wulkanowy/asc-timetable-parser';
+import { Temporal } from '@js-temporal/polyfill';
+import { mondayOf } from 'src/date-utils';
+import { useConfigStore } from 'stores/config';
 import TimetableLayout from '../layouts/TimetableLayout.vue';
 
 export interface Weekday {
@@ -47,10 +78,13 @@ export default defineComponent({
   setup: () => {
     const clientRef = useClientRef();
     const quasar = useQuasar();
+    const config = useConfigStore();
 
     const data = ref<AllClassesLessons | null>(null);
     const errorMessage = ref<string | null>(null);
     const isLoading = ref(true);
+    const { dayOfWeek } = Temporal.Now.plainDateISO();
+    const dayIndex = ref([0, 6].includes(dayOfWeek) ? 0 : dayOfWeek - 1);
 
     let refreshId = 0;
 
@@ -151,6 +185,19 @@ export default defineComponent({
       data,
       errorMessage,
       weekdays,
+      dayIndex,
+      tabs: computed(() => {
+        const monday = offset.value === null
+          ? null
+          : mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset.value.current });
+        return (quasar.screen.lt.sm ? weekdayNamesShort : weekdayNames).map((name, weekdayIndex) => {
+          const date = monday?.add({ days: weekdayIndex }) ?? null;
+          return ({
+            name,
+            date: date === null ? null : (config.iso8601 ? date.toString() : date.toLocaleString()),
+          });
+        });
+      }),
     };
   },
 });
@@ -159,5 +206,21 @@ export default defineComponent({
 <style lang="scss">
 .combined-timetable__wrapper {
   height: 100%;
+}
+
+.combined-timetable__tabs {
+  .q-tab {
+    padding: 0;
+  }
+
+  .q-tab__content {
+    min-width: 20px;
+  }
+
+  .combined-timetable__tab-date {
+    font-size: min(0.7rem, 2.7vw);
+    line-height: 1.2;
+    padding-bottom: 2px;
+  }
 }
 </style>

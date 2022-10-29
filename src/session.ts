@@ -9,4 +9,4 @@ export function useSessionStorage<T>(key: string, defaultValue: T) {
   return backing;
 }
 
-export const getDayOffsetSession = (defaultValue: number) => useSessionStorage<number>('day-offset', defaultValue);
+export const getWeekOffsetSession = (defaultValue: number) => useSessionStorage<number>('week-offset', defaultValue);

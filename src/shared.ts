@@ -1,7 +1,7 @@
 import { RouteLocationRaw, Router } from 'vue-router';
 import { computed, reactive } from 'vue';
 import { Temporal } from '@js-temporal/polyfill';
-import { getDayOffsetSession } from 'src/session';
+import { getWeekOffsetSession } from 'src/session';
 
 export function shake(el: Element, reverse: boolean) {
   const keyframes = [
@@ -21,7 +21,6 @@ export function goBack(router: Router, to: RouteLocationRaw) {
 }
 
 export interface Offset {
-  today: number;
   current: number;
   decreaseDisabled: boolean;
   increaseDisabled: boolean;
@@ -34,11 +33,10 @@ export const useOffset = (): Offset => {
   const todayOffset = computed<number>(
     () => ([6, 7].includes(Temporal.Now.plainDateISO().dayOfWeek) ? 1 : 0),
   );
-  const currentOffset = getDayOffsetSession(todayOffset.value);
+  const currentOffset = getWeekOffsetSession(todayOffset.value);
   const decreaseDisabled = computed(() => currentOffset.value <= -5);
   const increaseDisabled = computed(() => currentOffset.value >= 5);
   return reactive({
-    today: todayOffset,
     current: currentOffset,
     decreaseDisabled,
     increaseDisabled,
@@ -59,3 +57,4 @@ export const useOffset = (): Offset => {
 };
 
 export const weekdayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
+export const weekdayNamesShort = ['pon', 'wt', 'śr', 'czw', 'pt'];
