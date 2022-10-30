@@ -12,6 +12,7 @@
         :data="data"
         :is-current-week="offset?.isCurrentWeek ?? true"
         :change-offset="changeOffset"
+        :dense="dense"
       />
     </template>
     <template #menu>
@@ -50,6 +51,22 @@
           >
             Włączono
           </q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item
+        v-if="densePossible"
+        clickable
+        class="non-selectable"
+        @click="toggleDense"
+      >
+        <q-item-section side>
+          <q-icon
+            :name="config.dense ? 'view_compact_alt' : 'view_comfy_alt'"
+            :color="config.dense ? 'primary' : undefined"
+          />
+        </q-item-section>
+        <q-item-section>
+          {{ config.dense ? 'Wyłącz tryb kompaktowy' : 'Włącz tryb kompaktowy' }}
         </q-item-section>
       </q-item>
     </template>
@@ -196,7 +213,10 @@ export default defineComponent({
         && config.startupUnit.unit === tableRef.value.unit,
     );
 
+    const densePossible = computed(() => quasar.screen.width <= 900);
+
     return {
+      config,
       data,
       errorMessage,
       retryLoad,
@@ -228,6 +248,9 @@ export default defineComponent({
         });
       },
       isLoading,
+      densePossible,
+      toggleDense: () => { config.toggleDense(); },
+      dense: computed(() => config.dense && densePossible.value),
     };
   },
 });

@@ -27,6 +27,7 @@ export const useConfigStore = defineStore('config', {
     scrollSnap: true,
     iso8601: false,
     showColors: true,
+    dense: false,
   }),
   actions: {
     addHistoryEntry(info: OptivumTimetableInfo) {
@@ -81,6 +82,9 @@ export const useConfigStore = defineStore('config', {
     toggleColors() {
       this.showColors = !this.showColors;
     },
+    toggleDense() {
+      this.dense = !this.dense;
+    },
   },
   persist: {
     beforeRestore: (/* ctx */) => {
@@ -109,6 +113,7 @@ export const useConfigStore = defineStore('config', {
               unit: content.startupTable.classValue,
             } : null,
           favouriteUnits: {},
+          dense: false,
         };
       }
       window.localStorage.setItem('config', JSON.stringify(content));

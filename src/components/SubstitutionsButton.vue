@@ -1,13 +1,20 @@
 <template>
   <q-btn
-    round
+    :round="!block"
+    :rounded="block"
     color="amber-8"
     :size="small ? 'xs' : 'sm'"
     outline
     class="substitutions-button"
+    no-caps
+    :dense="block"
     @click="dialogVisible = true"
   >
     {{ substitutions.length }}
+    <span
+      v-if="block && $q.screen.width > 300"
+      class="substitutions-button__changes"
+    >{{ changesText }}</span>
     <q-tooltip>Zastępstwa</q-tooltip>
   </q-btn>
   <q-dialog v-model="dialogVisible">
@@ -37,7 +44,7 @@
 import {
   computed, defineComponent, PropType, ref,
 } from 'vue';
-import { Substitution, LessonRange } from '@wulkanowy/asc-timetable-parser';
+import { LessonRange, Substitution } from '@wulkanowy/asc-timetable-parser';
 
 function formatTimeSignature(range: LessonRange | null): string {
   if (range === null) return 'Cały dzień';
@@ -52,6 +59,7 @@ export default defineComponent({
       required: true,
     },
     small: Boolean,
+    block: Boolean,
   },
   setup: (props) => ({
     dialogVisible: ref(false),
@@ -63,6 +71,22 @@ export default defineComponent({
         timeSignature: formatTimeSignature(change.lessons),
       }));
     }),
+    changesText: computed(() => ({
+      zero: 'zmiany',
+      one: 'zmiana',
+      two: 'zmiany',
+      few: 'zmiany',
+      many: 'zmian',
+      other: 'zmian',
+    }[new Intl.PluralRules('pl-PL').select(props.substitutions.length)])),
   }),
 });
 </script>
+
+<style lang="scss">
+.substitutions-button {
+  .substitutions-button__changes {
+    margin-left: 0.3em;
+  }
+}
+</style>

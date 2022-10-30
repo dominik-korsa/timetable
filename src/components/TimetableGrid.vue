@@ -4,6 +4,7 @@
     class="timetable-grid__wrapper"
     :class="{
       'timetable-grid__wrapper--scroll-snap': config.scrollSnap,
+      'timetable-grid__wrapper--dense': dense,
     }"
   >
     <div
@@ -20,6 +21,7 @@
           :key="item.gridRow"
           :style="`grid-row: ${item.gridRow}`"
           :moment="item.moment"
+          :small="dense"
         />
         <div
           v-if="markerPosition !== null && markerPosition.dayIndex === i"
@@ -33,7 +35,10 @@
       <div
         v-for="(header, i) in headers"
         :key="i"
-        class="timetable-grid__header row items-center bg-page text-center q-pb-xs"
+        class="timetable-grid__header bg-page text-center q-pb-xs"
+        :class="{
+          'timetable-grid__header--dense': gridHeaderDense
+        }"
       >
         <div class="timetable-grid__header-content col-grow">
           <div class="timetable-grid__header-name">
@@ -49,6 +54,8 @@
         <substitutions-button
           v-if="header.substitutions && header.substitutions.length > 0"
           :substitutions="header.substitutions"
+          :block="gridHeaderDense"
+          :small="gridHeaderDense && $q.screen.lt.sm"
         />
       </div>
     </div>
@@ -90,7 +97,8 @@ import SubstitutionsButton from 'components/SubstitutionsButton.vue';
 import { useConfigStore } from 'stores/config';
 import { Temporal } from '@js-temporal/polyfill';
 import { ChangeOffsetFn } from 'layouts/TimetableLayout.vue';
-import { weekdayNames } from 'src/shared';
+import { weekdayNames, weekdayNamesShort } from 'src/shared';
+import { useQuasar } from 'quasar';
 
 interface TableItem {
   moment: TableLessonMoment;
@@ -110,9 +118,11 @@ export default defineComponent({
       type: Function as PropType<ChangeOffsetFn>,
       required: true,
     },
+    dense: Boolean,
   },
   setup: (props) => {
     const config = useConfigStore();
+    const quasar = useQuasar();
 
     const timestamps = computed(() => calculateTimestamps(props.data.hours, 30));
     const now = ref<Temporal.ZonedDateTime>(Temporal.Now.zonedDateTimeISO());
@@ -120,7 +130,7 @@ export default defineComponent({
       now.value = Temporal.Now.zonedDateTimeISO();
     }, 5000, true);
 
-    const hourPixels = 55;
+    const hourPixels = computed(() => (props.dense ? 50 : 55));
 
     const dayIndex = computed(() => {
       if (!props.isCurrentWeek) return null;
@@ -140,7 +150,7 @@ export default defineComponent({
       ) return null;
       return {
         dayIndex: dayIndex.value,
-        offset: ((timePosition - timestamps.value[0]) * hourPixels) / 60,
+        offset: ((timePosition - timestamps.value[0]) * hourPixels.value) / 60,
       };
     });
 
@@ -158,9 +168,10 @@ export default defineComponent({
 
     const headers = computed(() => {
       const headersValue = props.data.headers;
-      if (headersValue === null) return weekdayNames.map((name) => ({ name }));
+      const adequateWeekdayNames = (props.dense && quasar.screen.width <= 500) ? weekdayNamesShort : weekdayNames;
+      if (headersValue === null) return adequateWeekdayNames.map((name) => ({ name }));
 
-      return weekdayNames.map((name, index) => {
+      return adequateWeekdayNames.map((name, index) => {
         const header = headersValue[index];
         return ({
           name,
@@ -238,11 +249,12 @@ export default defineComponent({
     return {
       config: useConfigStore(),
       daysEl,
-      rows: computed(() => calculateRows(timestamps.value, hourPixels)),
+      rows: computed(() => calculateRows(timestamps.value, hourPixels.value)),
       markerPosition,
       lessonItems,
       headers,
       gridWrapper: wrapper,
+      gridHeaderDense: computed(() => props.dense && quasar.screen.width < 650),
     };
   },
 });
@@ -268,7 +280,7 @@ $timetable-gap: 4px;
   @media (max-width: 525px) { --column-count: 2; }
   @media (max-width: 350px) { --column-count: 1; }
 
-  $width: calc((100% - #{$timetable-gap}) / var(--column-count));
+  --column-width: calc((100% - #{$timetable-gap}) / var(--column-count));
 
   .timetable-grid__temporal-wrapper {
     grid-column: 1;
@@ -361,8 +373,8 @@ $timetable-gap: 4px;
     top: -1px;
     margin-top: -1px;
     display: grid;
-    grid-template-columns: calc(#{$width} + #{$timetable-gap});
-    grid-auto-columns: $width;
+    grid-template-columns: calc(var(--column-width) + #{$timetable-gap});
+    grid-auto-columns: var(--column-width);
     min-width: 0;
 
     .timetable-grid__header {
@@ -370,6 +382,9 @@ $timetable-gap: 4px;
       border-bottom: solid var(--separator-color) 1px;
       padding-right: $timetable-gap;
       font-size: 0.85rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
 
       .timetable-grid__header-name {
         line-height: 1.4;
@@ -387,6 +402,16 @@ $timetable-gap: 4px;
       &:first-of-type {
         padding-left: $timetable-gap;
       }
+
+      &.timetable-grid__header--dense {
+        display: block;
+
+        .substitutions-button {
+          width: 100%;
+          margin-bottom: -2px;
+          margin-top: 2px;
+        }
+      }
     }
   }
 
@@ -396,12 +421,12 @@ $timetable-gap: 4px;
     display: flex;
 
     .timetable-grid__day {
-      width: $width;
+      width: var(--column-width);
       padding-right: $timetable-gap;
       box-sizing: border-box;
       display: grid;
       grid-template-rows: v-bind(rows);
-      flex: 0 0 $width;
+      flex: 0 0 var(--column-width);
       scroll-snap-align: end;
       scroll-snap-stop: normal;
       position: relative;
@@ -457,6 +482,14 @@ $timetable-gap: 4px;
     margin-top: -1px;
     margin-right: -1px;
     left: 0;
+  }
+
+  &.timetable-grid__wrapper--dense {
+    --column-count: 5;
+
+    .timetable-grid__header-date {
+      font-size: min(calc((100vw - 32px) * 0.03), 0.9em) !important;
+    }
   }
 }
 </style>

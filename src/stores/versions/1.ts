@@ -29,4 +29,5 @@ export interface ConfigV1 {
   scrollSnap: boolean;
   iso8601: boolean;
   showColors: boolean;
+  dense: boolean;
 }
