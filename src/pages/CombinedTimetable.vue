@@ -16,32 +16,46 @@
       </div>
     </template>
     <template #tabs>
-      <q-tabs
-        v-model="dayIndex"
-        align="justify"
-        class="text-grey combined-timetable__tabs"
-        active-color="primary"
-        indicator-color="primary"
-        dense
-        narrow-indicator
-        no-caps
+      <q-tab-panels
+        :model-value="offset?.current ?? 0"
+        animated
+        :swipeable="false"
+        class="bg-transparent"
       >
-        <q-tab
-          v-for="(tab, i) in tabs"
-          :key="i"
-          :name="i"
+        <q-tab-panel
+          v-for="{weekOffset, tabs} in tabPanels"
+          :key="weekOffset"
+          :name="weekOffset"
+          class="q-pa-none"
         >
-          <div class="text-weight-medium">
-            {{ tab.name }}
-          </div>
-          <div
-            v-if="tab.date !== null"
-            class="text-caption combined-timetable__tab-date"
+          <q-tabs
+            v-model="dayIndex"
+            align="justify"
+            class="text-grey combined-timetable__tabs"
+            active-color="primary"
+            indicator-color="primary"
+            dense
+            narrow-indicator
+            no-caps
           >
-            {{ tab.date }}
-          </div>
-        </q-tab>
-      </q-tabs>
+            <q-tab
+              v-for="(tab, i) in tabs"
+              :key="i"
+              :name="i"
+            >
+              <div class="text-weight-medium">
+                {{ tab.name }}
+              </div>
+              <div
+                v-if="tab.date !== null"
+                class="text-caption combined-timetable__tab-date"
+              >
+                {{ tab.date }}
+              </div>
+            </q-tab>
+          </q-tabs>
+        </q-tab-panel>
+      </q-tab-panels>
     </template>
   </timetable-layout>
 </template>
@@ -84,7 +98,7 @@ export default defineComponent({
     const errorMessage = ref<string | null>(null);
     const isLoading = ref(true);
     const { dayOfWeek } = Temporal.Now.plainDateISO();
-    const dayIndex = ref([0, 6].includes(dayOfWeek) ? 0 : dayOfWeek - 1);
+    const dayIndex = ref([6, 7].includes(dayOfWeek) ? 0 : (dayOfWeek - 1));
 
     let refreshId = 0;
 
@@ -186,17 +200,25 @@ export default defineComponent({
       errorMessage,
       weekdays,
       dayIndex,
-      tabs: computed(() => {
+      tabPanels: computed(() => {
         const monday = offset.value === null
           ? null
           : mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset.value.current });
-        return (quasar.screen.lt.sm ? weekdayNamesShort : weekdayNames).map((name, weekdayIndex) => {
-          const date = monday?.add({ days: weekdayIndex }) ?? null;
-          return ({
-            name,
-            date: date === null ? null : (config.iso8601 ? date.toString() : date.toLocaleString()),
-          });
-        });
+        const offsets = offset.value === null ? [0] : [
+          offset.value.current - 1,
+          offset.value.current,
+          offset.value.current + 1,
+        ];
+        return offsets.map((weekOffset) => ({
+          weekOffset,
+          tabs: (quasar.screen.lt.sm ? weekdayNamesShort : weekdayNames).map((name, weekdayIndex) => {
+            const date = monday?.add({ weeks: weekOffset }).add({ days: weekdayIndex }) ?? null;
+            return ({
+              name,
+              date: date === null ? null : (config.iso8601 ? date.toString() : date.toLocaleString()),
+            });
+          }),
+        }));
       }),
     };
   },
