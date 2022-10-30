@@ -40,6 +40,16 @@ export default defineComponent({
       }
     }, { immediate: true });
 
+    if (window.sessionStorage.getItem('just-updated') !== null) {
+      window.sessionStorage.removeItem('just-updated');
+      quasar.notify({
+        icon: 'arrow_circle_up',
+        message: 'Zaktualizowano aplikację!',
+        caption: 'Korzystasz teraz z najnowszej wersji',
+        timeout: 6000,
+      });
+    }
+
     watch(
       () => config.dark,
       (value) => quasar.dark.set(value),

@@ -29,6 +29,7 @@ register(process.env.SERVICE_WORKER_FILE as string, {
 
   updated(/* registration */) {
     // console.log('New content is available; please refresh.');
+    window.sessionStorage.setItem('just-updated', '');
     window.location.reload();
   },
 
