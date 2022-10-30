@@ -63,7 +63,9 @@
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
-import { useOffset, weekdayNames, weekdayNamesShort } from 'src/shared';
+import {
+  useIsFavourite, useOffset, weekdayNames, weekdayNamesShort,
+} from 'src/shared';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useClientRef } from 'src/api/client';
 import { AllClassesLessons, TableLessonMoment } from 'src/api/common';
@@ -84,6 +86,7 @@ export interface Weekday {
     unitName: string;
     moments: TableLessonMoment[];
     substitutions: Substitution[];
+    isFavourite: boolean;
   }[];
 }
 
@@ -93,6 +96,7 @@ export default defineComponent({
     const clientRef = useClientRef();
     const quasar = useQuasar();
     const config = useConfigStore();
+    const isFavourite = useIsFavourite();
 
     const data = ref<AllClassesLessons | null>(null);
     const errorMessage = ref<string | null>(null);
@@ -188,6 +192,7 @@ export default defineComponent({
           unitName,
           moments: lessons[index],
           substitutions: headers?.[index]?.substitutions ?? [],
+          isFavourite: isFavourite.value(unitType, unit),
         })),
       }));
     });

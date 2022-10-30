@@ -5,12 +5,21 @@
         <div
           v-for="unit in weekday.units"
           :key="`${unit.unitType},${unit.unitName}`"
-          class="combined-timetable-grid__unit-name"
+          class="combined-timetable-grid__unit"
         >
-          {{ unit.unitName }}
-          <div class="q-ml-sm">
+          <div
+            class="combined-timetable-grid__unit-name"
+            :class="{
+              'combined-timetable-grid__unit-name--favourite': unit.isFavourite,
+            }"
+          >
+            {{ unit.unitName }}
+          </div>
+          <div
+            v-if="unit.substitutions.length > 0"
+            class="q-mr-xs"
+          >
             <substitutions-button
-              v-if="unit.substitutions.length > 0"
               :substitutions="unit.substitutions"
               small
             />
@@ -112,17 +121,31 @@ $column-width: 75px;
     display: flex;
     flex-direction: row;
 
-    .combined-timetable-grid__unit-name {
+    .combined-timetable-grid__unit {
       width: $column-width;
       min-width: $column-width;
       max-width: $column-width;
-      text-align: center;
-      font-size: 1rem;
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: center;
       min-height: 32px;
+
+      .combined-timetable-grid__unit-name {
+        font-size: 1rem;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        border: 1px solid transparent;
+        border-radius: $generic-border-radius;
+        padding: 2px;
+        line-height: 1;
+
+        &.combined-timetable-grid__unit-name--favourite {
+          border-color: $amber;
+          background: rgba($amber, 0.15);
+        }
+      }
     }
   }
 

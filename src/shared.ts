@@ -2,6 +2,9 @@ import { RouteLocationRaw, Router } from 'vue-router';
 import { computed, reactive } from 'vue';
 import { Temporal } from '@js-temporal/polyfill';
 import { getWeekOffsetSession } from 'src/session';
+import { useClientRef } from 'src/api/client';
+import { useConfigStore } from 'stores/config';
+import { UnitType } from 'src/api/common';
 
 export function shake(el: Element, reverse: boolean) {
   const keyframes = [
@@ -58,3 +61,21 @@ export const useOffset = (): Offset => {
 
 export const weekdayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
 export const weekdayNamesShort = ['pon', 'wt', 'śr', 'czw', 'pt'];
+
+export const useIsFavourite = () => {
+  const clientRef = useClientRef();
+  const config = useConfigStore();
+
+  return computed<(unitType: UnitType, unit: string) => boolean>(() => {
+    if (clientRef.value === undefined) return () => false;
+    const set = new Set(
+      config.favouriteUnits[clientRef.value.tri]
+        ?.map(({
+          unitType,
+          unit,
+        }) => `${unitType}|${unit}`)
+      ?? [],
+    );
+    return (unitType, unit) => set.has(`${unitType}|${unit}`);
+  });
+};

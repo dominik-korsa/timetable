@@ -52,6 +52,7 @@ import _ from 'lodash';
 import { useConfigStore } from 'stores/config';
 import SelectClassGroup from 'components/SelectClassGroup.vue';
 import { useClientRef } from 'src/api/client';
+import { useIsFavourite } from 'src/shared';
 
 interface ClassItem {
   unit: string;
@@ -69,6 +70,7 @@ export default defineComponent({
     const config = useConfigStore();
     const clientRef = useClientRef();
     const route = useRoute();
+    const isFavourite = useIsFavourite();
 
     const containerWidth = ref(100);
 
@@ -112,14 +114,9 @@ export default defineComponent({
       classItems,
       classGroups: computed(() => {
         if (classItems.value === null) return null;
-        const favourites = clientRef.value === undefined ? new Set() : new Set(
-          config.favouriteUnits[clientRef.value.tri]
-            ?.map(({ unitType, unit }) => `${unitType}|${unit}`)
-            ?? [],
-        );
         const classItemsCopy = classItems.value.map((item) => ({
           ...item,
-          isFavourite: favourites.has(`class|${item.unit}`),
+          isFavourite: isFavourite.value('class', item.unit),
         }));
         const groups = new DefaultsMap<number, ClassItem[]>(() => []);
         const remaining: ClassItem[] = [];
