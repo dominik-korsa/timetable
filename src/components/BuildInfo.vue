@@ -15,7 +15,10 @@
     <a href="https://github.com/cloud11665/vlo.rocks-api">API planu V LO</a>
     by <a href="https://github.com/cloud11665">cloud11665</a><br>
 
-    <a href="https://github.com/dominik-korsa/timetable">Kod źródłowy aplikacji na GitHub</a><br>
+    <a
+      href="https://github.com/dominik-korsa/timetable"
+      @click="onSourceCodeLinkClick"
+    >Kod źródłowy aplikacji na GitHub</a><br>
 
     <span
       class="build-time"
@@ -36,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { typed } from 'src/utils';
 import { useConfigStore } from 'stores/config';
 import { useQuasar } from 'quasar';
@@ -58,6 +61,9 @@ export default defineComponent({
 
     const buildTime = Temporal.Instant.from(process.env.BUILD_TIME as string);
     let buildTimeClickCount = 0;
+
+    const justUnlocked = ref(false);
+
     return {
       config,
       buildTimeString: computed(() => buildTime.toLocaleString()),
@@ -76,6 +82,13 @@ export default defineComponent({
         quasar.notify({
           message: 'Włączono Super Secret Settings',
         });
+        justUnlocked.value = true;
+        setTimeout(() => {
+          justUnlocked.value = false;
+        }, 1000);
+      },
+      onSourceCodeLinkClick: (event: MouseEvent) => {
+        if (justUnlocked.value)event.preventDefault();
       },
     };
   },
