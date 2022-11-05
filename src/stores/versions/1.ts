@@ -30,4 +30,5 @@ export interface ConfigV1 {
   iso8601: boolean;
   showColors: boolean;
   dense: boolean;
+  combinedTimetableScroll: Record<string, number>;
 }

@@ -28,6 +28,7 @@ export const useConfigStore = defineStore('config', {
     iso8601: false,
     showColors: true,
     dense: false,
+    combinedTimetableScroll: {},
   }),
   actions: {
     addHistoryEntry(info: OptivumTimetableInfo) {
@@ -85,6 +86,13 @@ export const useConfigStore = defineStore('config', {
     toggleDense() {
       this.dense = !this.dense;
     },
+    setCombinedTimetableScroll(clientKey: string, scroll?: number | undefined) {
+      if (scroll === undefined || scroll < 50) delete this.combinedTimetableScroll[clientKey];
+      else this.combinedTimetableScroll[clientKey] = Math.round(scroll);
+    },
+    getCombinedTimetableScroll(clientKey: string) {
+      return this.combinedTimetableScroll[clientKey] ?? 0;
+    },
   },
   persist: {
     beforeRestore: (/* ctx */) => {
@@ -114,6 +122,7 @@ export const useConfigStore = defineStore('config', {
             } : null,
           favouriteUnits: {},
           dense: false,
+          combinedTimetableScroll: {},
         };
       }
       window.localStorage.setItem('config', JSON.stringify(content));

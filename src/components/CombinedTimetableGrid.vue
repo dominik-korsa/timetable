@@ -1,5 +1,14 @@
 <template>
-  <div class="combined-timetable-grid">
+  <div
+    ref="grid"
+    class="combined-timetable-grid"
+  >
+    <q-scroll-observer
+      axis="horizontal"
+      :scroll-target="grid"
+      :debounce="500"
+      @scroll="onScroll"
+    />
     <div class="combined-timetable-grid__header bg-page">
       <div class="combined-timetable-grid__header-classes">
         <div
@@ -42,12 +51,16 @@
 
 <script lang="ts">
 import { Weekday } from 'src/pages/CombinedTimetable.vue';
-import { computed, defineComponent, PropType } from 'vue';
+import {
+  computed, defineComponent, onMounted, PropType, ref,
+} from 'vue';
 import {
   calculateRows, calculateTimestamps, TableHour, TableLessonMoment,
 } from 'src/api/common';
 import TimetableItem from 'components/TimetableItem.vue';
 import SubstitutionsButton from 'components/SubstitutionsButton.vue';
+import { useConfigStore } from 'stores/config';
+import { useClientRef } from 'src/api/client';
 
 export default defineComponent({
   name: 'CombinedTimetableGrid',
@@ -63,9 +76,20 @@ export default defineComponent({
     },
   },
   setup: (props) => {
+    const config = useConfigStore();
+    const clientRef = useClientRef();
+
     const timestamps = computed(() => calculateTimestamps(props.hours, 10));
     const hourPixels = 50;
+
+    const grid = ref<HTMLDivElement>();
+    onMounted(() => {
+      if (!clientRef.value) return;
+      grid.value?.scrollTo({ left: config.getCombinedTimetableScroll(clientRef.value.key) });
+    });
+
     return {
+      grid,
       rows: computed(() => calculateRows(timestamps.value, hourPixels)),
       items: computed(() => props.weekday.units.flatMap(({ moments }, unitIndex) => {
         const items: {
@@ -85,6 +109,10 @@ export default defineComponent({
         });
         return items;
       })),
+      onScroll: (event: { position: { top: number, left: number } }) => {
+        if (!clientRef.value) return;
+        config.setCombinedTimetableScroll(clientRef.value.key, event.position.left);
+      },
     };
   },
 });
