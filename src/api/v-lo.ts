@@ -39,6 +39,11 @@ interface LessonResponseItem {
   date: string;
   day_index: number;
   removed: boolean;
+  raw: null;
+}
+
+interface LessonResponse {
+  ttdata: LessonResponseItem[][][];
 }
 
 export async function loadVLoHours(cacheMode: CacheMode): Promise<TableHour[]> {
@@ -106,12 +111,11 @@ export class VLoClient implements BaseClient {
     const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
     const response = await fetchWithCache(
       cacheMode,
-      `https://api.cld.sh/v1/vlo/ttdata/${unit}?offset=${offset}`,
+      `https://api.cld.sh/v2/ttdata?classid=${encodeURIComponent(unit)}&date=${monday.toString()}`,
       undefined,
-      `https://api.cld.sh/v1/vlo/ttdata/${unit}?date=${monday.toString()}`,
     );
-    const body = await response.json() as LessonResponseItem[][][];
-    return body.map((day, dayIndex) => {
+    const body = await response.json() as LessonResponse;
+    return body.ttdata.map((day, dayIndex) => {
       const moments: TableLessonMoment[] = [];
       let date = monday.add({ days: dayIndex });
       _.flatten(day).forEach((lesson) => {
