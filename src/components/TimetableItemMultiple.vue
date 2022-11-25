@@ -87,7 +87,7 @@ export default defineComponent({
       const { favourite } = props;
       if (!favourite) return null;
       return props.lessons.find(
-        (lesson) => lesson.group === favourite.group && lesson.subject === favourite.subject,
+        (lesson) => lesson.group?.key === favourite.group && lesson.subject === favourite.subject,
       ) ?? null;
     }),
   }),

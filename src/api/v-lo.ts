@@ -35,6 +35,7 @@ interface LessonResponseItem {
   color: string;
   time_index: number;
   duration: number;
+  group_raw: string;
   group: string;
   date: string;
   day_index: number;
@@ -135,7 +136,10 @@ export class VLoClient implements BaseClient {
             subjectShort: lesson.subject_short,
             teacher: lesson.teacher || undefined,
             room: lesson.classroom || undefined,
-            group: lesson.group || undefined,
+            group: lesson.group_raw ? {
+              key: lesson.group_raw,
+              name: lesson.group,
+            } : undefined,
             color: lesson.color,
             removed: lesson.removed ?? false,
           });

@@ -94,7 +94,10 @@ export class OptivumClient implements BaseClient {
         lessons: moment.map((lesson) => ({
           subject: lesson.subject,
           subjectShort: lesson.subject,
-          group: lesson.groupName,
+          group: lesson.groupName ? {
+            name: lesson.groupName,
+            key: lesson.groupName,
+          } : undefined,
           room: lesson.room,
           teacher: lesson.teacher,
           color: randomColor(`${lesson.subject}|${lesson.teacher}`),

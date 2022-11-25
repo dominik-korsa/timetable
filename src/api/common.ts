@@ -14,7 +14,10 @@ export interface TableLesson {
   subjectShort: string;
   teacher: string | undefined;
   room: string | undefined;
-  group: string | undefined;
+  group: {
+    key: string;
+    name: string;
+  } | undefined;
   color: string | undefined;
   removed: boolean;
 }

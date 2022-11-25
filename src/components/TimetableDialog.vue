@@ -85,7 +85,7 @@ export default defineComponent({
       },
       items: computed(() => props.moment.lessons.map((lesson) => {
         const isFavourite = props.favourite
-          && props.favourite.group === lesson.group
+          && props.favourite.group === lesson.group?.key
           && props.favourite.subject === lesson.subject;
         return ({
           ...lesson,
@@ -95,7 +95,7 @@ export default defineComponent({
           } : () => {
             setFavourite({
               subject: lesson.subject,
-              group: lesson.group,
+              group: lesson.group?.key,
             });
             emit('close');
           },
