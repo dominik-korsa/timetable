@@ -42,7 +42,7 @@ interface LessonResponseItem {
 }
 
 export async function loadVLoHours(cacheMode: CacheMode): Promise<TableHour[]> {
-  const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/vlo/timestamps');
+  const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/v1/vlo/timestamps');
   const body = await response.json() as TimestampsResponseItem[];
   return Object.entries(body).map(([index, { begin, end }]) => ({
     begin,
@@ -61,7 +61,7 @@ export class VLoClient implements BaseClient {
   readonly supportsOffsets = true;
 
   async getClassList(cacheMode: CacheMode): Promise<ClassListItem[]> {
-    const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/vlo/listclass');
+    const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/v1/vlo/listclass');
     const classes = await response.json() as string[];
     return classes.map((value) => ({
       unit: value,
@@ -106,9 +106,9 @@ export class VLoClient implements BaseClient {
     const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
     const response = await fetchWithCache(
       cacheMode,
-      `https://api.cld.sh/vlo/ttdata/${unit}?offset=${offset}`,
+      `https://api.cld.sh/v1/vlo/ttdata/${unit}?offset=${offset}`,
       undefined,
-      `https://api.cld.sh/vlo/ttdata/${unit}?date=${monday.toString()}`,
+      `https://api.cld.sh/v1/vlo/ttdata/${unit}?date=${monday.toString()}`,
     );
     const body = await response.json() as LessonResponseItem[][][];
     return body.map((day, dayIndex) => {
