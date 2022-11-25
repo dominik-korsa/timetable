@@ -12,7 +12,7 @@
       class="q-mr-xs"
       color="red"
     />
-    <a href="https://github.com/cloud11665/vlo.rocks-api">API planu V LO</a>
+    <a href="https://github.com/cloud11665/vlott">API planu V LO</a>
     by <a href="https://github.com/cloud11665">cloud11665</a><br>
 
     <a
