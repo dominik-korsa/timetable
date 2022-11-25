@@ -16,7 +16,7 @@
         class="q-mb-lg select-class__update-alert"
       >
         <q-banner
-          class="bg-amber"
+          class="bg-amber text-black"
           dense
         >
           <template #avatar>
