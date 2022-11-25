@@ -91,6 +91,8 @@ module.exports = configure((ctx) => ({
       PROXY_URL: requireEnv('PROXY_URL'),
       OLD_HOST: requireEnv('OLD_HOST'),
       NEW_HOST: requireEnv('NEW_HOST'),
+      VLO_V1_API_ORIGIN: process.env.VLO_V1_API_ORIGIN,
+      VLO_V2_API_ORIGIN: process.env.VLO_V2_API_ORIGIN,
       BRANCH: process.env.BRANCH,
       DEPLOY_ID: process.env.DEPLOY_ID,
       REPOSITORY_URL: process.env.REPOSITORY_URL,

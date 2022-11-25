@@ -46,8 +46,11 @@ interface LessonResponse {
   ttdata: LessonResponseItem[][][];
 }
 
+const v1ApiOrigin = process.env.VLO_V1_API_ORIGIN ?? 'https://api.cld.sh';
+const v2ApiOrigin = process.env.VLO_V2_API_ORIGIN ?? 'https://api.cld.sh';
+
 export async function loadVLoHours(cacheMode: CacheMode): Promise<TableHour[]> {
-  const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/v1/vlo/timestamps');
+  const response = await fetchWithCache(cacheMode, new URL('/v1/vlo/timestamps', v1ApiOrigin).toString());
   const body = await response.json() as TimestampsResponseItem[];
   return Object.entries(body).map(([index, { begin, end }]) => ({
     begin,
@@ -66,7 +69,7 @@ export class VLoClient implements BaseClient {
   readonly supportsOffsets = true;
 
   async getClassList(cacheMode: CacheMode): Promise<ClassListItem[]> {
-    const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/v1/vlo/listclass');
+    const response = await fetchWithCache(cacheMode, new URL('/v1/vlo/listclass', v1ApiOrigin).toString());
     const classes = await response.json() as string[];
     return classes.map((value) => ({
       unit: value,
@@ -111,7 +114,7 @@ export class VLoClient implements BaseClient {
     const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
     const response = await fetchWithCache(
       cacheMode,
-      `https://api.cld.sh/v2/ttdata?classid=${encodeURIComponent(unit)}&date=${monday.toString()}`,
+      new URL(`/v2/ttdata?classid=${encodeURIComponent(unit)}&date=${monday.toString()}`, v2ApiOrigin).toString(),
       undefined,
     );
     const body = await response.json() as LessonResponse;
