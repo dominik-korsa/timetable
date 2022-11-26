@@ -208,7 +208,7 @@ export default defineComponent({
       tabPanels: computed(() => {
         const monday = offset.value === null
           ? null
-          : mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset.value.current });
+          : mondayOf(Temporal.Now.plainDateISO());
         const offsets = offset.value === null ? [0] : [
           offset.value.current - 1,
           offset.value.current,
