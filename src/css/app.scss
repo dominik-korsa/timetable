@@ -7,6 +7,8 @@
 
 body {
   --page-color: white;
+  --card-color: white;
+  --distinct-bg-color: #eee;
   --separator-color: #{$separator-color};
 
   .text-page {
@@ -15,6 +17,8 @@ body {
 
   &.body--dark {
     --page-color: var(--q-dark-page);
+    --card-color: var(--q-dark);
+    --distinct-bg-color: #282828;
     --separator-color: #{$separator-dark-color};
 
     .text-page {

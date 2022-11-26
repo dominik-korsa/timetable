@@ -35,14 +35,23 @@ interface LessonResponseItem {
   color: string;
   time_index: number;
   duration: number;
+  group_raw: string;
   group: string;
   date: string;
   day_index: number;
   removed: boolean;
+  raw: null;
 }
 
+interface LessonResponse {
+  ttdata: LessonResponseItem[][][];
+}
+
+const v1ApiOrigin = process.env.VLO_V1_API_ORIGIN ?? 'https://api.cld.sh';
+const v2ApiOrigin = process.env.VLO_V2_API_ORIGIN ?? 'https://api.cld.sh';
+
 export async function loadVLoHours(cacheMode: CacheMode): Promise<TableHour[]> {
-  const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/v1/vlo/timestamps');
+  const response = await fetchWithCache(cacheMode, new URL('/v1/vlo/timestamps', v1ApiOrigin).toString());
   const body = await response.json() as TimestampsResponseItem[];
   return Object.entries(body).map(([index, { begin, end }]) => ({
     begin,
@@ -61,7 +70,7 @@ export class VLoClient implements BaseClient {
   readonly supportsOffsets = true;
 
   async getClassList(cacheMode: CacheMode): Promise<ClassListItem[]> {
-    const response = await fetchWithCache(cacheMode, 'https://api.cld.sh/v1/vlo/listclass');
+    const response = await fetchWithCache(cacheMode, new URL('/v1/vlo/listclass', v1ApiOrigin).toString());
     const classes = await response.json() as string[];
     return classes.map((value) => ({
       unit: value,
@@ -106,12 +115,11 @@ export class VLoClient implements BaseClient {
     const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
     const response = await fetchWithCache(
       cacheMode,
-      `https://api.cld.sh/v1/vlo/ttdata/${unit}?offset=${offset}`,
+      new URL(`/v2/ttdata?classid=${encodeURIComponent(unit)}&date=${monday.toString()}`, v2ApiOrigin).toString(),
       undefined,
-      `https://api.cld.sh/v1/vlo/ttdata/${unit}?date=${monday.toString()}`,
     );
-    const body = await response.json() as LessonResponseItem[][][];
-    return body.map((day, dayIndex) => {
+    const body = await response.json() as LessonResponse;
+    return body.ttdata.map((day, dayIndex) => {
       const moments: TableLessonMoment[] = [];
       let date = monday.add({ days: dayIndex });
       _.flatten(day).forEach((lesson) => {
@@ -128,7 +136,10 @@ export class VLoClient implements BaseClient {
             subjectShort: lesson.subject_short,
             teacher: lesson.teacher || undefined,
             room: lesson.classroom || undefined,
-            group: lesson.group || undefined,
+            group: lesson.group_raw ? {
+              key: lesson.group_raw,
+              name: lesson.group,
+            } : undefined,
             color: lesson.color,
             removed: lesson.removed ?? false,
           });

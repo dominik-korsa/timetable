@@ -1,64 +1,96 @@
 <template>
   <q-card class="timetable-dialog">
-    <q-list separator>
-      <q-item
-        v-for="(lesson, i) in items"
-        :key="i"
-        class="q-px-sm"
+    <div class="timetable-dialog__list">
+      <div
+        v-for="(items, subject) in groups"
+        :key="subject"
       >
-        <q-item-section
-          v-if="items.length > 1 || lesson.isFavourite"
-          side
-          class="q-pr-xs"
+        <div class="timetable-dialog__list-header">
+          {{ subject }}
+        </div>
+        <q-item
+          v-for="(lesson, i) in items"
+          :key="i"
+          class="q-px-sm timetable-dialog__item"
         >
-          <q-btn
-            :icon="lesson.isFavourite ? 'star' : 'star_border'"
-            :color="lesson.isFavourite ? 'amber' : undefined"
-            flat
-            round
-            @click="lesson.favouriteClick"
-          />
-        </q-item-section>
-        <q-item-section>
-          <timetable-item-single
-            :lesson="lesson"
-            class="timetable-dialog__item"
-            full-subject
-          />
-        </q-item-section>
-      </q-item>
-      <q-item
-        class="q-px-sm"
+          <q-item-section
+            v-if="many || lesson.isFavourite"
+            side
+            class="q-pr-xs"
+          >
+            <q-btn
+              :icon="lesson.isFavourite ? 'star' : 'star_border'"
+              :color="lesson.isFavourite ? 'amber' : undefined"
+              flat
+              round
+              @click="lesson.favouriteClick"
+            />
+          </q-item-section>
+          <q-item-section class="timetable-dialog__item-content">
+            <div class="timetable-dialog__item-top">
+              <div
+                v-if="lesson.teacher"
+                class="timetable-dialog__item-teacher"
+              >
+                {{ lesson.teacher }}
+              </div>
+              <div
+                v-else
+                class="timetable-dialog__item-teacher timetable-dialog__item-teacher--empty"
+              >
+                (brak nauczyciela)
+              </div>
+              <div class="timetable-dialog__item-room">
+                {{ lesson.room }}
+              </div>
+            </div>
+            <div
+              v-if="lesson.group"
+              class="timetable-dialog__item-group"
+            >
+              {{ lesson.group.name }}
+              <span
+                v-if="lesson.group.name !== lesson.group.key"
+                class="timetable-dialog__item-group-alt"
+              >({{ lesson.group.key }})</span>
+            </div>
+          </q-item-section>
+        </q-item>
+      </div>
+    </div>
+    <q-separator />
+    <q-item class="q-px-sm">
+      <q-item-section
+        side
+        class="q-pr-sm"
       >
-        <q-item-section
-          side
-          class="q-pr-sm"
-        >
-          <q-btn
-            :icon="favourite === null ? 'visibility_off' : 'visibility'"
-            flat
-            round
-            :color="favourite === null ? 'negative' : undefined"
-            @click="hideClick"
-          />
-        </q-item-section>
-        <q-item-section>
-          {{ favourite === null ? 'Lekcja ukryta' : 'Lekcja widoczna' }}
-        </q-item-section>
-      </q-item>
-    </q-list>
+        <q-btn
+          :icon="favourite === null ? 'visibility_off' : 'visibility'"
+          flat
+          round
+          :color="favourite === null ? 'negative' : undefined"
+          @click="hideClick"
+        />
+      </q-item-section>
+      <q-item-section>
+        {{ favourite === null ? 'Lekcja ukryta' : 'Lekcja widoczna' }}
+      </q-item-section>
+    </q-item>
   </q-card>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from 'vue';
 import { FavouriteLesson, useConfigStore } from 'stores/config';
-import { TableLessonMoment } from 'src/api/common';
-import TimetableItemSingle from 'components/TimetableItemSingle.vue';
+import { TableLesson, TableLessonMoment } from 'src/api/common';
+
+interface LessonItem extends TableLesson {
+  isFavourite: boolean | null | undefined;
+  favouriteClick: () => void;
+}
 
 export default defineComponent({
   name: 'TimetableDialog',
-  components: { TimetableItemSingle },
   props: {
     moment: {
       type: Object as PropType<TableLessonMoment>,
@@ -83,24 +115,30 @@ export default defineComponent({
         if (props.favourite !== null) emit('close');
         setFavourite(props.favourite === null ? undefined : null);
       },
-      items: computed(() => props.moment.lessons.map((lesson) => {
-        const isFavourite = props.favourite
-          && props.favourite.group === lesson.group
-          && props.favourite.subject === lesson.subject;
-        return ({
-          ...lesson,
-          isFavourite,
-          favouriteClick: isFavourite ? () => {
-            setFavourite(undefined);
-          } : () => {
-            setFavourite({
-              subject: lesson.subject,
-              group: lesson.group,
-            });
-            emit('close');
-          },
+      many: computed(() => props.moment.lessons.length > 1),
+      groups: computed(() => {
+        const groups: Record<string, LessonItem[]> = {};
+        props.moment.lessons.forEach((lesson) => {
+          const isFavourite = props.favourite
+            && props.favourite.group === lesson.group?.key
+            && props.favourite.subject === lesson.subject;
+          if (!(lesson.subject in groups)) groups[lesson.subject] = [];
+          groups[lesson.subject].push({
+            ...lesson,
+            isFavourite,
+            favouriteClick: isFavourite ? () => {
+              setFavourite(undefined);
+            } : () => {
+              setFavourite({
+                subject: lesson.subject,
+                group: lesson.group?.key,
+              });
+              emit('close');
+            },
+          });
         });
-      })),
+        return groups;
+      }),
     });
   },
 });
@@ -108,12 +146,61 @@ export default defineComponent({
 
 <style lang="scss">
 .timetable-dialog {
-  min-width: min(300px, 100%);
+  min-width: min(350px, 100%);
+  display: flex;
+  flex-direction: column;
+
+  .timetable-dialog__list {
+    position: relative;
+    overflow-y: auto;
+    flex-grow: 1;
+
+    > div {
+      $inset: 1px;
+      margin-bottom: $inset;
+
+      > .timetable-dialog__list-header {
+        background: var(--distinct-bg-color);
+        text-align: center;
+        padding: 8px;
+        font-weight: 500;
+        font-size: 12pt;
+
+        z-index: 1;
+        position: sticky;
+        top: 0;
+        margin-top: -$inset;
+      }
+
+      &:not(:last-of-type) {
+        border-bottom: var(--separator-color) 1px solid;
+      }
+    }
+  }
 
   .timetable-dialog__item {
-    min-height: 40px;
-    width: 100%;
-    border-radius: 4px;
+    &:not(:last-of-type) {
+      border-bottom: var(--separator-color) 1px solid;
+    }
+
+    .timetable-dialog__item-top {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .timetable-dialog__item-teacher--empty {
+        opacity: 0.7;
+      }
+    }
+
+    .timetable-dialog__item-group {
+      font-style: italic;
+
+      .timetable-dialog__item-group-alt {
+        font-weight: 300;
+        opacity: 0.7;
+      }
+    }
   }
 }
 </style>
