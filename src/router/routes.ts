@@ -22,6 +22,14 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        name: 'SelectRoom',
+        path: 'timetable/:tri/room',
+        component: () => import('pages/SelectRoom.vue'),
+        meta: {
+          title: 'Wybierz salę',
+        },
+      },
+      {
         name: 'SuperSecretSettings',
         path: 'super-secret-settings',
         component: () => import('pages/SuperSecretSettings.vue'),

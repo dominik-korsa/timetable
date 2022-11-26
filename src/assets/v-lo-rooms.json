@@ -1,0 +1,291 @@
+{
+  "dungeons": [
+    {
+      "value": "03",
+      "width": 4,
+      "height": 4,
+      "x": 6,
+      "y": 12
+    },
+    {
+      "value": "02",
+      "width": 4,
+      "height": 4,
+      "x": 6,
+      "y": 16
+    },
+    {
+      "value": "01",
+      "width": 4,
+      "height": 4,
+      "x": 6,
+      "y": 20
+    },
+    {
+      "value": "Siłownia",
+      "width": 10,
+      "height": 4,
+      "x": 2,
+      "y": 26
+    },
+    {
+      "value": "inf2",
+      "width": 6,
+      "height": 4,
+      "x": 24,
+      "y": 26
+    },
+    {
+      "value": "04",
+      "width": 4,
+      "height": 4,
+      "x": 26,
+      "y": 20
+    },
+    {
+      "value": "inf1",
+      "width": 4,
+      "height": 6,
+      "x": 26,
+      "y": 14
+    }
+  ],
+  "groundFloor": [
+    {
+      "value": "13c",
+      "width": 4,
+      "height": 4,
+      "x": 6,
+      "y": 6
+    },
+    {
+      "value": "13b",
+      "width": 4,
+      "height": 4,
+      "x": 6,
+      "y": 12
+    },
+    {
+      "value": "13a",
+      "width": 4,
+      "height": 4,
+      "x": 6,
+      "y": 16
+    },
+    {
+      "value": "13",
+      "width": 4,
+      "height": 4,
+      "x": 6,
+      "y": 20
+    },
+    {
+      "value": "czytelnia",
+      "width": 10,
+      "height": 4,
+      "x": 2,
+      "y": 26
+    },
+    {
+      "value": "5",
+      "width": 4,
+      "height": 6,
+      "x": 32,
+      "y": 24
+    },
+    {
+      "value": "3",
+      "width": 4,
+      "height": 6,
+      "x": 26,
+      "y": 14
+    },
+    {
+      "value": "2",
+      "width": 4,
+      "height": 4,
+      "x": 26,
+      "y": 10
+    },
+    {
+      "value": "1",
+      "width": 4,
+      "height": 6,
+      "x": 26,
+      "y": 4
+    },
+    {
+      "value": "aerobik",
+      "width": 4,
+      "height": 8,
+      "x": 0,
+      "y": 2,
+      "vertical": true
+    },
+    {
+      "value": "gim1",
+      "width": 14,
+      "height": 4,
+      "x": 0,
+      "y": -4
+    }
+  ],
+  "firstFloor": [
+    {
+      "value": "26",
+      "width": 4,
+      "height": 6,
+      "x": 6,
+      "y": 4
+    },
+    {
+      "value": "25",
+      "width": 4,
+      "height": 6,
+      "x": 6,
+      "y": 12
+    },
+    {
+      "value": "24",
+      "width": 4,
+      "height": 6,
+      "x": 6,
+      "y": 18
+    },
+    {
+      "value": "23",
+      "width": 4,
+      "height": 4,
+      "x": 2,
+      "y": 26
+    },
+    {
+      "value": "22",
+      "width": 6,
+      "height": 4,
+      "x": 8,
+      "y": 26
+    },
+    {
+      "value": "21",
+      "width": 6,
+      "height": 5,
+      "x": 14,
+      "y": 26
+    },
+    {
+      "value": "20",
+      "width": 4,
+      "height": 5,
+      "x": 20,
+      "y": 26
+    },
+    {
+      "value": "19",
+      "width": 6,
+      "height": 4,
+      "x": 24,
+      "y": 26
+    },
+    {
+      "value": "17",
+      "width": 4,
+      "height": 6,
+      "x": 32,
+      "y": 24
+    },
+    {
+      "value": "18",
+      "width": 4,
+      "height": 4,
+      "x": 26,
+      "y": 20
+    },
+    {
+      "value": "16",
+      "width": 4,
+      "height": 6,
+      "x": 26,
+      "y": 14
+    },
+    {
+      "value": "15",
+      "width": 4,
+      "height": 4,
+      "x": 26,
+      "y": 10
+    },
+    {
+      "value": "14",
+      "width": 4,
+      "height": 6,
+      "x": 26,
+      "y": 4
+    }
+  ],
+  "secondFloor": [
+    {
+      "value": "37",
+      "width": 4,
+      "height": 6,
+      "x": 6,
+      "y": 4
+    },
+    {
+      "value": "36",
+      "width": 4,
+      "height": 6,
+      "x": 6,
+      "y": 12
+    },
+    {
+      "value": "35",
+      "width": 4,
+      "height": 6,
+      "x": 6,
+      "y": 18
+    },
+    {
+      "value": "aula",
+      "width": 10,
+      "height": 5,
+      "x": 14,
+      "y": 26
+    },
+    {
+      "value": "32",
+      "width": 6,
+      "height": 4,
+      "x": 24,
+      "y": 26
+    },
+    {
+      "value": "29",
+      "width": 4,
+      "height": 6,
+      "x": 32,
+      "y": 24
+    },
+    {
+      "value": "31",
+      "width": 4,
+      "height": 4,
+      "x": 26,
+      "y": 20
+    },
+    {
+      "value": "28",
+      "width": 4,
+      "height": 6,
+      "x": 26,
+      "y": 14
+    },
+    {
+      "value": "27",
+      "width": 4,
+      "height": 8,
+      "x": 26,
+      "y": 6
+    }
+  ]
+}

@@ -54,6 +54,15 @@
               Beta
             </q-badge>
           </q-btn>
+          <q-btn
+            no-caps
+            :outline="!$q.dark.isActive"
+            :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
+            class="full-width q-mt-sm"
+            :to="selectRoomRoute"
+          >
+            Mapa sal
+          </q-btn>
         </div>
       </div>
     </template>
@@ -156,6 +165,10 @@ export default defineComponent({
       }),
       combinedRoute: computed(() => ({
         name: 'CombinedTimetable',
+        params: route.params,
+      })),
+      selectRoomRoute: computed(() => ({
+        name: 'SelectRoom',
         params: route.params,
       })),
     };
