@@ -75,6 +75,7 @@ module.exports = {
     '@typescript-eslint/no-shadow': 'error',
 
     'import/first': 'off',
+    'import/named': 'error',
     'import/namespace': 'error',
     'import/default': 'error',
     'import/export': 'error',
@@ -82,10 +83,6 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/no-extraneous-dependencies': 'off',
     'import/prefer-default-export': 'off',
-
-    // The core 'import/named' rules
-    // does not work with type definitions
-    'import/named': 'off',
 
     'prefer-promise-reject-errors': 'off',
 
@@ -97,7 +94,7 @@ module.exports = {
     // in plain CommonJS modules, you can't use `import foo = require('foo')` to pass this rule, so it has to be disabled
     '@typescript-eslint/no-var-requires': 'off',
 
-    // The core 'no-unused-vars' rules (in the eslint:recommeded ruleset)
+    // The core 'no-unused-vars' rules (in the eslint:recommended ruleset)
     // does not work with type definitions
     'no-unused-vars': 'off',
 

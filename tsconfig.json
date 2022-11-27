@@ -1,7 +1,6 @@
 {
-  "extends": "@quasar/app-webpack/tsconfig-preset",
+  "extends": "@quasar/app-vite/tsconfig-preset",
   "compilerOptions": {
-    "baseUrl": ".",
-    "lib": ["es2021", "dom"],
+    "baseUrl": "."
   }
 }
