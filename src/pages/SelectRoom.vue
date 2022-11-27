@@ -12,6 +12,22 @@
           viewbox="centered"
           @room-click="selectRoom"
         />
+        <q-btn-toggle
+          v-model="floor"
+          class="select-room__floor-picker"
+          toggle-color="primary"
+          spread
+          no-caps
+          unelevated
+          rounded
+          no-wrap
+          :options="[
+            {label: '-1', value: 'dungeons'},
+            {label: '0', value: 'groundFloor'},
+            {label: '+1', value: 'firstFloor'},
+            {label: '+2', value: 'secondFloor'},
+          ]"
+        />
       </div>
       <div class="select-room__map-grid">
         <v-lo-map
@@ -234,6 +250,11 @@ export default defineComponent({
     }
   }
 
+  .select-room__floor-picker {
+    border: 1px solid black;
+    margin-top: 24px;
+  }
+
   .select-room__info-wrapper {
     grid-area: info;
     height: 64px;
@@ -264,6 +285,7 @@ export default defineComponent({
         flex-direction: row;
         flex-shrink: 0;
         gap: 6px;
+        justify-content: start;
 
         .select-room__other-room {
           padding: 6px 10px;
@@ -272,6 +294,7 @@ export default defineComponent({
 
       .select-room__map-single {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         padding: 8px;
