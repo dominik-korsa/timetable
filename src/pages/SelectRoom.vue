@@ -28,9 +28,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import VLoMap from 'components/VLoMap.vue';
+import vLoRooms from 'src/assets/v-lo-rooms.json';
 
 export default defineComponent({
   components: { VLoMap },
+  setup: () => ({
+    instituteRooms: vLoRooms.institute,
+  }),
 });
 </script>
 

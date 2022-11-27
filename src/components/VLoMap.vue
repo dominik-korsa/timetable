@@ -42,9 +42,9 @@
       <rect
         class="v-lo-map__corridor"
         width="16"
-        height="64"
+        height="80"
         x="80"
-        y="48"
+        y="32"
       />
       <path
         class="v-lo-map__corridor"
