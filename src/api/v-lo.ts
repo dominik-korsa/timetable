@@ -20,6 +20,7 @@ import {
 import { Temporal } from '@js-temporal/polyfill';
 import { BaseClient, ClassListItem } from 'src/api/client';
 import { DefaultsMap } from 'src/utils';
+import { roomRawToIdMap } from 'src/api/v-lo-rooms';
 
 interface TimestampsResponseItem {
   begin: string;
@@ -136,6 +137,7 @@ export class VLoClient implements BaseClient {
             subjectShort: lesson.subject_short,
             teacher: lesson.teacher || undefined,
             room: lesson.classroom || undefined,
+            roomId: roomRawToIdMap[lesson.classroom],
             group: lesson.group_raw ? {
               key: lesson.group_raw,
               name: lesson.group,

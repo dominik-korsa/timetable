@@ -317,7 +317,7 @@ export default defineComponent({
       color: inherit;
 
       .index-page__v-lo {
-        background-color: #852439;
+        background-color: $v-lo;
         border: var(--separator-color) solid 1px;
 
         .index-page__v-lo-logo {

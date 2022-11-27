@@ -22,6 +22,14 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        name: 'SelectRoom',
+        path: 'timetable/:tri/room',
+        component: () => import('pages/SelectRoom.vue'),
+        meta: {
+          title: 'Mapa sal',
+        },
+      },
+      {
         name: 'SuperSecretSettings',
         path: 'super-secret-settings',
         component: () => import('pages/SuperSecretSettings.vue'),
@@ -40,6 +48,12 @@ const routes: RouteRecordRaw[] = [
     name: 'CombinedTimetable',
     path: '/timetable/:tri/combined/',
     component: () => import('pages/CombinedTimetable.vue'),
+  },
+  {
+    name: 'Campaign',
+    path: '/13c',
+    alias: '/13C',
+    component: () => import('pages/CampaignPage.vue'),
   },
   {
     path: '/pwa-home',
