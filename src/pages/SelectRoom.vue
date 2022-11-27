@@ -158,7 +158,7 @@ export default defineComponent({
     display: none;
     overflow: hidden;
     flex-shrink: 1;
-    flex-grow: 0;
+    flex-grow: 1;
   }
 
   .select-room__map-grid {
@@ -252,7 +252,7 @@ export default defineComponent({
     }
   }
 
-  @media screen and (orientation: portrait) and (max-width: 700px) {
+  @media (max-width: 500px), (max-height: 650px) {
     .select-room__content {
       width: 100%;
       display: flex;
@@ -262,12 +262,23 @@ export default defineComponent({
 
       .select-room__other {
         flex-direction: row;
-        flex-wrap: wrap;
         flex-shrink: 0;
+        gap: 6px;
+
+        .select-room__other-room {
+          padding: 6px 10px;
+        }
       }
 
       .select-room__map-single {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+
+        .v-lo-map {
+          max-width: 350px;
+        }
       }
 
       .select-room__map-grid {

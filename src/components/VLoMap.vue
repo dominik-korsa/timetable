@@ -169,8 +169,8 @@ export default defineComponent({
     }[props.floor])),
     viewboxValue: computed(() => ({
       default: '-4 -36 296 288',
-      'reduced-height': '-4 12 312 242',
-      centered: '4 -36 296 288',
+      'reduced-height': '-4 12 296 242',
+      centered: '-4 -36 312 288',
     }[props.viewbox])),
     onRoomClick: (id: string) => {
       emit('roomClick', id);
