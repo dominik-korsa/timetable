@@ -40,7 +40,21 @@
               >
                 (brak nauczyciela)
               </div>
-              <div class="timetable-dialog__item-room">
+              <router-link
+                v-if="lesson.roomId !== undefined"
+                class="timetable-dialog__item-room"
+                :to="{
+                  name: 'SelectRoom',
+                  params: $route.params,
+                  query: { selected: lesson.roomId },
+                }"
+              >
+                {{ lesson.room }}
+              </router-link>
+              <div
+                v-else
+                class="timetable-dialog__item-room"
+              >
                 {{ lesson.room }}
               </div>
             </div>
@@ -191,6 +205,10 @@ export default defineComponent({
       .timetable-dialog__item-teacher--empty {
         opacity: 0.7;
       }
+    }
+
+    a.timetable-dialog__item-room {
+      color: $primary;
     }
 
     .timetable-dialog__item-group {

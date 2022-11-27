@@ -2,6 +2,7 @@ import vLoRoomsRaw from 'assets/v-lo-rooms.json';
 
 interface BaseRoom {
   id: string;
+  raw: string;
   short: string;
   full: string;
   type: string;
@@ -40,7 +41,10 @@ export const isFloorRoom = (
   room: BaseRoom | undefined,
 ): room is FloorRoom => room !== undefined && room.type in floorRooms;
 
+export const roomRawToIdMap: Record<string, string> = {};
+
 vLoRooms.forEach((room) => {
+  roomRawToIdMap[room.raw] = room.id;
   if (isFloorRoom(room)) floorRooms[room.type].push(room);
   else otherRooms.push(room);
 });

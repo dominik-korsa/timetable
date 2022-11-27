@@ -99,6 +99,7 @@ export class OptivumClient implements BaseClient {
             key: lesson.groupName,
           } : undefined,
           room: lesson.room,
+          roomId: undefined,
           teacher: lesson.teacher,
           color: randomColor(`${lesson.subject}|${lesson.teacher}`),
           removed: false,
