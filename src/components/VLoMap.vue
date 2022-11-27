@@ -61,14 +61,19 @@
       class="v-lo-map__corridor"
       d="M 80,48 V 192 H 48 v 16 H 80 256 V 48 h -16 V 192 H 96 V 48 Z"
     />
-    <router-link
+    <g
       v-for="room in rooms"
-      :key="room.value"
-      to="/"
+      :key="room.id"
+      role="button"
+      tabindex="0"
       class="v-lo-map__room"
       :class="{
         'v-lo-map__room--vertical': !!room.vertical,
+        'v-lo-map__room--selected': room.id === selectedId,
       }"
+      @click="onRoomClick(room.id)"
+      @keydown.enter="onRoomClick(room.id)"
+      @keydown.space="onRoomClick(room.id)"
     >
       <rect
         :width="room.width*8"
@@ -84,11 +89,11 @@
       >
         <div class="v-lo-map__room-text">
           <div>
-            {{ room.value }}
+            {{ room.short }}
           </div>
         </div>
       </foreignObject>
-    </router-link>
+    </g>
 
     <g v-if="campaign">
       <path
@@ -133,26 +138,35 @@
 </template>
 
 <script lang="ts">
-import vLoRooms from 'src/assets/v-lo-rooms.json';
+import { floorRooms, FloorType } from 'src/api/v-lo-rooms';
 import { computed, defineComponent, PropType } from 'vue';
 
 export default defineComponent({
   props: {
     floor: {
-      type: String as PropType<'dungeons' | 'groundFloor' | 'firstFloor' | 'secondFloor'>,
+      type: String as PropType<FloorType>,
       required: true,
     },
     campaign: Boolean,
     reducedHeight: Boolean,
+    selectedId: {
+      type: String,
+      required: false,
+      default: undefined,
+    },
   },
-  setup: (props) => ({
-    rooms: computed(() => vLoRooms[props.floor]),
+  emits: ['roomClick'],
+  setup: (props, { emit }) => ({
+    rooms: computed(() => floorRooms[props.floor]),
     floorNumber: computed(() => ({
       dungeons: '-1',
       groundFloor: '0',
       firstFloor: '+1',
       secondFloor: '+2',
     }[props.floor])),
+    onRoomClick: (id: string) => {
+      emit('roomClick', id);
+    },
   }),
 });
 </script>
@@ -180,16 +194,32 @@ export default defineComponent({
   .v-lo-map__room {
     cursor: pointer;
     user-select: none;
+    outline: none;
 
-    &:hover rect {
+    &.v-lo-map__room--selected rect, &:hover rect {
       fill: lighten($primary, 15%);
+    }
+
+    &.v-lo-map__room--selected rect {
+      animation: selected-rect ease-in-out alternate infinite 800ms;
+
+      @keyframes selected-rect {
+        to {
+          fill: lighten($primary, 30%);
+        }
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid black;
+      outline-offset: 2px;
     }
 
     rect {
       fill: $primary;
       stroke-width: 1px;
       stroke: black;
-      transition: fill 200ms;
+      transition: fill 200ms, fill-opactiy 200ms;
     }
 
     .v-lo-map__room-text {
@@ -197,7 +227,6 @@ export default defineComponent({
       align-items: center;
       justify-content: center;
       text-align: center;
-      text-transform: capitalize;
       height: 100%;
       color: white;
     }
@@ -211,16 +240,6 @@ export default defineComponent({
   .v-lo-map__floor-number {
     font-weight: lighter;
     font-size: 4em;
-  }
-
-  .v-lo-map__bg-stairs, .v-lo-map__room {
-    transition: 300ms opacity;
-  }
-
-  &:has(.v-lo-map__room--highlighted) {
-    .v-lo-map__bg-stairs, .v-lo-map__room:not(.v-lo-map__room--highlighted) {
-      opacity: 0.3;
-    }
   }
 
   .v-lo-map__13-campaign-title {
@@ -254,7 +273,7 @@ body.body--dark .v-lo-map {
   }
 
   .v-lo-map__floor-number {
-    color: #fff9;
+    fill: #fff9;
   }
 }
 </style>

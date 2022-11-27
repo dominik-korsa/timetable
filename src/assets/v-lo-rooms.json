@@ -1,300 +1,493 @@
-{
-  "dungeons": [
+[
     {
-      "value": "03",
-      "width": 4,
-      "height": 4,
-      "x": 6,
-      "y": 12
+        "type": "dungeons",
+        "id": "03",
+        "short": "03",
+        "full": "Sala 03",
+        "width": 4,
+        "height": 4,
+        "x": 6,
+        "y": 12
     },
     {
-      "value": "02",
-      "width": 4,
-      "height": 4,
-      "x": 6,
-      "y": 16
+        "type": "dungeons",
+        "id": "02",
+        "short": "02",
+        "full": "Sala 02",
+        "width": 4,
+        "height": 4,
+        "x": 6,
+        "y": 16
     },
     {
-      "value": "01",
-      "width": 4,
-      "height": 4,
-      "x": 6,
-      "y": 20
+        "type": "dungeons",
+        "id": "01",
+        "short": "01",
+        "full": "Sala 01",
+        "width": 4,
+        "height": 4,
+        "x": 6,
+        "y": 20
     },
     {
-      "value": "Siłownia",
-      "width": 10,
-      "height": 4,
-      "x": 2,
-      "y": 26
+        "type": "dungeons",
+        "id": "siłownia",
+        "short": "siłownia",
+        "full": "Siłownia",
+        "width": 10,
+        "height": 4,
+        "x": 2,
+        "y": 26
     },
     {
-      "value": "inf2",
-      "width": 6,
-      "height": 4,
-      "x": 24,
-      "y": 26
+        "type": "dungeons",
+        "id": "inf2",
+        "short": "inf2",
+        "full": "Sala informatyczna 2",
+        "width": 6,
+        "height": 4,
+        "x": 24,
+        "y": 26
     },
     {
-      "value": "04",
-      "width": 4,
-      "height": 4,
-      "x": 26,
-      "y": 20
+        "type": "dungeons",
+        "id": "04",
+        "short": "04",
+        "full": "Sala 04",
+        "width": 4,
+        "height": 4,
+        "x": 26,
+        "y": 20
     },
     {
-      "value": "inf1",
-      "width": 4,
-      "height": 6,
-      "x": 26,
-      "y": 14
+        "type": "dungeons",
+        "id": "inf1",
+        "short": "inf1",
+        "full": "Sala informatyczna 1",
+        "width": 4,
+        "height": 6,
+        "x": 26,
+        "y": 14
+    },
+    {
+        "type": "groundFloor",
+        "id": "13c",
+        "short": "13C",
+        "full": "Sala 13C",
+        "width": 4,
+        "height": 4,
+        "x": 6,
+        "y": 6
+    },
+    {
+        "type": "groundFloor",
+        "id": "13b",
+        "short": "13B",
+        "full": "Sala 13B",
+        "width": 4,
+        "height": 4,
+        "x": 6,
+        "y": 12
+    },
+    {
+        "type": "groundFloor",
+        "id": "13a",
+        "short": "13A",
+        "full": "Sala 13A",
+        "width": 4,
+        "height": 4,
+        "x": 6,
+        "y": 16
+    },
+    {
+        "type": "groundFloor",
+        "id": "13",
+        "short": "13",
+        "full": "Sala 13",
+        "width": 4,
+        "height": 4,
+        "x": 6,
+        "y": 20
+    },
+    {
+        "type": "groundFloor",
+        "id": "czytelnia",
+        "short": "czytelnia",
+        "full": "Czytelnia",
+        "width": 10,
+        "height": 4,
+        "x": 2,
+        "y": 26
+    },
+    {
+        "type": "groundFloor",
+        "id": "5",
+        "short": "5",
+        "full": "Sala 5",
+        "width": 4,
+        "height": 6,
+        "x": 32,
+        "y": 24
+    },
+    {
+        "type": "groundFloor",
+        "id": "3",
+        "short": "3",
+        "full": "Sala 3",
+        "width": 4,
+        "height": 6,
+        "x": 26,
+        "y": 14
+    },
+    {
+        "type": "groundFloor",
+        "id": "2",
+        "short": "2",
+        "full": "Sala 2",
+        "width": 4,
+        "height": 4,
+        "x": 26,
+        "y": 10
+    },
+    {
+        "type": "groundFloor",
+        "id": "1",
+        "short": "1",
+        "full": "Sala 1",
+        "width": 4,
+        "height": 6,
+        "x": 26,
+        "y": 4
+    },
+    {
+        "type": "groundFloor",
+        "id": "aerobik",
+        "short": "aerobik",
+        "full": "Sala do aerobiku",
+        "width": 4,
+        "height": 8,
+        "x": 0,
+        "y": 2,
+        "vertical": true
+    },
+    {
+        "type": "groundFloor",
+        "id": "gim1",
+        "short": "gim1",
+        "full": "Sala gimnastyczna",
+        "width": 14,
+        "height": 4,
+        "x": 0,
+        "y": -4
+    },
+    {
+        "type": "firstFloor",
+        "id": "26",
+        "short": "26",
+        "full": "Sala 26",
+        "width": 4,
+        "height": 6,
+        "x": 6,
+        "y": 4
+    },
+    {
+        "type": "firstFloor",
+        "id": "25",
+        "short": "25",
+        "full": "Sala 25",
+        "width": 4,
+        "height": 6,
+        "x": 6,
+        "y": 12
+    },
+    {
+        "type": "firstFloor",
+        "id": "24",
+        "short": "24",
+        "full": "Sala 24",
+        "width": 4,
+        "height": 6,
+        "x": 6,
+        "y": 18
+    },
+    {
+        "type": "firstFloor",
+        "id": "23",
+        "short": "23",
+        "full": "Sala 23",
+        "width": 4,
+        "height": 4,
+        "x": 2,
+        "y": 26
+    },
+    {
+        "type": "firstFloor",
+        "id": "22",
+        "short": "22",
+        "full": "Sala 22",
+        "width": 6,
+        "height": 4,
+        "x": 8,
+        "y": 26
+    },
+    {
+        "type": "firstFloor",
+        "id": "21",
+        "short": "21",
+        "full": "Sala 21",
+        "width": 6,
+        "height": 5,
+        "x": 14,
+        "y": 26
+    },
+    {
+        "type": "firstFloor",
+        "id": "20",
+        "short": "20",
+        "full": "Sala 20",
+        "width": 4,
+        "height": 5,
+        "x": 20,
+        "y": 26
+    },
+    {
+        "type": "firstFloor",
+        "id": "19",
+        "short": "19",
+        "full": "Sala 19",
+        "width": 6,
+        "height": 4,
+        "x": 24,
+        "y": 26
+    },
+    {
+        "type": "firstFloor",
+        "id": "17",
+        "short": "17",
+        "full": "Sala 17",
+        "width": 4,
+        "height": 6,
+        "x": 32,
+        "y": 24
+    },
+    {
+        "type": "firstFloor",
+        "id": "18",
+        "short": "18",
+        "full": "Sala 18",
+        "width": 4,
+        "height": 4,
+        "x": 26,
+        "y": 20
+    },
+    {
+        "type": "firstFloor",
+        "id": "16",
+        "short": "16",
+        "full": "Sala 16",
+        "width": 4,
+        "height": 6,
+        "x": 26,
+        "y": 14
+    },
+    {
+        "type": "firstFloor",
+        "id": "15",
+        "short": "15",
+        "full": "Sala 15",
+        "width": 4,
+        "height": 4,
+        "x": 26,
+        "y": 10
+    },
+    {
+        "type": "firstFloor",
+        "id": "14",
+        "short": "14",
+        "full": "Sala 14",
+        "width": 4,
+        "height": 6,
+        "x": 26,
+        "y": 4
+    },
+    {
+        "type": "secondFloor",
+        "id": "37",
+        "short": "37",
+        "full": "Sala 37",
+        "width": 4,
+        "height": 6,
+        "x": 6,
+        "y": 4
+    },
+    {
+        "type": "secondFloor",
+        "id": "36",
+        "short": "36",
+        "full": "Sala 36",
+        "width": 4,
+        "height": 6,
+        "x": 6,
+        "y": 12
+    },
+    {
+        "type": "secondFloor",
+        "id": "35",
+        "short": "35",
+        "full": "Sala 35",
+        "width": 4,
+        "height": 6,
+        "x": 6,
+        "y": 18
+    },
+    {
+        "type": "secondFloor",
+        "id": "aula",
+        "short": "aula",
+        "full": "Aula",
+        "width": 10,
+        "height": 5,
+        "x": 14,
+        "y": 26
+    },
+    {
+        "type": "secondFloor",
+        "id": "32",
+        "short": "32",
+        "full": "Sala 32",
+        "width": 6,
+        "height": 4,
+        "x": 24,
+        "y": 26
+    },
+    {
+        "type": "secondFloor",
+        "id": "29",
+        "short": "29",
+        "full": "Sala 29",
+        "width": 4,
+        "height": 6,
+        "x": 32,
+        "y": 24
+    },
+    {
+        "type": "secondFloor",
+        "id": "31",
+        "short": "31",
+        "full": "Sala 31",
+        "width": 4,
+        "height": 4,
+        "x": 26,
+        "y": 20
+    },
+    {
+        "type": "secondFloor",
+        "id": "28",
+        "short": "28",
+        "full": "Sala 28",
+        "width": 4,
+        "height": 6,
+        "x": 26,
+        "y": 14
+    },
+    {
+        "type": "secondFloor",
+        "id": "27",
+        "short": "27",
+        "full": "Sala 27",
+        "width": 4,
+        "height": 8,
+        "x": 26,
+        "y": 6
+    },
+    {
+        "type": "institute",
+        "id": "a1",
+        "short": "A1",
+        "full": "Sala A1"
+    },
+    {
+        "type": "institute",
+        "id": "a2",
+        "short": "A2",
+        "full": "Sala A2"
+    },
+    {
+        "type": "institute",
+        "id": "a3",
+        "short": "A3",
+        "full": "Sala A3"
+    },
+    {
+        "type": "institute",
+        "id": "a4",
+        "short": "A4",
+        "full": "Sala A4"
+    },
+    {
+        "type": "institute",
+        "id": "a5",
+        "short": "A5",
+        "full": "Sala A5"
+    },
+    {
+        "type": "institute",
+        "id": "a6",
+        "short": "A6",
+        "full": "Sala A6"
+    },
+    {
+        "type": "institute",
+        "id": "a7",
+        "short": "A7",
+        "full": "Sala A7"
+    },
+    {
+        "type": "institute",
+        "id": "a8",
+        "short": "A8",
+        "full": "Sala A8"
+    },
+    {
+        "type": "institute",
+        "id": "a9",
+        "short": "A9",
+        "full": "Sala A9"
+    },
+    {
+        "type": "institute",
+        "id": "a10",
+        "short": "A10",
+        "full": "Sala A10"
+    },
+    {
+        "type": "institute",
+        "id": "a11",
+        "short": "A11",
+        "full": "Sala A11"
+    },
+    {
+        "type": "dh",
+        "id": "dh1",
+        "short": "DH1",
+        "full": "Dom Harcerza 1"
+    },
+    {
+        "type": "dh",
+        "id": "dh2",
+        "short": "DH2",
+        "full": "Dom Harcerza 2"
+    },
+    {
+        "type": "uj",
+        "id": "uj1",
+        "short": "UJ1",
+        "full": "Uniwersytet Jagielloński 1"
+    },
+    {
+        "type": "uj",
+        "id": "uj2",
+        "short": "UJ2",
+        "full": "Uniwersytet Jagielloński 2"
     }
-  ],
-  "groundFloor": [
-    {
-      "value": "13c",
-      "width": 4,
-      "height": 4,
-      "x": 6,
-      "y": 6
-    },
-    {
-      "value": "13b",
-      "width": 4,
-      "height": 4,
-      "x": 6,
-      "y": 12
-    },
-    {
-      "value": "13a",
-      "width": 4,
-      "height": 4,
-      "x": 6,
-      "y": 16
-    },
-    {
-      "value": "13",
-      "width": 4,
-      "height": 4,
-      "x": 6,
-      "y": 20
-    },
-    {
-      "value": "czytelnia",
-      "width": 10,
-      "height": 4,
-      "x": 2,
-      "y": 26
-    },
-    {
-      "value": "5",
-      "width": 4,
-      "height": 6,
-      "x": 32,
-      "y": 24
-    },
-    {
-      "value": "3",
-      "width": 4,
-      "height": 6,
-      "x": 26,
-      "y": 14
-    },
-    {
-      "value": "2",
-      "width": 4,
-      "height": 4,
-      "x": 26,
-      "y": 10
-    },
-    {
-      "value": "1",
-      "width": 4,
-      "height": 6,
-      "x": 26,
-      "y": 4
-    },
-    {
-      "value": "aerobik",
-      "width": 4,
-      "height": 8,
-      "x": 0,
-      "y": 2,
-      "vertical": true
-    },
-    {
-      "value": "gim1",
-      "width": 14,
-      "height": 4,
-      "x": 0,
-      "y": -4
-    }
-  ],
-  "firstFloor": [
-    {
-      "value": "26",
-      "width": 4,
-      "height": 6,
-      "x": 6,
-      "y": 4
-    },
-    {
-      "value": "25",
-      "width": 4,
-      "height": 6,
-      "x": 6,
-      "y": 12
-    },
-    {
-      "value": "24",
-      "width": 4,
-      "height": 6,
-      "x": 6,
-      "y": 18
-    },
-    {
-      "value": "23",
-      "width": 4,
-      "height": 4,
-      "x": 2,
-      "y": 26
-    },
-    {
-      "value": "22",
-      "width": 6,
-      "height": 4,
-      "x": 8,
-      "y": 26
-    },
-    {
-      "value": "21",
-      "width": 6,
-      "height": 5,
-      "x": 14,
-      "y": 26
-    },
-    {
-      "value": "20",
-      "width": 4,
-      "height": 5,
-      "x": 20,
-      "y": 26
-    },
-    {
-      "value": "19",
-      "width": 6,
-      "height": 4,
-      "x": 24,
-      "y": 26
-    },
-    {
-      "value": "17",
-      "width": 4,
-      "height": 6,
-      "x": 32,
-      "y": 24
-    },
-    {
-      "value": "18",
-      "width": 4,
-      "height": 4,
-      "x": 26,
-      "y": 20
-    },
-    {
-      "value": "16",
-      "width": 4,
-      "height": 6,
-      "x": 26,
-      "y": 14
-    },
-    {
-      "value": "15",
-      "width": 4,
-      "height": 4,
-      "x": 26,
-      "y": 10
-    },
-    {
-      "value": "14",
-      "width": 4,
-      "height": 6,
-      "x": 26,
-      "y": 4
-    }
-  ],
-  "secondFloor": [
-    {
-      "value": "37",
-      "width": 4,
-      "height": 6,
-      "x": 6,
-      "y": 4
-    },
-    {
-      "value": "36",
-      "width": 4,
-      "height": 6,
-      "x": 6,
-      "y": 12
-    },
-    {
-      "value": "35",
-      "width": 4,
-      "height": 6,
-      "x": 6,
-      "y": 18
-    },
-    {
-      "value": "aula",
-      "width": 10,
-      "height": 5,
-      "x": 14,
-      "y": 26
-    },
-    {
-      "value": "32",
-      "width": 6,
-      "height": 4,
-      "x": 24,
-      "y": 26
-    },
-    {
-      "value": "29",
-      "width": 4,
-      "height": 6,
-      "x": 32,
-      "y": 24
-    },
-    {
-      "value": "31",
-      "width": 4,
-      "height": 4,
-      "x": 26,
-      "y": 20
-    },
-    {
-      "value": "28",
-      "width": 4,
-      "height": 6,
-      "x": 26,
-      "y": 14
-    },
-    {
-      "value": "27",
-      "width": 4,
-      "height": 8,
-      "x": 26,
-      "y": 6
-    }
-  ],
-  "institute": [
-    "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11"
-  ],
-  "dh": [
-    "DH1", "DH2"
-  ],
-  "other": [
-    "UJ1", "UJ2"
-  ]
-}
+]
