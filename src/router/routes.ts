@@ -50,6 +50,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('pages/CombinedTimetable.vue'),
   },
   {
+    name: 'Campaign',
+    path: '/13c',
+    alias: '/13C',
+    component: () => import('pages/CampaignPage.vue'),
+  },
+  {
     path: '/pwa-home',
     redirect: () => {
       const config = useConfigStore();

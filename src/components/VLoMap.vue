@@ -130,7 +130,7 @@
           <div>
             Sprawdź gdzie jest twoja sala bezpośrednio w planie lekcji!
           </div>
-          <a href="https://plan.dk-gl.eu/">plan.dk-gl.eu</a>
+          <a href="/">plan.dk-gl.eu</a>
         </div>
       </foreignObject>
     </g>
