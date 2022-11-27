@@ -1,8 +1,7 @@
 <template>
   <svg
-    width="296"
-    :height="reducedHeight ? 242 : 288"
-    :viewBox="reducedHeight ? '-4 12 296 242' : '-4 -36 296 288'"
+    width="100%"
+    :viewBox="viewboxValue"
     class="v-lo-map"
   >
     <text
@@ -147,8 +146,12 @@ export default defineComponent({
       type: String as PropType<FloorType>,
       required: true,
     },
+    viewbox: {
+      type: String as PropType<'default' | 'reduced-height' | 'centered'>,
+      required: false,
+      default: 'default',
+    },
     campaign: Boolean,
-    reducedHeight: Boolean,
     selectedId: {
       type: String,
       required: false,
@@ -164,6 +167,11 @@ export default defineComponent({
       firstFloor: '+1',
       secondFloor: '+2',
     }[props.floor])),
+    viewboxValue: computed(() => ({
+      default: '-4 -36 296 288',
+      'reduced-height': '-4 12 312 242',
+      centered: '4 -36 296 288',
+    }[props.viewbox])),
     onRoomClick: (id: string) => {
       emit('roomClick', id);
     },
@@ -173,6 +181,9 @@ export default defineComponent({
 
 <style lang="scss">
 .v-lo-map {
+  max-height: 100%;
+  max-width: 100%;
+
   .v-lo-map__bg {
     fill: #999;
     stroke-width: 1px;

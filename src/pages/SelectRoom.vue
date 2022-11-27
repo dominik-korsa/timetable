@@ -2,9 +2,18 @@
   <q-page
     padding
     class="select-room"
+    :style-fn="styleFn"
   >
     <div class="select-room__content">
-      <div class="select-room__map">
+      <div class="select-room__map-single">
+        <v-lo-map
+          :floor="floor"
+          :selected-id="selectedRoom?.id"
+          viewbox="centered"
+          @room-click="selectRoom"
+        />
+      </div>
+      <div class="select-room__map-grid">
         <v-lo-map
           floor="dungeons"
           class="select-room__floor select-room__floor--dungeons"
@@ -20,7 +29,7 @@
         <v-lo-map
           floor="firstFloor"
           class="select-room__floor select-room__floor--first"
-          reduced-height
+          viewbox="reduced-height"
           :selected-id="selectedRoom?.id"
           @room-click="selectRoom"
         />
@@ -50,37 +59,44 @@
           {{ room.short }}
         </div>
       </div>
-      <q-card
-        v-if="selectedRoom"
-        class="select-room__info"
-        bordered
-        flat
-      >
-        <q-card-section class="select-room__info-text">
-          <div class="text-body1">
-            {{ selectedRoom.full }}
-          </div>
-          <div class="text-caption">
-            {{ selectedRoom.description }}
-          </div>
-        </q-card-section>
-        <q-card-section>
-          <q-btn
-            flat
-            round
-            icon="close"
-            @click="selectRoom(undefined)"
-          />
-        </q-card-section>
-      </q-card>
+      <div class="select-room__info-wrapper">
+        <q-card
+          v-if="selectedRoom"
+          class="select-room__info"
+          bordered
+          flat
+        >
+          <q-card-section class="select-room__info-text">
+            <div class="text-body1">
+              {{ selectedRoom.full }}
+            </div>
+            <div class="text-caption">
+              {{ selectedRoom.description }}
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <q-btn
+              flat
+              round
+              icon="close"
+              @click="selectRoom(undefined)"
+            />
+          </q-card-section>
+        </q-card>
+      </div>
     </div>
   </q-page>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import {
+  computed, defineComponent, ref, watch,
+} from 'vue';
 import VLoMap from 'components/VLoMap.vue';
-import { otherRooms, typeDescription, vLoRooms } from 'src/api/v-lo-rooms';
+import {
+  FloorType,
+  isFloorRoom, otherRooms, typeDescription, vLoRooms,
+} from 'src/api/v-lo-rooms';
 import { useRoute, useRouter } from 'vue-router';
 
 export default defineComponent({
@@ -89,16 +105,25 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
 
+    const floor = ref<FloorType>('groundFloor');
+    const selectedRoom = computed(() => {
+      const room = vLoRooms.find((e) => e.id === route.query.selected);
+      if (!room) return undefined;
+      return {
+        ...room,
+        description: typeDescription[room.type],
+      };
+    });
+
+    watch(() => selectedRoom.value, (value) => {
+      if (!value) return;
+      if (isFloorRoom(value)) floor.value = value.type;
+    }, { immediate: true });
+
     return ({
       otherRooms,
-      selectedRoom: computed(() => {
-        const selectedRoom = vLoRooms.find((room) => room.id === route.query.selected);
-        if (!selectedRoom) return undefined;
-        return {
-          ...selectedRoom,
-          description: typeDescription[selectedRoom.type],
-        };
-      }),
+      floor,
+      selectedRoom,
       selectRoom: (id: string | undefined) => {
         router.replace({
           query: {
@@ -106,6 +131,7 @@ export default defineComponent({
           },
         });
       },
+      styleFn: (topMargin: number, height: number) => ({ height: `${height - topMargin}px` }),
     });
   },
 });
@@ -119,19 +145,32 @@ export default defineComponent({
 
   .select-room__content {
     display: grid;
-    grid-template-rows: 1fr 64px;
-    grid-template-columns: auto auto;
+    grid-template-rows: 1fr auto;
+    grid-template-columns: 1fr auto;
     grid-template-areas:
     "map other"
     "info info";
     grid-gap: 24px;
+    height: 100%;
   }
 
-  .select-room__map {
+  .select-room__map-single {
+    display: none;
+    overflow: hidden;
+    flex-shrink: 1;
+    flex-grow: 0;
+  }
+
+  .select-room__map-grid {
+    overflow: hidden;
     grid-area: map;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto;
+    align-self: center;
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: (2*296)/(288+242);
 
     .select-room__floor {
       &.select-room__floor--first, &.select-room__floor--second {
@@ -146,8 +185,9 @@ export default defineComponent({
     flex-direction: column;
     gap: 3px;
     justify-content: center;
+    overflow: auto;
 
-    & .select-room__other-room {
+    .select-room__other-room {
       color: white;
       padding: 2px 4px;
       text-align: center;
@@ -194,8 +234,12 @@ export default defineComponent({
     }
   }
 
-  .select-room__info {
+  .select-room__info-wrapper {
     grid-area: info;
+    height: 64px;
+  }
+
+  .select-room__info {
     display: flex;
     align-items: center;
 
@@ -205,6 +249,34 @@ export default defineComponent({
 
     & > .q-card__section {
       padding: 8px 16px;
+    }
+  }
+
+  @media screen and (orientation: portrait) and (max-width: 700px) {
+    .select-room__content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      justify-content: end;
+
+      .select-room__other {
+        flex-direction: row;
+        flex-wrap: wrap;
+        flex-shrink: 0;
+      }
+
+      .select-room__map-single {
+        display: block;
+      }
+
+      .select-room__map-grid {
+        display: none;
+      }
+
+      .select-room__info {
+        flex-shrink: 0;
+      }
     }
   }
 }

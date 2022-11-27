@@ -36,7 +36,7 @@ export const floorRooms: Record<FloorType, FloorRoom[]> = {
 };
 export const otherRooms: OtherRoom[] = [];
 
-const isFloorRoom = (room: BaseRoom): room is FloorRoom => room.type in floorRooms;
+export const isFloorRoom = (room: BaseRoom): room is FloorRoom => room.type in floorRooms;
 
 vLoRooms.forEach((room) => {
   if (isFloorRoom(room)) floorRooms[room.type].push(room);
