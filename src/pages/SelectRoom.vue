@@ -10,6 +10,7 @@
           :floor="floor"
           :selected-id="selectedRoom?.id"
           viewbox="centered"
+          :campaign="floor === 'groundFloor' && !!$route.query.campaign"
           @room-click="selectRoom"
         />
         <q-btn-toggle
@@ -41,6 +42,7 @@
           floor="groundFloor"
           class="select-room__floor select-room__floor--ground"
           :selected-id="selectedRoom?.id"
+          :campaign="!!$route.query.campaign"
           @room-click="selectRoom"
         />
         <v-lo-map
@@ -140,6 +142,7 @@ export default defineComponent({
     const selectRoom = (id: string | undefined) => {
       router.replace({
         query: {
+          ...route.query,
           selected: id,
         },
       });

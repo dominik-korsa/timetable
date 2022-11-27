@@ -120,16 +120,17 @@
       </text>
       <foreignObject
         x="104"
-        y="56"
+        y="60"
         width="96"
         height="96"
         class="v-lo-map__13-campaign-text"
         text-anchor="middle"
       >
         <div>
-          Od teraz w aplikacji
-          <a href="/">plan.dk-gl.eu</a>
-          możesz sprawdzać plan sal i nauczycieli
+          <div>
+            Sprawdź gdzie jest twoja sala bezpośrednio w planie lekcji!
+          </div>
+          <a href="https://plan.dk-gl.eu/">plan.dk-gl.eu</a>
         </div>
       </foreignObject>
     </g>
@@ -268,8 +269,11 @@ export default defineComponent({
     font-size: 0.8em;
 
     a {
+      display: block;
+      margin-top: 8px;
       color: $primary;
       white-space: nowrap;
+      font-size: 1.3em;
     }
   }
 }
