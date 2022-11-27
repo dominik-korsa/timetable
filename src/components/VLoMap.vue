@@ -1,8 +1,8 @@
 <template>
   <svg
     width="296"
-    height="288"
-    viewBox="-4 -36 296 288"
+    :height="reducedHeight ? 242 : 288"
+    :viewBox="reducedHeight ? '-4 12 296 242' : '-4 -36 296 288'"
     class="v-lo-map"
   >
     <text
@@ -143,6 +143,7 @@ export default defineComponent({
       required: true,
     },
     campaign: Boolean,
+    reducedHeight: Boolean,
   },
   setup: (props) => ({
     rooms: computed(() => vLoRooms[props.floor]),
@@ -181,7 +182,7 @@ export default defineComponent({
     user-select: none;
 
     &:hover rect {
-      fill: lighten($primary, 20%);
+      fill: lighten($primary, 15%);
     }
 
     rect {
