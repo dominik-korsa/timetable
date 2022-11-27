@@ -18,17 +18,17 @@
       v-if="small"
       class="timetable-item-single__group"
     >
-      {{ lesson.group?.name }}
+      {{ lesson.group?.short }}
     </div>
     <div class="timetable-item-single__bottom">
       <div
         v-if="!small"
         class="timetable-item-single__group"
       >
-        {{ lesson.group?.name }}
+        {{ lesson.group?.short }}
       </div>
       <div class="timetable-item-single__teacher">
-        {{ lesson.teacher }}
+        {{ lesson.teacher.short }}
       </div>
       <slot />
     </div>

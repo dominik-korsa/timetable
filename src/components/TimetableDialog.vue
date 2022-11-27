@@ -32,7 +32,7 @@
                 v-if="lesson.teacher"
                 class="timetable-dialog__item-teacher"
               >
-                {{ lesson.teacher }}
+                {{ lesson.teacher.name }}
               </div>
               <div
                 v-else

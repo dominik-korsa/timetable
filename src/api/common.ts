@@ -12,11 +12,15 @@ export interface TableHour {
 export interface TableLesson {
   subject: string;
   subjectShort: string;
-  teacher: string | undefined;
+  teacher: {
+    name: string;
+    short: string;
+  } | undefined;
   room: string | undefined;
   group: {
     key: string;
     name: string;
+    short: string;
   } | undefined;
   color: string | undefined;
   removed: boolean;

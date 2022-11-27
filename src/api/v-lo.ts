@@ -30,13 +30,19 @@ interface TimestampsResponseItem {
 interface LessonResponseItem {
   subject: string;
   subject_short: string;
-  teacher: string;
+  teacher: {
+    name: string;
+    short: string;
+  };
   classroom: string;
   color: string;
   time_index: number;
   duration: number;
-  group_raw: string;
-  group: string;
+  group: {
+    name: string;
+    raw: string;
+    short: string;
+  } | null;
   date: string;
   day_index: number;
   removed: boolean;
@@ -134,11 +140,12 @@ export class VLoClient implements BaseClient {
           moments[i].lessons.push({
             subject: lesson.subject,
             subjectShort: lesson.subject_short,
-            teacher: lesson.teacher || undefined,
+            teacher: lesson.teacher.short ? lesson.teacher : undefined,
             room: lesson.classroom || undefined,
-            group: lesson.group_raw ? {
-              key: lesson.group_raw,
-              name: lesson.group,
+            group: lesson.group ? {
+              key: lesson.group.raw,
+              name: lesson.group.name,
+              short: lesson.group.short,
             } : undefined,
             color: lesson.color,
             removed: lesson.removed ?? false,
