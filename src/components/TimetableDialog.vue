@@ -195,6 +195,7 @@ export default defineComponent({
 
     .timetable-dialog__item-group {
       font-style: italic;
+      font-size: 0.8em;
 
       .timetable-dialog__item-group-alt {
         font-weight: 300;
