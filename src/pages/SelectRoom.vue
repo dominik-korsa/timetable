@@ -13,7 +13,7 @@
           @room-click="selectRoom"
         />
         <q-btn-toggle
-          v-model="floor"
+          :model-value="floor"
           class="select-room__floor-picker"
           toggle-color="primary"
           spread
@@ -27,6 +27,7 @@
             {label: '+1', value: 'firstFloor'},
             {label: '+2', value: 'secondFloor'},
           ]"
+          @update:model-value="selectFloor"
         />
       </div>
       <div class="select-room__map-grid">
@@ -136,16 +137,21 @@ export default defineComponent({
       if (isFloorRoom(value)) floor.value = value.type;
     }, { immediate: true });
 
+    const selectRoom = (id: string | undefined) => {
+      router.replace({
+        query: {
+          selected: id,
+        },
+      });
+    };
     return ({
       otherRooms,
       floor,
       selectedRoom,
-      selectRoom: (id: string | undefined) => {
-        router.replace({
-          query: {
-            selected: id,
-          },
-        });
+      selectRoom,
+      selectFloor: (value: FloorType) => {
+        floor.value = value;
+        if (isFloorRoom(selectedRoom.value) && selectedRoom.value.type !== value) selectRoom(undefined);
       },
       styleFn: (topMargin: number, height: number) => ({ height: `${height - topMargin}px` }),
     });
@@ -251,7 +257,7 @@ export default defineComponent({
   }
 
   .select-room__floor-picker {
-    border: 1px solid black;
+    border: 1px solid var(--separator-color);
     margin-top: 24px;
   }
 
