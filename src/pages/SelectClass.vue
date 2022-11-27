@@ -47,12 +47,6 @@
             :to="combinedRoute"
           >
             Zestawienie klas
-            <q-badge
-              color="red"
-              floating
-            >
-              Beta
-            </q-badge>
           </q-btn>
           <q-btn
             no-caps
@@ -61,6 +55,12 @@
             class="full-width q-mt-sm"
             :to="selectRoomRoute"
           >
+            <q-badge
+              color="red"
+              floating
+            >
+              Nowość!
+            </q-badge>
             Mapa sal
           </q-btn>
         </div>

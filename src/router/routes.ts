@@ -26,7 +26,7 @@ const routes: RouteRecordRaw[] = [
         path: 'timetable/:tri/room',
         component: () => import('pages/SelectRoom.vue'),
         meta: {
-          title: 'Wybierz salę',
+          title: 'Mapa sal',
         },
       },
       {
