@@ -53,12 +53,12 @@
     <path
       v-else-if="floor === 'firstFloor'"
       class="v-lo-map__corridor"
-      d="M 80,48 V 192 H 48 v 16 16 h 16 v -16 H 80 256 V 48 h -16 V 192 H 96 V 48 Z"
+      d="M 80,48 V 190 H 48 v 32 h 16 V 208 H 256 V 48 h -16 V 192 H 96 V 48 Z"
     />
     <path
       v-else-if="floor === 'secondFloor'"
       class="v-lo-map__corridor"
-      d="M 80,48 V 192 H 48 v 16 H 80 256 V 48 h -16 V 192 H 96 V 48 Z"
+      d="M 80,48 V 192 H 48 v 16 H 256 V 48 h -16 V 192 H 96 V 48 Z"
     />
     <g
       v-for="room in rooms"
@@ -67,6 +67,7 @@
       tabindex="0"
       class="v-lo-map__room"
       :class="{
+        [`v-lo-map__room--${room.type}`]: true,
         'v-lo-map__room--vertical': !!room.vertical,
         'v-lo-map__room--selected': room.id === selectedId,
       }"
@@ -75,12 +76,20 @@
       @keydown.space="onRoomClick(room.id)"
     >
       <rect
+        v-if="room.width !== undefined"
+        class="v-lo-map__room-shape"
         :width="room.width*8"
         :height="room.height*8"
         :x="room.x*8"
         :y="room.y*8"
       />
+      <path
+        v-else
+        class="v-lo-map__room-shape"
+        :d="room.d"
+      />
       <foreignObject
+        v-if="room.short"
         :width="room.width*8"
         :height="room.height*8"
         :x="room.x*8"
@@ -208,16 +217,52 @@ export default defineComponent({
     user-select: none;
     outline: none;
 
-    &.v-lo-map__room--selected rect, &:hover rect {
-      fill: lighten($primary, 15%);
+    &.v-lo-map__room--classroom {
+      --base-color:  #{$primary};
+      --hover-color: #{lighten($primary, 15%)};
+      --blink-color: #{lighten($primary, 30%)};
     }
 
-    &.v-lo-map__room--selected rect {
+    &.v-lo-map__room--bathroom {
+      --base-color:  #{$teal};
+      --hover-color: #{$teal-4};
+      --blink-color: #{$teal-3};
+    }
+
+    &.v-lo-map__room--teachers {
+      --base-color:  #{$purple};
+      --hover-color: #{$purple-4};
+      --blink-color: #{$purple-3};
+    }
+
+    &.v-lo-map__room--management {
+      --base-color:  #{$pink};
+      --hover-color: #{$pink-4};
+      --blink-color: #{$pink-3};
+    }
+
+    &.v-lo-map__room--facility {
+      --base-color:  #{$brown-7};
+      --hover-color: #{$brown-5};
+      --blink-color: #{$brown-4};
+    }
+
+    &.v-lo-map__room--other {
+      --base-color:  #{$lime-7};
+      --hover-color: #{$lime-4};
+      --blink-color: #{$lime-2};
+    }
+
+    &:hover .v-lo-map__room-shape {
+      fill: var(--hover-color);
+    }
+
+    &.v-lo-map__room--selected .v-lo-map__room-shape {
       animation: selected-rect ease-in-out alternate infinite 800ms;
 
       @keyframes selected-rect {
         to {
-          fill: lighten($primary, 30%);
+          fill: var(--blink-color);
         }
       }
     }
@@ -227,8 +272,8 @@ export default defineComponent({
       outline-offset: 2px;
     }
 
-    rect {
-      fill: $primary;
+    .v-lo-map__room-shape {
+      fill: var(--base-color);
       stroke-width: 1px;
       stroke: black;
       transition: fill 200ms, fill-opactiy 200ms;

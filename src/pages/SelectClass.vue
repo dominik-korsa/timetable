@@ -61,7 +61,7 @@
             >
               Nowość!
             </q-badge>
-            Mapa sal
+            Mapa pomieszczeń
           </q-btn>
         </div>
       </div>

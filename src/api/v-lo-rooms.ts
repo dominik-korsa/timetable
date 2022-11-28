@@ -3,53 +3,57 @@ import vLoRoomsRaw from 'assets/v-lo-rooms.json';
 interface BaseRoom {
   id: string;
   raw: string;
-  short: string;
+  short?: string;
   full: string;
-  type: string;
+  type: 'classroom';
 }
 
 export type FloorType = 'dungeons' | 'groundFloor' | 'firstFloor' | 'secondFloor';
-export type OtherType = 'institute' | 'dh' | 'uj';
-export type RoomType = FloorType | OtherType;
+export type OtherLocation = 'institute' | 'dh' | 'uj';
+export type RoomLocation = FloorType | OtherLocation;
 
-interface FloorRoom extends BaseRoom {
+interface FloorRectRoom extends BaseRoom {
   x: number;
   y: number;
   width: number;
   height: number;
-  type: FloorType;
   vertical?: boolean;
 }
 
-interface OtherRoom extends BaseRoom {
-  type: OtherType;
+interface FloorPathRoom extends BaseRoom {
+  d: string;
 }
 
-type Room = FloorRoom | OtherRoom;
+type FloorRoom = FloorRectRoom | FloorPathRoom;
 
-export const vLoRooms = vLoRoomsRaw as Room[];
+interface OtherRoom extends BaseRoom {
+  location: OtherLocation;
+  short: string;
+}
 
-export const floorRooms: Record<FloorType, FloorRoom[]> = {
-  firstFloor: [],
-  secondFloor: [],
-  groundFloor: [],
-  dungeons: [],
-};
-export const otherRooms: OtherRoom[] = [];
+type Room = (FloorRoom & { location: FloorType }) | OtherRoom;
 
-export const isFloorRoom = (
-  room: BaseRoom | undefined,
-): room is FloorRoom => room !== undefined && room.type in floorRooms;
+export const floorRooms: Record<FloorType, FloorRoom[]> = vLoRoomsRaw.floors as Record<FloorType, FloorRoom[]>;
+export const otherRooms: OtherRoom[] = vLoRoomsRaw.other as OtherRoom[];
+
+export const isFloor = (x: RoomLocation): x is FloorType => x in floorRooms;
 
 export const roomRawToIdMap: Record<string, string> = {};
+export const vLoRooms: Room[] = [];
 
-vLoRooms.forEach((room) => {
+Object.entries(floorRooms).forEach(([floor, rooms]) => rooms.forEach((room) => {
   roomRawToIdMap[room.raw] = room.id;
-  if (isFloorRoom(room)) floorRooms[room.type].push(room);
-  else otherRooms.push(room);
+  vLoRooms.push({
+    ...room,
+    location: floor as FloorType,
+  });
+}));
+otherRooms.forEach((room) => {
+  roomRawToIdMap[room.raw] = room.id;
+  vLoRooms.push(room);
 });
 
-export const typeDescription: Record<RoomType, string> = {
+export const locationDescription: Record<RoomLocation, string> = {
   dungeons: 'V LO, piwnice',
   groundFloor: 'V LO, parter',
   firstFloor: 'V LO, 1. piętro',

@@ -66,7 +66,7 @@
           role="button"
           class="select-room__other-room"
           :class="{
-            [`select-room__other-room--${room.type}`]: true,
+            [`select-room__other-room--${room.location}`]: true,
             'select-room__other--selected': selectedRoom?.id === room.id
           }"
           @click="selectRoom(room.id)"
@@ -111,8 +111,7 @@ import {
 } from 'vue';
 import VLoMap from 'components/VLoMap.vue';
 import {
-  FloorType,
-  isFloorRoom, otherRooms, typeDescription, vLoRooms,
+  FloorType, otherRooms, locationDescription, vLoRooms, isFloor,
 } from 'src/api/v-lo-rooms';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -128,13 +127,13 @@ export default defineComponent({
       if (!room) return undefined;
       return {
         ...room,
-        description: typeDescription[room.type],
+        description: locationDescription[room.location],
       };
     });
 
     watch(() => selectedRoom.value, (value) => {
       if (!value) return;
-      if (isFloorRoom(value)) floor.value = value.type;
+      if (isFloor(value.location)) floor.value = value.location;
     }, { immediate: true });
 
     const selectRoom = (id: string | undefined) => {
@@ -152,7 +151,10 @@ export default defineComponent({
       selectRoom,
       selectFloor: (value: FloorType) => {
         floor.value = value;
-        if (isFloorRoom(selectedRoom.value) && selectedRoom.value.type !== value) selectRoom(undefined);
+        if (selectedRoom.value
+          && isFloor(selectedRoom.value.location)
+          && selectedRoom.value.location !== value
+        ) selectRoom(undefined);
       },
       styleFn: (topMargin: number, height: number) => ({ height: `${height - topMargin}px` }),
     });
@@ -264,7 +266,7 @@ export default defineComponent({
 
   .select-room__info-wrapper {
     grid-area: info;
-    height: 64px;
+    min-height: 64px;
   }
 
   .select-room__info {
