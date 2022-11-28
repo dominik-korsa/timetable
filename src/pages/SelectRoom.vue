@@ -53,7 +53,7 @@
         <v-lo-map
           floor="secondFloor"
           class="select-room__floor select-room__floor--second"
-          reduced-height
+          viewbox="reduced-height"
           :selected-id="selectedRoom?.id"
           @room-click="selectRoom"
         />
