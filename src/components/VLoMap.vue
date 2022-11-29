@@ -32,11 +32,16 @@
       x="128"
       y="160"
     />
-    <path
-      v-if="floor === 'dungeons'"
-      class="v-lo-map__corridor"
-      d="m 240,112 0,80 H 96 V 80 H 80 V 208 H 256 V 112 Z"
-    />
+    <template v-if="floor === 'dungeons'">
+      <path
+        class="v-lo-map__corridor"
+        d="m 240,112 0,80 H 96 V 80 H 80 V 208 H 256 V 112 Z"
+      />
+      <path
+        class="v-lo-map__corridor-outline"
+        d="m 240,112 0,80 H 96 V 80 H 80 V 208 H 256 V 112 Z"
+      />
+    </template>
     <template v-else-if="floor === 'groundFloor'">
       <rect
         class="v-lo-map__corridor"
@@ -49,17 +54,38 @@
         class="v-lo-map__corridor"
         d="M 240,48 V 192 H 96 v -48 H 80 v 48 H 48 16 v 16 H 48 80 128 v 40 h 48 v -40 h 80 V 48 Z"
       />
+      <rect
+        class="v-lo-map__corridor-outline"
+        width="16"
+        height="80"
+        x="80"
+        y="32"
+      />
+      <path
+        class="v-lo-map__corridor-outline"
+        d="M 240,48 V 192 H 96 v -48 H 80 v 48 H 48 16 v 16 H 48 80 128 v 40 h 48 v -40 h 80 V 48 Z"
+      />
     </template>
-    <path
-      v-else-if="floor === 'firstFloor'"
-      class="v-lo-map__corridor"
-      d="M 80,48 V 190 H 48 v 32 h 16 V 208 H 256 V 48 h -16 V 192 H 96 V 48 Z"
-    />
-    <path
-      v-else-if="floor === 'secondFloor'"
-      class="v-lo-map__corridor"
-      d="M 80,48 V 192 H 48 v 16 H 256 V 48 h -16 V 192 H 96 V 48 Z"
-    />
+    <template v-else-if="floor === 'firstFloor'">
+      <path
+        class="v-lo-map__corridor"
+        d="M 80,48 V 192 H 48 v 30 h 16 V 208 H 256 V 48 h -16 V 192 H 96 V 48 Z"
+      />
+      <path
+        class="v-lo-map__corridor-outline"
+        d="M 80,48 V 192 H 48 v 30 h 16 V 208 H 256 V 48 h -16 V 192 H 96 V 48 Z"
+      />
+    </template>
+    <template v-else-if="floor === 'secondFloor'">
+      <path
+        class="v-lo-map__corridor"
+        d="M 80,48 V 192 H 48 v 16 H 256 V 48 h -16 V 192 H 96 V 48 Z"
+      />
+      <path
+        class="v-lo-map__corridor-outline"
+        d="M 80,48 V 192 H 48 v 16 H 256 V 48 h -16 V 192 H 96 V 48 Z"
+      />
+    </template>
     <g
       v-for="room in rooms"
       :key="room.id"
@@ -208,6 +234,10 @@ export default defineComponent({
 
   .v-lo-map__corridor {
     fill: #ddd;
+  }
+
+  .v-lo-map__corridor-outline {
+    fill: none;
     stroke-width: 1px;
     stroke: black;
   }
