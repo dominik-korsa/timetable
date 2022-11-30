@@ -49,6 +49,7 @@
             Zestawienie klas
           </q-btn>
           <q-btn
+            v-if="isVlo"
             no-caps
             :outline="!$q.dark.isActive"
             :color="$q.dark.isActive ? 'indigo-9' : 'primary'"

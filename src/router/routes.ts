@@ -33,7 +33,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'SelectRoom',
-        path: ':tri/room',
+        path: ':tri(v-lo)/room',
         component: () => import('pages/SelectRoom.vue'),
         meta: {
           title: 'Mapa pomieszczeń',
