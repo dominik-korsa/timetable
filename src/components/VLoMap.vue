@@ -220,6 +220,8 @@ export default defineComponent({
   max-height: 100%;
   max-width: 100%;
 
+  $corridor: #ddd;
+
   .v-lo-map__bg {
     fill: #999;
     stroke-width: 1px;
@@ -233,7 +235,7 @@ export default defineComponent({
   }
 
   .v-lo-map__corridor {
-    fill: #ddd;
+    fill: $corridor;
   }
 
   .v-lo-map__corridor-outline {
@@ -272,9 +274,9 @@ export default defineComponent({
     }
 
     &.v-lo-map__room--facility {
-      --base-color:  #{$brown-7};
-      --hover-color: #{$brown-5};
-      --blink-color: #{$brown-4};
+      --base-color:  #481E3A;
+      --hover-color: #652A51;
+      --blink-color: #903C74;
     }
 
     &.v-lo-map__room--other {
