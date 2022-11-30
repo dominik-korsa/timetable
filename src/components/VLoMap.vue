@@ -375,6 +375,7 @@ export default defineComponent({
 
   .v-lo-map__crown {
     user-select: none;
+    pointer-events: none;
 
     path {
       fill: $amber;
