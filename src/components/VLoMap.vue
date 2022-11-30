@@ -274,9 +274,9 @@ export default defineComponent({
     }
 
     &.v-lo-map__room--facility {
-      --base-color:  #481E3A;
-      --hover-color: #652A51;
-      --blink-color: #903C74;
+      --base-color:  #{$brown-7};
+      --hover-color: #{$brown-5};
+      --blink-color: #{$brown-4};
     }
 
     &.v-lo-map__room--other {
