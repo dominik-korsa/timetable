@@ -293,9 +293,18 @@
       },
       {
         "type": "other",
-        "id": "ochronka",
-        "full": "Ochronka",
-        "d": "M 96 208 h 32 v 40 h -16 v -8 h -16 Z"
+        "id": "psycholog",
+        "full": "Gabinet psychologa",
+        "x": 12,
+        "y": 26,
+        "width": 2,
+        "height": 4
+      },
+      {
+        "type": "other",
+        "id": "pedagog",
+        "full": "Gabinet pedagoga",
+        "d": "M 112 228 h 8 l 8 -8 v 28 h -16 Z"
       },
       {
         "type": "other",

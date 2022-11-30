@@ -52,7 +52,7 @@
       />
       <path
         class="v-lo-map__corridor"
-        d="M 240,48 V 192 H 96 v -48 H 80 v 48 H 48 16 v 16 H 48 80 128 v 40 h 48 v -40 h 80 V 48 Z"
+        d="M 240,48 V 192 H 96 v -48 H 80 v 48 H 48 16 v 16 H 112 v 20 h 8 l 8,-8 v 28 H 176 v -40 H 256 V 48 Z"
       />
       <rect
         class="v-lo-map__corridor-outline"
@@ -63,7 +63,11 @@
       />
       <path
         class="v-lo-map__corridor-outline"
-        d="M 240,48 V 192 H 96 v -48 H 80 v 48 H 48 16 v 16 H 48 80 128 v 40 h 48 v -40 h 80 V 48 Z"
+        d="M 240,48 V 192 H 96 v -48 H 80 v 48 H 48 16 v 16 H 112 v 20 h 8 l 8,-8 v 28 H 176 v -40 H 256 V 48 Z"
+      />
+      <path
+        class="v-lo-map__corridor-outline"
+        d="M 112 208 h 4 m 8,0 h 4 v 12"
       />
     </template>
     <template v-else-if="floor === 'firstFloor'">
@@ -309,6 +313,10 @@ export default defineComponent({
       stroke-width: 1px;
       stroke: black;
       transition: fill 200ms, fill-opactiy 200ms;
+
+      //fill-opacity: 0.1;
+      //stroke-dasharray: 1 1;
+      //stroke: var(--base-color);
     }
 
     .v-lo-map__room-text {
