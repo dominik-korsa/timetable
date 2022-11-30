@@ -5,6 +5,16 @@ export type BackTo = (route: RouteLocation) => RouteLocationRaw;
 
 const routes: RouteRecordRaw[] = [
   {
+    path: '/timetable/:catchAll(.*)*',
+    redirect: (route) => {
+      let parts = route.params.catchAll;
+      if (typeof parts !== 'string') parts = parts.join('/');
+      return ({
+        path: `/${parts}`,
+      });
+    },
+  },
+  {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -15,7 +25,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'SelectClass',
-        path: 'timetable/:tri',
+        path: ':tri',
         component: () => import('pages/SelectClass.vue'),
         meta: {
           title: 'Wybierz klasę',
@@ -23,7 +33,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'SelectRoom',
-        path: 'timetable/:tri/room',
+        path: ':tri/room',
         component: () => import('pages/SelectRoom.vue'),
         meta: {
           title: 'Mapa pomieszczeń',
@@ -41,12 +51,12 @@ const routes: RouteRecordRaw[] = [
   },
   {
     name: 'UnitTimetable',
-    path: '/timetable/:tri/:unitType(class|teacher|room)/:unit/',
+    path: '/:tri/:unitType(class|teacher|room)/:unit/',
     component: () => import('pages/UnitTimetable.vue'),
   },
   {
     name: 'CombinedTimetable',
-    path: '/timetable/:tri/combined/',
+    path: '/:tri/combined/',
     component: () => import('pages/CombinedTimetable.vue'),
   },
   {
