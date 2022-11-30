@@ -9,6 +9,7 @@
         <v-lo-map
           :floor="floor"
           :selected-id="selectedRoom?.id"
+          :campaign-drzwi="campaignDrzwi"
           viewbox="centered"
           @room-click="selectRoom"
         />
@@ -41,6 +42,7 @@
           floor="groundFloor"
           class="select-room__floor select-room__floor--ground"
           :selected-id="selectedRoom?.id"
+          :campaign-drzwi="campaignDrzwi"
           @room-click="selectRoom"
         />
         <v-lo-map
@@ -157,6 +159,7 @@ export default defineComponent({
         ) selectRoom(undefined);
       },
       styleFn: (topMargin: number, height: number) => ({ height: `${height - topMargin}px` }),
+      campaignDrzwi: computed(() => route.query.campaign === 'drzwi'),
     });
   },
 });

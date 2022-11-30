@@ -318,7 +318,7 @@
       {
         "type": "management",
         "id": "dyrektor",
-        "full": "Gabinet dyrektora",
+        "full": "Gabinet dyrektora - Stanisław Pietras",
         "width": 4,
         "height": 4,
         "x": 24,
@@ -656,7 +656,7 @@
       {
         "type": "management",
         "id": "wicedyrektor",
-        "full": "Gabinet wicedyrektorów",
+        "full": "Gabinet wicedyrektorów - Agata Brezdeń, Marcin Chruściel",
         "width": 2,
         "height": 4,
         "x": 8,

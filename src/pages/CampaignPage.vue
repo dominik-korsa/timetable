@@ -6,7 +6,7 @@
     <q-page-container>
       <q-page class="campaign__page">
         <v-lo-map
-          campaign
+          campaign13c
           viewbox="centered"
           floor="groundFloor"
         />

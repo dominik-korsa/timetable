@@ -5,7 +5,7 @@
     class="v-lo-map"
   >
     <text
-      v-if="!campaign"
+      v-if="!campaign13c"
       x="152"
       y="112"
       class="v-lo-map__floor-number"
@@ -133,7 +133,7 @@
       </foreignObject>
     </g>
 
-    <g v-if="campaign">
+    <g v-if="campaign13c">
       <path
         style="fill:none;stroke:#ff0000;stroke-width:2"
         d="m 78.657787,40.056685 c 13.30387,8.829199 16.675382,27.364736
@@ -173,6 +173,16 @@
         </div>
       </foreignObject>
     </g>
+
+    <g
+      v-if="campaignDrzwi && floor === 'groundFloor'"
+      transform="translate(196, 212)"
+      class="v-lo-map__crown"
+    >
+      <path
+        d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z"
+      />
+    </g>
   </svg>
 </template>
 
@@ -191,7 +201,8 @@ export default defineComponent({
       required: false,
       default: 'default',
     },
-    campaign: Boolean,
+    campaign13c: Boolean,
+    campaignDrzwi: Boolean,
     selectedId: {
       type: String,
       required: false,
@@ -278,9 +289,9 @@ export default defineComponent({
     }
 
     &.v-lo-map__room--facility {
-      --base-color:  #{$brown-7};
-      --hover-color: #{$brown-5};
-      --blink-color: #{$brown-4};
+      --base-color:  #{$blue-grey-7};
+      --hover-color: #{$blue-grey-5};
+      --blink-color: #{$blue-grey-4};
     }
 
     &.v-lo-map__room--other {
@@ -359,6 +370,16 @@ export default defineComponent({
       color: $primary;
       white-space: nowrap;
       font-size: 1.3em;
+    }
+  }
+
+  .v-lo-map__crown {
+    user-select: none;
+
+    path {
+      fill: $amber;
+      stroke: black;
+      stroke-width: 1px;
     }
   }
 }
