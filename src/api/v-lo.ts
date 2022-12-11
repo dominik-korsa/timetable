@@ -174,13 +174,12 @@ export class VLoClient implements BaseClient {
   }
 
   async getLessons(fromCache: boolean, unitType: UnitType, unit: string, offset: number): Promise<TableDataWithHours> {
-    const cacheMode = fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate;
     const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
     const [hours, partialData, substitutions] = await Promise.all([
-      loadVLoHours(cacheMode),
+      loadVLoHours(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
       this.getLessonsPartial(fromCache, unitType, unit, offset),
       Promise.all([0, 1, 2, 3, 4].map((value) => VLoClient.loadVLoSubstitutions(
-        cacheMode,
+        fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly,
         monday.add({ days: value }),
       ))),
     ]);
@@ -197,12 +196,11 @@ export class VLoClient implements BaseClient {
   async getLessonsOfAllClasses(fromCache: boolean, offset: number): Promise<AllClassesLessons> {
     const classList = await this.getClassList(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
     const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
-    const cacheMode = fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly;
     const [hours, lessons, substitutions] = await Promise.all([
-      loadVLoHours(cacheMode),
+      loadVLoHours(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
       Promise.all(classList.map((item) => this.getLessonsPartial(fromCache, 'class', item.unit, offset))),
       Promise.all([0, 1, 2, 3, 4].map((value) => VLoClient.loadVLoSubstitutions(
-        cacheMode,
+        fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly,
         monday.add({ days: value }),
       ))),
     ]);
