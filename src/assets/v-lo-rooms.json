@@ -768,7 +768,7 @@
       "id": "a2",
       "raw": "A2",
       "short": "A2",
-      "full": "Sala A2",
+      "full": "Sala A2 - \"Linz\"",
       "location": "institute"
     },
     {
@@ -776,7 +776,7 @@
       "id": "a3",
       "raw": "A3",
       "short": "A3",
-      "full": "Sala A3",
+      "full": "Sala A3 - \"Villach\"",
       "location": "institute"
     },
     {
@@ -784,7 +784,7 @@
       "id": "a4",
       "raw": "A4",
       "short": "A4",
-      "full": "Sala A4",
+      "full": "Sala A4 - \"St. Pölten\"",
       "location": "institute"
     },
     {
@@ -792,7 +792,7 @@
       "id": "a5",
       "raw": "A5",
       "short": "A5",
-      "full": "Sala A5",
+      "full": "Sala A5 - \"Klagenfurt\" i/lub \"Leoben\"",
       "location": "institute"
     },
     {
@@ -800,7 +800,7 @@
       "id": "a6",
       "raw": "A6",
       "short": "A6",
-      "full": "Sala A6",
+      "full": "Sala A6 - \"Eisenstadt\"",
       "location": "institute"
     },
     {
@@ -808,7 +808,7 @@
       "id": "a7",
       "raw": "A7",
       "short": "A7",
-      "full": "Sala A7",
+      "full": "Sala A7 - \"Salzburg\"",
       "location": "institute"
     },
     {
@@ -816,7 +816,7 @@
       "id": "a8",
       "raw": "A8",
       "short": "A8",
-      "full": "Sala A8",
+      "full": "Sala A8 - \"Graz\"",
       "location": "institute"
     },
     {
@@ -824,7 +824,7 @@
       "id": "a9",
       "raw": "A9",
       "short": "A9",
-      "full": "Sala A9",
+      "full": "Sala A9 - \"Bregenz\"",
       "location": "institute"
     },
     {
@@ -832,7 +832,7 @@
       "id": "a10",
       "raw": "A10",
       "short": "A10",
-      "full": "Sala A10",
+      "full": "Sala A10 - \"Innsbruck\"",
       "location": "institute"
     },
     {
@@ -840,7 +840,7 @@
       "id": "a11",
       "raw": "A11",
       "short": "A11",
-      "full": "Sala A11",
+      "full": "Sala A11 - \"Wien\"",
       "location": "institute"
     },
     {
