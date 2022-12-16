@@ -12,6 +12,7 @@
         <combined-timetable-grid
           :weekday="weekdays[dayIndex]"
           :hours="data.hours"
+          :is-current-week="offset?.isCurrentWeek ?? true"
         />
       </div>
     </template>
@@ -80,6 +81,7 @@ import TimetableLayout from '../layouts/TimetableLayout.vue';
 
 export interface Weekday {
   name: string;
+  index: number;
   units: {
     unitType: string;
     unit: string;
@@ -184,6 +186,7 @@ export default defineComponent({
       const { units } = data.value;
       return weekdayNames.map((weekdayName, index) => ({
         name: weekdayName,
+        index,
         units: units.map(({
           lessons, unit, unitName, unitType, headers,
         }) => ({

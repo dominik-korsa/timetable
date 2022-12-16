@@ -46,6 +46,10 @@
         :style="item.style"
         small
       />
+      <div
+        v-if="markerPositionPx !== null"
+        class="combined-timetable-grid__marker"
+      />
     </div>
   </div>
 </template>
@@ -62,6 +66,8 @@ import TimetableItem from 'components/TimetableItem.vue';
 import SubstitutionsButton from 'components/SubstitutionsButton.vue';
 import { useConfigStore } from 'stores/config';
 import { useClientRef } from 'src/api/client';
+import { useNow } from 'src/utils';
+import _ from 'lodash';
 
 export default defineComponent({
   name: 'CombinedTimetableGrid',
@@ -75,12 +81,15 @@ export default defineComponent({
       type: Array as PropType<TableHour[]>,
       required: true,
     },
+    isCurrentWeek: Boolean,
   },
   setup: (props) => {
     const config = useConfigStore();
     const clientRef = useClientRef();
 
     const timestamps = computed(() => calculateTimestamps(props.hours, 10));
+    const now = useNow(5000);
+
     const hourPixels = 50;
 
     const grid = ref<HTMLDivElement>();
@@ -112,6 +121,18 @@ export default defineComponent({
         });
         return items;
       })),
+      markerPositionPx: computed(() => {
+        if (!props.isCurrentWeek || props.weekday.index !== now.value.dayOfWeek - 1) return null;
+
+        const midnight = now.value.round({ smallestUnit: 'day', roundingMode: 'floor' });
+        const timePosition = (now.value.epochSeconds - midnight.epochSeconds) / 60;
+        if (
+          timePosition < timestamps.value[0]
+          || timePosition > _.last(timestamps.value)!
+        ) return null;
+        return `${((timePosition - timestamps.value[0]) * hourPixels) / 60}px`;
+      }),
+      columnCount: computed(() => props.weekday.units.length),
       onScroll: (event: { position: { top: number, left: number } }) => {
         if (!clientRef.value) return;
         config.setCombinedTimetableScroll(clientRef.value.key, event.position.left);
@@ -188,6 +209,17 @@ $column-width: 75px;
 
   .combined-timetable-grid__grid-item {
     margin: 0 2px;
+  }
+
+  .combined-timetable-grid__marker {
+    transform: translateY(v-bind(markerPositionPx));
+    height: 2px;
+    box-sizing: content-box;
+    background: transparentize($red-8, 0.65);
+    margin-top: - 1px;
+    pointer-events: none;
+    grid-column: 1/calc(v-bind(columnCount) + 1);
+    grid-row: 1;
   }
 }
 </style>

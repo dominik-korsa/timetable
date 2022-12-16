@@ -1,4 +1,5 @@
-import { onBeforeUnmount, onMounted } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { Temporal } from '@js-temporal/polyfill';
 import { colors } from 'quasar';
 import textToRgb = colors.textToRgb;
 import rgbToHex = colors.rgbToHex;
@@ -100,3 +101,11 @@ export const bangEncode = (input: string) => encodeURIComponent(input)
   .replaceAll('%', '!');
 
 export const bangDecode = (input: string) => decodeURIComponent(input.replaceAll('!', '%'));
+
+export const useNow = (interval: number) => {
+  const now = ref<Temporal.ZonedDateTime>(Temporal.Now.zonedDateTimeISO());
+  useInterval(() => {
+    now.value = Temporal.Now.zonedDateTimeISO();
+  }, interval, true);
+  return now;
+};

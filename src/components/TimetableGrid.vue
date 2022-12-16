@@ -27,7 +27,6 @@
         <div
           v-if="markerPosition !== null && markerPosition.dayIndex === i"
           class="timetable-grid__marker"
-          :style="`--offset: ${markerPosition.offset}px`"
         />
       </div>
     </div>
@@ -91,12 +90,11 @@ import {
 import {
   calculateRows, calculateTimestamps, TableDataWithHours, TableHour, TableLessonMoment,
 } from 'src/api/common';
-import { useDocumentListener, useInterval } from 'src/utils';
+import { useDocumentListener, useNow } from 'src/utils';
 import _ from 'lodash';
 import TimetableItem from 'components/TimetableItem.vue';
 import SubstitutionsButton from 'components/SubstitutionsButton.vue';
 import { useConfigStore } from 'stores/config';
-import { Temporal } from '@js-temporal/polyfill';
 import { ChangeOffsetFn } from 'layouts/TimetableLayout.vue';
 import { weekdayNames, weekdayNamesShort } from 'src/shared';
 import { useQuasar } from 'quasar';
@@ -127,10 +125,7 @@ export default defineComponent({
     const quasar = useQuasar();
 
     const timestamps = computed(() => calculateTimestamps(props.data.hours, 30));
-    const now = ref<Temporal.ZonedDateTime>(Temporal.Now.zonedDateTimeISO());
-    useInterval(() => {
-      now.value = Temporal.Now.zonedDateTimeISO();
-    }, 5000, true);
+    const now = useNow(5000);
 
     const hourPixels = computed(() => (props.dense ? 50 : 55));
 
@@ -254,6 +249,7 @@ export default defineComponent({
       daysEl,
       rows: computed(() => calculateRows(timestamps.value, hourPixels.value)),
       markerPosition,
+      markerOffsetPx: computed(() => `${markerPosition.value?.offset ?? 0}px`),
       lessonItems,
       headers,
       gridWrapper: wrapper,
@@ -448,7 +444,7 @@ $timetable-gap: 4px;
       box-sizing: content-box;
       background: transparentize($color, 0.65);
       margin-top: - 1px;
-      transform: translateY(var(--offset));
+      transform: translateY(v-bind(markerOffsetPx));
       margin-left: -$timetable-gap;
       pointer-events: none;
       position: absolute;
