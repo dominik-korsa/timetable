@@ -73,7 +73,15 @@
       </div>
     </div>
     <q-separator />
-    <q-item class="q-px-sm">
+    <div class="q-px-md q-pt-sm row items-baseline justify-between full-width text-caption">
+      <div class="q-mr-sm">
+        Lekcja {{ hour.display }}, {{ hour.begin }} - {{ hour.end }}
+      </div>
+      <div>
+        {{ dateString }}
+      </div>
+    </div>
+    <q-item class="q-px-sm q-pt-xs">
       <q-item-section
         side
         class="q-pr-sm"
@@ -96,7 +104,8 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from 'vue';
 import { FavouriteLesson, useConfigStore } from 'stores/config';
-import { TableLesson, TableLessonMoment } from 'src/api/common';
+import { TableHour, TableLesson, TableLessonMoment } from 'src/api/common';
+import { weekdayNames } from 'src/shared';
 
 interface LessonItem extends TableLesson {
   isFavourite: boolean | null | undefined;
@@ -108,6 +117,10 @@ export default defineComponent({
   props: {
     moment: {
       type: Object as PropType<TableLessonMoment>,
+      required: true,
+    },
+    hour: {
+      type: Object as PropType<TableHour>,
       required: true,
     },
     favourite: {
@@ -152,6 +165,14 @@ export default defineComponent({
           });
         });
         return groups;
+      }),
+      dateString: computed(() => {
+        const weekdayName = weekdayNames[props.moment.weekday];
+        if (!props.moment.date) return weekdayName;
+        return `${weekdayName}, ${config.iso8601
+          ? props.moment.date.toString()
+          : props.moment.date.toLocaleString()
+        }`;
       }),
     });
   },

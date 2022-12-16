@@ -42,6 +42,7 @@
         :key="item.key"
         class="combined-timetable-grid__grid-item"
         :moment="item.moment"
+        :hour="item.hour"
         :style="item.style"
         small
       />
@@ -95,7 +96,8 @@ export default defineComponent({
         const items: {
           key: string;
           style: string;
-          moment: TableLessonMoment,
+          moment: TableLessonMoment;
+          hour: TableHour;
         }[] = [];
         moments.forEach((moment, momentIndex) => {
           if (moment.lessons.length === 0) return;
@@ -105,6 +107,7 @@ export default defineComponent({
             style: `grid-column: ${gridColumn}; grid-row: ${gridRow}`,
             key: `${gridColumn}/${gridRow}`,
             moment,
+            hour: props.hours[momentIndex],
           }));
         });
         return items;

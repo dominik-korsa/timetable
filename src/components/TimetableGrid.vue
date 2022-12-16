@@ -21,6 +21,7 @@
           :key="item.gridRow"
           :style="`grid-row: ${item.gridRow}`"
           :moment="item.moment"
+          :hour="item.hour"
           :small="dense"
         />
         <div
@@ -88,7 +89,7 @@ import {
   computed, defineComponent, onMounted, PropType, ref,
 } from 'vue';
 import {
-  calculateRows, calculateTimestamps, TableDataWithHours, TableLessonMoment,
+  calculateRows, calculateTimestamps, TableDataWithHours, TableHour, TableLessonMoment,
 } from 'src/api/common';
 import { useDocumentListener, useInterval } from 'src/utils';
 import _ from 'lodash';
@@ -102,6 +103,7 @@ import { useQuasar } from 'quasar';
 
 interface TableItem {
   moment: TableLessonMoment;
+  hour: TableHour;
   gridRow: number;
 }
 
@@ -160,6 +162,7 @@ export default defineComponent({
         if (moment.lessons.length === 0) return;
         items.push({
           moment,
+          hour: props.data.hours[momentIndex],
           gridRow: momentIndex * 2 + 2,
         });
       });

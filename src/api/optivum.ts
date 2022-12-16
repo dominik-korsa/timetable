@@ -89,8 +89,9 @@ export class OptivumClient implements BaseClient {
         begin: timeFrom,
         end: timeTo,
       })),
-      lessons: table.getDays().map((day, dayIndex) => day.map((moment, momentIndex) => ({
-        umid: toUmid(this.key, unitType, unit, dayIndex, momentIndex),
+      lessons: table.getDays().map((day, weekday) => day.map((moment, momentIndex) => ({
+        umid: toUmid(this.key, unitType, unit, weekday, momentIndex),
+        weekday,
         lessons: moment.map((lesson) => ({
           subject: lesson.subject,
           subjectShort: lesson.subject,

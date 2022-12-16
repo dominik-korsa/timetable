@@ -120,14 +120,16 @@ export class VLoClient implements BaseClient {
       undefined,
     );
     const body = await response.json() as LessonResponse;
-    return body.ttdata.map((day, dayIndex) => {
+    return body.ttdata.map((day, weekday) => {
       const moments: TableLessonMoment[] = [];
-      let date = monday.add({ days: dayIndex });
+      let date = monday.add({ days: weekday });
       _.flatten(day).forEach((lesson) => {
         date = Temporal.PlainDate.from(lesson.date);
         while (moments.length < lesson.time_index + lesson.duration) {
           moments.push({
-            umid: toUmid(this.key, unitType, unit, dayIndex, moments.length),
+            umid: toUmid(this.key, unitType, unit, weekday, moments.length),
+            weekday,
+            date,
             lessons: [],
           });
         }

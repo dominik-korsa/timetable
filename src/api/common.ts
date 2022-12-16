@@ -24,6 +24,8 @@ export interface TableLesson {
 }
 
 export interface TableLessonMoment {
+  date?: Temporal.PlainDate;
+  weekday: number;
   umid: string;
   lessons: TableLesson[];
 }
@@ -67,9 +69,9 @@ export const toUmid = (
   key: string,
   unitType: UnitType,
   unit: string,
-  day: number,
+  weekday: number,
   hour: number,
-) => `${unitFullId(key, unitType, unit)}|${day.toString()}|${hour.toString()}`;
+) => `${unitFullId(key, unitType, unit)}|${weekday}|${hour}`;
 
 export function toProxiedUrl(url: URL | string): URL {
   return new URL(`/${url}`, process.env.PROXY_URL);

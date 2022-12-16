@@ -31,6 +31,7 @@
     >
       <timetable-dialog
         :moment="moment"
+        :hour="hour"
         :favourite="favourite"
         @close="dialogVisible = false"
       />
@@ -44,7 +45,7 @@ import {
 } from 'vue';
 import TimetableItemSingle from 'components/TimetableItemSingle.vue';
 import TimetableItemMultiple from 'components/TimetableItemMultiple.vue';
-import { TableLessonMoment } from 'src/api/common';
+import { TableHour, TableLessonMoment } from 'src/api/common';
 import { useConfigStore } from 'stores/config';
 import TimetableDialog from 'components/TimetableDialog.vue';
 
@@ -57,6 +58,10 @@ export default defineComponent({
       required: true,
     },
     small: Boolean,
+    hour: {
+      type: Object as PropType<TableHour>,
+      required: true,
+    },
   },
   setup: (props) => {
     const config = useConfigStore();
