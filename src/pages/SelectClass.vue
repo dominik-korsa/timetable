@@ -8,65 +8,45 @@
       color="primary"
       size="64px"
     />
-    <template v-else>
-      <q-card
-        v-if="isVlo"
-        bordered
-        flat
-        class="q-mb-lg select-class__update-alert"
-      >
-        <q-banner
-          class="bg-amber text-black"
-          dense
+    <div
+      v-else
+      class="select-class__items-wrapper"
+    >
+      <q-resize-observer @resize="containerWidth = $event.width" />
+      <div class="select-class__items">
+        <select-class-group
+          v-for="(items, i) in classGroups"
+          :key="i"
+          :items="items"
+          :container-width="containerWidth"
+        />
+        <q-btn
+          no-caps
+          :outline="!$q.dark.isActive"
+          :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
+          class="full-width"
+          :to="combinedRoute"
         >
-          <template #avatar>
-            <q-icon
-              name="warning"
-            />
-          </template>
-          Wprowadzamy duże zmiany w aplikacji, niektóre funkcje mogą nie działać poprawnie
-        </q-banner>
-      </q-card>
-      <div
-        class="select-class__items-wrapper"
-      >
-        <q-resize-observer @resize="containerWidth = $event.width" />
-        <div class="select-class__items">
-          <q-resize-observer @resize="selectItemsWidth = $event.width" />
-          <select-class-group
-            v-for="(items, i) in classGroups"
-            :key="i"
-            :items="items"
-            :container-width="containerWidth"
-          />
-          <q-btn
-            no-caps
-            :outline="!$q.dark.isActive"
-            :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
-            class="full-width"
-            :to="combinedRoute"
+          Zestawienie klas
+        </q-btn>
+        <q-btn
+          v-if="isVlo"
+          no-caps
+          :outline="!$q.dark.isActive"
+          :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
+          class="full-width q-mt-sm"
+          :to="selectRoomRoute"
+        >
+          <q-badge
+            color="red"
+            floating
           >
-            Zestawienie klas
-          </q-btn>
-          <q-btn
-            v-if="isVlo"
-            no-caps
-            :outline="!$q.dark.isActive"
-            :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
-            class="full-width q-mt-sm"
-            :to="selectRoomRoute"
-          >
-            <q-badge
-              color="red"
-              floating
-            >
-              Nowość!
-            </q-badge>
-            Mapa pomieszczeń
-          </q-btn>
-        </div>
+            Nowość!
+          </q-badge>
+          Mapa pomieszczeń
+        </q-btn>
       </div>
-    </template>
+    </div>
   </q-page>
 </template>
 
@@ -103,7 +83,6 @@ export default defineComponent({
     const isFavourite = useIsFavourite();
 
     const containerWidth = ref(100);
-    const selectItemsWidth = ref();
 
     const classItems = ref<ClassItem[] | null>(null);
     watch(() => clientRef.value, async (client) => {
@@ -142,7 +121,6 @@ export default defineComponent({
 
     return {
       containerWidth,
-      selectItemsWidth,
       classItems,
       isVlo: computed(() => clientRef.value?.type === 'v-lo'),
       classGroups: computed(() => {
@@ -178,12 +156,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.select-class__update-alert {
-  margin-left: auto;
-  margin-right: auto;
-  width: calc(v-bind(selectItemsWidth) * 1px);
-}
-
 .select-class__items-wrapper {
   width: 100%;
   max-width: 600px;

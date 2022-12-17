@@ -103,7 +103,7 @@ export const bangEncode = (input: string) => encodeURIComponent(input)
 export const bangDecode = (input: string) => decodeURIComponent(input.replaceAll('!', '%'));
 
 export const useNow = (interval: number) => {
-  const now = ref<Temporal.ZonedDateTime>(Temporal.Now.zonedDateTimeISO());
+  const now = ref(Temporal.Now.zonedDateTimeISO());
   useInterval(() => {
     now.value = Temporal.Now.zonedDateTimeISO();
   }, interval, true);
