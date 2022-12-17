@@ -51,6 +51,12 @@
         class="combined-timetable-grid__marker"
       />
     </div>
+    <hour-markers
+      class="combined-timetable-grid__hours"
+      :hours="hours"
+      :rows="rows"
+    />
+    <div class="combined-timetable-grid__corner bg-page" />
   </div>
 </template>
 
@@ -68,10 +74,11 @@ import { useConfigStore } from 'stores/config';
 import { useClientRef } from 'src/api/client';
 import { useNow } from 'src/utils';
 import _ from 'lodash';
+import HourMarkers from 'components/HourMarkers.vue';
 
 export default defineComponent({
   name: 'CombinedTimetableGrid',
-  components: { SubstitutionsButton, TimetableItem },
+  components: { HourMarkers, SubstitutionsButton, TimetableItem },
   props: {
     weekday: {
       type: Object as PropType<Weekday>,
@@ -148,6 +155,16 @@ $column-width: 75px;
 .combined-timetable-grid {
   overflow: auto;
   height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: auto 1fr;
+
+  .combined-timetable-grid__hours {
+    grid-row: 2;
+    grid-column: 1;
+    position: sticky;
+    left: 0;
+  }
 
   .combined-timetable-grid__header {
     position: sticky;
@@ -159,10 +176,8 @@ $column-width: 75px;
     justify-content: space-between;
     z-index: 2;
     border-bottom: 1px solid var(--separator-color);
-
-    .combined-timetable-grid__weekday {
-
-    }
+    grid-row: 1;
+    grid-column: 2;
 
     .combined-timetable-grid__date {
       text-align: right;
@@ -202,6 +217,8 @@ $column-width: 75px;
   }
 
   .combined-timetable-grid__grid {
+    grid-row: 2;
+    grid-column: 2;
     display: grid;
     grid-template-rows: v-bind(rows);
     grid-auto-columns: $column-width;
@@ -220,6 +237,18 @@ $column-width: 75px;
     pointer-events: none;
     grid-column: 1/calc(v-bind(columnCount) + 1);
     grid-row: 1;
+  }
+
+  .combined-timetable-grid__corner {
+    grid-row: 1;
+    grid-column: 1;
+    border-bottom: solid var(--separator-color) 1px;
+    position: sticky;
+    top: -1px;
+    margin-top: -1px;
+    margin-right: -1px;
+    left: 0;
+    z-index: 3;
   }
 }
 </style>

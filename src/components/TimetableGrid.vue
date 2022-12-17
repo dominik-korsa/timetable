@@ -60,24 +60,11 @@
       </div>
     </div>
 
-    <div class="timetable-grid__temporal-grid bg-page">
-      <div
-        v-for="(hour, i) in data.hours"
-        :key="i"
-        class="timetable-grid__temporal"
-        :style="`grid-row: ${i*2+2}`"
-      >
-        <div class="timetable-grid__temporal-number">
-          {{ hour.display }}
-        </div>
-        <div class="timetable-grid__temporal-start">
-          {{ hour.begin }}
-        </div>
-        <div class="timetable-grid__temporal-end">
-          {{ hour.end }}
-        </div>
-      </div>
-    </div>
+    <hour-markers
+      class="timetable-grid__hours"
+      :hours="data.hours"
+      :rows="rows"
+    />
 
     <div class="timetable-grid__corner bg-page" />
   </div>
@@ -98,6 +85,7 @@ import { useConfigStore } from 'stores/config';
 import { ChangeOffsetFn } from 'layouts/TimetableLayout.vue';
 import { weekdayNames, weekdayNamesShort } from 'src/shared';
 import { useQuasar } from 'quasar';
+import HourMarkers from 'components/HourMarkers.vue';
 
 interface TableItem {
   moment: TableLessonMoment;
@@ -107,7 +95,7 @@ interface TableItem {
 
 export default defineComponent({
   name: 'TimetableGrid',
-  components: { SubstitutionsButton, TimetableItem },
+  components: { HourMarkers, SubstitutionsButton, TimetableItem },
   props: {
     data: {
       type: Object as PropType<TableDataWithHours>,
@@ -288,81 +276,11 @@ $timetable-gap: 4px;
     left: 0;
   }
 
-  .timetable-grid__temporal-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: v-bind(rows);
-    position: sticky;
+  .timetable-grid__hours {
     grid-column: 1;
     grid-row: 2;
+    position: sticky;
     left: 0;
-    border-right: solid var(--separator-color) 1px;
-
-    .timetable-grid__temporal {
-      grid-column: 1;
-      display: grid;
-      grid-template-rows: 1fr 1fr;
-      grid-template-columns: 1fr auto;
-      padding: 2px 5px;
-      grid-template-areas:
-          "number start"
-          "number end";
-
-      .timetable-grid__temporal-number {
-        grid-area: number;
-        align-self: center;
-        justify-self: left;
-        margin-right: 5px;
-        font-size: 1.1rem;
-        border: 1px solid var(--separator-color);
-        border-radius: $generic-border-radius;
-        padding: 0 2px;
-        text-align: center;
-      }
-
-      .timetable-grid__temporal-start, .timetable-grid__temporal-end {
-        font-size: 0.8rem;
-        line-height: 1;
-        text-align: right;
-      }
-
-      .timetable-grid__temporal-start {
-        grid-area: start;
-        align-self: start;
-      }
-
-      .timetable-grid__temporal-end {
-        grid-area: end;
-        align-self: end;
-      }
-
-      @media (max-width: 870px) {
-        & {
-          grid-template-columns: 1fr;
-          grid-template-rows: auto 1fr auto;
-          grid-template-areas:
-              "start"
-              "number"
-              "end";
-          padding: 0 3px;
-        }
-
-        .timetable-grid__temporal-number {
-          margin: 0;
-          padding: 0;
-          border: none;
-          font-size: 0.9rem;
-          text-align: center;
-          line-height: 0;
-          justify-self: center;
-        }
-
-        .timetable-grid__temporal-start, .timetable-grid__temporal-end {
-          font-size: 0.7em;
-          text-align: center;
-        }
-      }
-    }
   }
 
   .timetable-grid__headers {
