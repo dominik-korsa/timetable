@@ -3,7 +3,7 @@ import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   AllClassesLessons,
   TableDataWithHours,
-  toProxiedUrl,
+  toProxied,
   toUmid,
   UnitType,
 } from 'src/api/common';
@@ -40,7 +40,14 @@ export class OptivumClient implements BaseClient {
     cacheMode: CacheMode,
     initialBaseUrl: string,
   ): Promise<OptivumTimetableInfo> {
-    const response = await fetchWithCache(cacheMode, toProxiedUrl(initialBaseUrl).toString());
+    const proxied = toProxied(initialBaseUrl);
+    const response = await fetchWithCache(
+      cacheMode,
+      proxied.url.toString(),
+      {
+        headers: proxied.headers,
+      },
+    );
     const timetable = new Timetable(await response.text());
     const listPath = timetable.getListPath();
     if (listPath === undefined) throw new Error('Invalid timetable format');
@@ -60,13 +67,27 @@ export class OptivumClient implements BaseClient {
 
   async getClassList(cacheMode: CacheMode): Promise<ClassListItem[]> {
     const listUrl = new URL(this.listPath, this.baseUrl);
-    const response = await fetchWithCache(cacheMode, toProxiedUrl(listUrl).toString());
+    const proxied = toProxied(listUrl);
+    const response = await fetchWithCache(
+      cacheMode,
+      proxied.url.toString(),
+      {
+        headers: proxied.headers,
+      },
+    );
     const timetableList = new TimetableList(await response.text());
     return timetableList.getList().classes.map((item) => ({ name: item.name, unit: item.value }));
   }
 
   async getTitle(cacheMode: CacheMode): Promise<string> {
-    const response = await fetchWithCache(cacheMode, toProxiedUrl(this.baseUrl).toString());
+    const proxied = toProxied(this.baseUrl);
+    const response = await fetchWithCache(
+      cacheMode,
+      proxied.url.toString(),
+      {
+        headers: proxied.headers,
+      },
+    );
     const timetable = new Timetable(await response.text());
     return timetable.getTitle();
   }
@@ -74,9 +95,13 @@ export class OptivumClient implements BaseClient {
   async getLessons(fromCache: boolean, unitType: UnitType, unit: string): Promise<TableDataWithHours> {
     if (unitType !== 'class') throw new Error('Not implemented');
     const tableUrl = new URL(`plany/o${unit}.html`, this.baseUrl);
+    const proxied = toProxied(tableUrl);
     const response = await fetchWithCache(
       fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly,
-      toProxiedUrl(tableUrl).toString(),
+      proxied.url.toString(),
+      {
+        headers: proxied.headers,
+      },
     );
     const table = new Table(await response.text());
 

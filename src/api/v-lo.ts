@@ -5,7 +5,7 @@ import {
   TableDataWithHours,
   TableHour,
   TableLessonMoment,
-  toProxiedUrl,
+  toProxied,
   toUmid,
   UnitType,
 } from 'src/api/common';
@@ -84,15 +84,16 @@ export class VLoClient implements BaseClient {
     date: Temporal.PlainDate,
   ): Promise<(classValue: string) => Substitution[]> {
     const url = new URL(getSubstitutionsUrl(), 'https://www.v-lo.krakow.pl/');
-    const proxiedUrl = toProxiedUrl(url).toString();
+    const proxied = toProxied(url);
     const response = await fetchWithCache(
       cacheMode,
-      proxiedUrl,
+      proxied.url.toString(),
       {
         method: 'POST',
         body: JSON.stringify(getSubstitutionsBody(date.toString(), false)),
+        headers: proxied.headers,
       },
-      `${proxiedUrl}|${date.toString()},`,
+      `${proxied.url}|${date.toString()},`,
     );
     const body = await response.text();
     const parsed = parseSubstitutions(body);

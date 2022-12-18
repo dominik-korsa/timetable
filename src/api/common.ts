@@ -73,8 +73,21 @@ export const toUmid = (
   hour: number,
 ) => `${unitFullId(key, unitType, unit)}|${weekday}|${hour}`;
 
-export function toProxiedUrl(url: URL | string): URL {
-  return new URL(`/${url}`, process.env.PROXY_URL);
+export interface ProxiedRequest {
+  url: URL,
+  headers: Headers,
+}
+
+export function toProxied(url: URL | string): ProxiedRequest {
+  if (typeof url === 'string') url = new URL(url);
+  const headers = new Headers();
+  if (url.username !== '' || url.password !== '') {
+    headers.set('Authorization', `Basic ${btoa(`${url.username}:${url.password}`)}`);
+  }
+  return {
+    url: new URL(`/${url.origin}${url.pathname}${url.search}${url.hash}`, process.env.PROXY_URL),
+    headers,
+  };
 }
 
 export const calculateTimestamps = (hours: TableHour[], marginMinutes: number) => {
