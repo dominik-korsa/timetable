@@ -153,6 +153,7 @@ export default defineComponent({
 
 <style lang="scss">
 $column-width: 75px;
+$column-gap: 4px;
 
 .combined-timetable-grid {
   overflow: auto;
@@ -194,6 +195,7 @@ $column-width: 75px;
   .combined-timetable-grid__header-classes {
     display: flex;
     flex-direction: row;
+    padding: 0 $column-gap/2;
 
     .combined-timetable-grid__unit {
       width: $column-width;
@@ -229,10 +231,11 @@ $column-width: 75px;
     display: grid;
     grid-template-rows: v-bind(rows);
     grid-auto-columns: $column-width;
+    padding: 0 $column-gap/2;
   }
 
   .combined-timetable-grid__grid-item {
-    margin: 0 2px;
+    margin: 0 $column-gap/2;
   }
 
   .combined-timetable-grid__marker {
