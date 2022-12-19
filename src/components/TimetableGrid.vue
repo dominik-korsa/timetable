@@ -26,7 +26,7 @@
         />
         <div
           v-if="markerPosition !== null && markerPosition.dayIndex === i"
-          class="timetable-grid__marker"
+          class="time-marker timetable-grid__marker"
         />
       </div>
     </div>
@@ -354,39 +354,10 @@ $timetable-gap: 4px;
     }
 
     .timetable-grid__marker {
-      $height: 2px;
-      $color: $red-8;
-      $triangle-size: 7px;
-      height: $height;
-      width: calc(100% + #{$timetable-gap});
-      box-sizing: content-box;
-      background: transparentize($color, 0.65);
-      margin-top: - 1px;
       transform: translateY(v-bind(markerOffsetPx));
-      margin-left: -$timetable-gap;
-      pointer-events: none;
       position: absolute;
-      display: flex;
-      justify-content: space-between;
-
-      &:before, &:after {
-        display: block;
-        content: '';
-        border-top: $triangle-size solid transparent;
-        border-bottom: $triangle-size solid transparent;
-
-        height: 0;
-        width: 0;
-        margin-top: -$triangle-size + $height/2;
-      }
-
-      &:before {
-        border-left: $triangle-size solid $color;
-      }
-
-      &:after {
-        border-right: $triangle-size solid $color;
-      }
+      width: calc(100% + #{$timetable-gap});
+      margin-left: -$timetable-gap;
     }
   }
 

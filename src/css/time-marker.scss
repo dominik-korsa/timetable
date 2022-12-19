@@ -1,0 +1,37 @@
+$height: 2px;
+$color: $red-8;
+$triangle-size: 7px;
+
+.time-marker {
+  box-sizing: content-box;
+  height: $height;
+  background: transparentize($color, 0.65);
+  margin-top: - 1px;
+  pointer-events: none;
+  display: flex;
+  justify-content: space-between;
+
+  &::before, &::after {
+    content: '';
+  }
+}
+
+.time-marker::before, .time-marker::after, .time-marker-triangle {
+  display: block;
+  border-top: $triangle-size solid transparent;
+  border-bottom: $triangle-size solid transparent;
+
+  height: 0;
+  width: 0;
+  margin-top: -$triangle-size + $height/2;
+}
+
+.time-marker::before, .time-marker-triangle--left {
+  border-left: $triangle-size solid $color;
+  margin-right: -$triangle-size;
+}
+
+.time-marker::after, .time-marker-triangle--right {
+  border-right: $triangle-size solid $color;
+  margin-left: -$triangle-size;
+}

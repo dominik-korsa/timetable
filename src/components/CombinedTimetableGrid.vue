@@ -46,16 +46,18 @@
         :style="item.style"
         small
       />
-      <div
-        v-if="markerPositionPx !== null"
-        class="combined-timetable-grid__marker"
-      />
     </div>
-    <hour-markers
-      class="combined-timetable-grid__hours"
-      :hours="hours"
-      :rows="rows"
+    <div
+      v-if="markerPositionPx !== null"
+      class="time-marker combined-timetable-grid__marker"
     />
+    <div class="combined-timetable-grid__hours">
+      <hour-markers
+        :hours="hours"
+        :rows="rows"
+      />
+      <div class="time-marker-triangle time-marker-triangle--left combined-timetable-grid__time-marker-triangle" />
+    </div>
     <div class="combined-timetable-grid__corner bg-page" />
   </div>
 </template>
@@ -164,6 +166,11 @@ $column-width: 75px;
     grid-column: 1;
     position: sticky;
     left: 0;
+    display: flex;
+
+    .combined-timetable-grid__time-marker-triangle {
+      transform: translateY(v-bind(markerPositionPx)) translateY(-1px);
+    }
   }
 
   .combined-timetable-grid__header {
@@ -177,7 +184,7 @@ $column-width: 75px;
     z-index: 2;
     border-bottom: 1px solid var(--separator-color);
     grid-row: 1;
-    grid-column: 2;
+    grid-column: 3;
 
     .combined-timetable-grid__date {
       text-align: right;
@@ -218,7 +225,7 @@ $column-width: 75px;
 
   .combined-timetable-grid__grid {
     grid-row: 2;
-    grid-column: 2;
+    grid-column: 3;
     display: grid;
     grid-template-rows: v-bind(rows);
     grid-auto-columns: $column-width;
@@ -229,14 +236,19 @@ $column-width: 75px;
   }
 
   .combined-timetable-grid__marker {
+    grid-row: 2;
+    grid-column: 3;
     transform: translateY(v-bind(markerPositionPx));
-    height: 2px;
-    box-sizing: content-box;
-    background: transparentize($red-8, 0.65);
-    margin-top: - 1px;
-    pointer-events: none;
-    grid-column: 1/calc(v-bind(columnCount) + 1);
-    grid-row: 1;
+
+    &::before {
+      content: none;
+    }
+
+    &::after {
+      position: sticky;
+      right: 0;
+      margin-left: auto;
+    }
   }
 
   .combined-timetable-grid__corner {
