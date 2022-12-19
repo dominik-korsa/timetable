@@ -56,7 +56,10 @@
         :hours="hours"
         :rows="rows"
       />
-      <div class="time-marker-triangle time-marker-triangle--left combined-timetable-grid__time-marker-triangle" />
+      <div
+        v-if="markerPositionPx !== null"
+        class="time-marker-triangle time-marker-triangle--left combined-timetable-grid__time-marker-triangle"
+      />
     </div>
     <div class="combined-timetable-grid__corner bg-page" />
   </div>
