@@ -5,6 +5,8 @@ export interface ConfigHistoryV1 {
   baseUrl: string;
   listPath: string;
   lastUse: string;
+
+  logoSrc?: string | undefined;
 }
 
 export interface FavouriteLessonV1 {

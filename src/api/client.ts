@@ -10,10 +10,14 @@ export interface ClassListItem {
   name: string;
 }
 
+export interface ClassList {
+  items: ClassListItem[];
+}
+
 export interface BaseClient {
   tri: string;
   key: string;
-  getClassList(cacheMode: CacheMode): Promise<ClassListItem[]>;
+  getClassList(cacheMode: CacheMode): Promise<ClassList>;
   getTitle(cacheMode: CacheMode): Promise<string>;
   supportsOffsets: boolean;
   getLessons(

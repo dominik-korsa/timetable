@@ -47,6 +47,17 @@
             :to="item.to"
             class="q-pr-sm"
           >
+            <q-item-section
+              v-if="item.absoluteImageSrc"
+              avatar
+            >
+              <q-avatar rounded>
+                <img
+                  :src="item.absoluteImageSrc"
+                  alt="Logo"
+                >
+              </q-avatar>
+            </q-item-section>
             <q-item-section>
               <q-item-label lines="1">
                 {{ item.title }}
@@ -209,7 +220,7 @@ export default defineComponent({
       optivumLoading.value = true;
       try {
         const timetableInfo = await OptivumClient.attemptLoad(CacheMode.NetworkFirst, url.value);
-        configStore.addHistoryEntry(timetableInfo);
+        configStore.addHistoryEntry(timetableInfo, null);
         await router.push({
           name: 'SelectClass',
           params: {
@@ -284,6 +295,9 @@ export default defineComponent({
         .map((item) => ({
           ...item,
           to: { name: 'SelectClass', params: { tri: OptivumClient.createTri(item.baseUrl, item.listPath) } },
+          absoluteImageSrc: item.logoSrc
+            ? new URL(item.logoSrc, new URL(item.listPath, item.baseUrl)).toString()
+            : undefined,
         }))),
       historyOverflow: computed(() => configStore.optivumHistory.length > historyLimit.value),
       increaseHistoryLimit,

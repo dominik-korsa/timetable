@@ -15,7 +15,7 @@
     "@js-temporal/polyfill": "^0.4.2",
     "@quasar/extras": "^1.0.0",
     "@wulkanowy/asc-timetable-parser": "^0.2.2",
-    "@wulkanowy/timetable-parser": "^1.3.1",
+    "@wulkanowy/timetable-parser": "^1.4.0",
     "core-js": "^3.6.5",
     "dotenv": "^16.0.0",
     "is-url-superb": "^6.1.0",

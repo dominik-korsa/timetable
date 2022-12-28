@@ -63,6 +63,7 @@ import { useConfigStore } from 'stores/config';
 import SelectClassGroup from 'components/SelectClassGroup.vue';
 import { useClientRef } from 'src/api/client';
 import { useIsFavourite } from 'src/shared';
+import { OptivumClassList } from 'src/api/optivum.js';
 
 interface ClassItem {
   unit: string;
@@ -89,8 +90,8 @@ export default defineComponent({
       classItems.value = null;
       if (client === undefined) return;
       try {
-        const newClassItems = await client.getClassList(CacheMode.LazyUpdate);
-        classItems.value = newClassItems.map((item) => ({
+        const newClassList = await client.getClassList(CacheMode.LazyUpdate);
+        classItems.value = newClassList.items.map((item) => ({
           ...item,
           to: {
             name: 'UnitTimetable',
@@ -106,7 +107,7 @@ export default defineComponent({
             title: await client.getTitle(CacheMode.CacheFirst),
             baseUrl: client.baseUrl,
             listPath: client.listPath,
-          });
+          }, (newClassList as OptivumClassList).logoSrc);
         }
       } catch (error) {
         console.error(error);

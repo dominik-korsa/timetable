@@ -8,12 +8,16 @@ import {
   UnitType,
 } from 'src/api/common';
 import { bangEncode, randomColor } from 'src/utils';
-import { BaseClient, ClassListItem } from 'src/api/client';
+import { BaseClient, ClassList } from 'src/api/client';
 
 export interface OptivumTimetableInfo {
   title: string;
   baseUrl: string;
   listPath: string;
+}
+
+export interface OptivumClassList extends ClassList {
+  logoSrc: string | null;
 }
 
 export class OptivumClient implements BaseClient {
@@ -65,7 +69,7 @@ export class OptivumClient implements BaseClient {
     this.key = `o,${baseUrl}`;
   }
 
-  async getClassList(cacheMode: CacheMode): Promise<ClassListItem[]> {
+  async getClassList(cacheMode: CacheMode): Promise<OptivumClassList> {
     const listUrl = new URL(this.listPath, this.baseUrl);
     const proxied = toProxied(listUrl);
     const response = await fetchWithCache(
@@ -76,7 +80,10 @@ export class OptivumClient implements BaseClient {
       },
     );
     const timetableList = new TimetableList(await response.text());
-    return timetableList.getList().classes.map((item) => ({ name: item.name, unit: item.value }));
+    return {
+      items: timetableList.getList().classes.map((item) => ({ name: item.name, unit: item.value })),
+      logoSrc: timetableList.getLogoSrc(),
+    };
   }
 
   async getTitle(cacheMode: CacheMode): Promise<string> {
@@ -145,7 +152,7 @@ export class OptivumClient implements BaseClient {
 
   async getUnitNameMapper(cacheMode: CacheMode) {
     const classList = await this.getClassList(cacheMode);
-    const classMap = Object.fromEntries(classList.map(({ name, unit }) => ([unit, name])));
+    const classMap = Object.fromEntries(classList.items.map(({ name, unit }) => ([unit, name])));
     return (unitType: UnitType, unit: string) => {
       if (unitType !== 'class') return unit;
       return classMap[unit] ?? unit;

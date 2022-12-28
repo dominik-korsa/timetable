@@ -31,13 +31,14 @@ export const useConfigStore = defineStore('config', {
     combinedTimetableScroll: {},
   }),
   actions: {
-    addHistoryEntry(info: OptivumTimetableInfo) {
+    addHistoryEntry(info: OptivumTimetableInfo, logoSrc: string | null) {
       this.optivumHistory = [
         {
           title: info.title,
           baseUrl: info.baseUrl,
           listPath: info.listPath,
           lastUse: Temporal.Now.instant.toString(),
+          logoSrc: logoSrc || undefined,
         },
         ...this.optivumHistory.filter((e) => e.baseUrl !== info.baseUrl),
       ];
