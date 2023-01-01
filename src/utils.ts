@@ -109,3 +109,9 @@ export const useNow = (interval: number) => {
   }, interval, true);
   return now;
 };
+
+export const createArray = <T>(n: number, getDefault: (index: number) => T): T[] => {
+  const result: T[] = [];
+  for (let i = 0; i < n; i += 1) result.push(getDefault(i));
+  return result;
+};

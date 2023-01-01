@@ -2,12 +2,14 @@ import { Table, Timetable, TimetableList } from '@wulkanowy/timetable-parser';
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   AllClassesLessons,
-  TableDataWithHours,
+  TableDataWithHours, TableHour, TableLessonMoment,
   toProxied,
   toUmid,
   UnitType,
 } from 'src/api/common';
-import { bangEncode, randomColor } from 'src/utils';
+import {
+  bangEncode, createArray, parseHour, randomColor,
+} from 'src/utils';
 import { BaseClient, ClassList } from 'src/api/client';
 
 export interface OptivumTimetableInfo {
@@ -143,11 +145,40 @@ export class OptivumClient implements BaseClient {
   }
 
   async getLessonsOfAllClasses(fromCache: boolean): Promise<AllClassesLessons> {
-    throw new Error('Not implemented');
-    // const classList = await this.getClassList(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
-    // return Promise.all(
-    //   classList.map((item) => this.getLessons(fromCache, 'class', item.unit)),
-    // );
+    const classList = await this.getClassList(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
+    const tables = await Promise.all(
+      classList.items.map(async (item) => this.getLessons(fromCache, 'class', item.unit)),
+    );
+    const getHourId = (hour: TableHour) => `${hour.begin}-${hour.end}`;
+    const hoursMap: Record<string, TableHour> = {};
+    tables.forEach((table) => {
+      table.hours.forEach((hour) => {
+        hoursMap[getHourId(hour)] = hour;
+      });
+    });
+    const hours = Array.from(Object.values(hoursMap));
+    hours.sort((lhs, rhs) => parseHour(lhs.begin) - parseHour(rhs.begin));
+    const hourIndexes: Record<string, number> = {};
+    hours.forEach((hour, index) => {
+      hourIndexes[getHourId(hour)] = index;
+    });
+    return {
+      hours,
+      units: tables.map((unit) => ({
+        ...unit,
+        lessons: unit.lessons.map((day, weekday) => {
+          const result = createArray<TableLessonMoment>(hours.length, (momentIndex) => ({
+            lessons: [],
+            umid: toUmid(this.key, unit.unitType, unit.unit, weekday, momentIndex),
+            weekday,
+          }));
+          day.forEach((moment, index) => {
+            result[hourIndexes[getHourId(unit.hours[index])]].lessons.push(...moment.lessons);
+          });
+          return result;
+        }),
+      })),
+    };
   }
 
   async getUnitNameMapper(cacheMode: CacheMode) {
