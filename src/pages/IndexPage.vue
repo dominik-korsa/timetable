@@ -55,6 +55,7 @@
                 <img
                   :src="item.absoluteImageSrc"
                   alt="Logo"
+                  crossorigin="anonymous"
                 >
               </q-avatar>
             </q-item-section>
@@ -192,6 +193,7 @@ import { OptivumClient } from 'src/api/optivum';
 import BuildInfo from 'components/BuildInfo.vue';
 import PwaBanner from 'components/PwaBanner.vue';
 import { getClient } from 'src/api/client';
+import { toProxied } from 'src/api/common';
 
 interface UnitItem {
   key: string;
@@ -296,7 +298,7 @@ export default defineComponent({
           ...item,
           to: { name: 'SelectClass', params: { tri: OptivumClient.createTri(item.baseUrl, item.listPath) } },
           absoluteImageSrc: item.logoSrc
-            ? new URL(item.logoSrc, new URL(item.listPath, item.baseUrl)).toString()
+            ? toProxied(new URL(item.logoSrc, new URL(item.listPath, item.baseUrl)).toString()).url.toString()
             : undefined,
         }))),
       historyOverflow: computed(() => configStore.optivumHistory.length > historyLimit.value),
