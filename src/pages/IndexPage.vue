@@ -8,89 +8,7 @@
       bordered
       class="index-page__optivum-picker q-mb-md"
     >
-      <q-form
-        greedy
-        @submit.prevent="submitOptivum"
-      >
-        <q-card-section class="text-h6">
-          Plan lekcji OPTIVUM
-        </q-card-section>
-        <q-card-section class="q-py-none">
-          <q-input
-            v-model="url"
-            type="url"
-            filled
-            label="URL Planu"
-            :rules="urlRules"
-            :readonly="optivumLoading"
-          />
-        </q-card-section>
-        <q-card-actions align="center">
-          <q-btn
-            color="primary"
-            type="submit"
-            :loading="optivumLoading"
-          >
-            Wczytaj plan
-          </q-btn>
-        </q-card-actions>
-      </q-form>
-      <template v-if="historyItems.length > 0">
-        <q-separator />
-        <q-item-label header>
-          Ostatnio używane
-        </q-item-label>
-        <q-list>
-          <q-item
-            v-for="(item, i) in historyItems"
-            :key="item.baseUrl"
-            :to="item.to"
-            class="q-pr-sm"
-          >
-            <q-item-section
-              v-if="item.absoluteImageSrc"
-              avatar
-            >
-              <q-avatar rounded>
-                <img
-                  :src="item.absoluteImageSrc"
-                  alt="Logo"
-                  crossorigin="anonymous"
-                >
-              </q-avatar>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label lines="1">
-                {{ item.title }}
-              </q-item-label>
-              <q-item-label
-                lines="1"
-                caption
-              >
-                {{ item.baseUrl }}
-              </q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-btn
-                icon="remove_circle_outline"
-                round
-                flat
-                @click.prevent="removeHistoryEntry(i)"
-              />
-            </q-item-section>
-          </q-item>
-        </q-list>
-        <q-card-actions align="center">
-          <q-btn
-            v-if="historyOverflow"
-            color="primary"
-            flat
-            @click="increaseHistoryLimit"
-          >
-            Pokaż więcej
-          </q-btn>
-        </q-card-actions>
-      </template>
+      <optivum-timetable-picker />
     </q-card>
 
     <router-link
@@ -181,19 +99,14 @@
 </template>
 
 <script lang="ts">
-import {
-  computed, defineComponent, onMounted, ref, watch,
-} from 'vue';
-import isUrl from 'is-url-superb';
-import { RouteLocationRaw, useRouter } from 'vue-router';
+import { defineComponent, onMounted, ref } from 'vue';
+import { RouteLocationRaw } from 'vue-router';
 import { useConfigStore } from 'stores/config';
 import { CacheMode } from 'src/api/requests';
-import { useQuasar } from 'quasar';
-import { OptivumClient } from 'src/api/optivum';
 import BuildInfo from 'components/BuildInfo.vue';
 import PwaBanner from 'components/PwaBanner.vue';
 import { getClient } from 'src/api/client';
-import { toProxied } from 'src/api/common';
+import OptivumTimetablePicker from 'components/OptivumTimetablePicker.vue';
 
 interface UnitItem {
   key: string;
@@ -210,52 +123,9 @@ interface FavouriteUnitItem {
 
 export default defineComponent({
   name: 'IndexPage',
-  components: { BuildInfo, PwaBanner },
+  components: { OptivumTimetablePicker, BuildInfo, PwaBanner },
   setup() {
-    const router = useRouter();
-    const quasar = useQuasar();
     const configStore = useConfigStore();
-
-    const url = ref('');
-    const optivumLoading = ref(false);
-    const submitOptivum = async () => {
-      optivumLoading.value = true;
-      try {
-        const timetableInfo = await OptivumClient.attemptLoad(CacheMode.NetworkFirst, url.value);
-        configStore.addHistoryEntry(timetableInfo, null);
-        await router.push({
-          name: 'SelectClass',
-          params: {
-            tri: OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath),
-          },
-        });
-      } catch (error) {
-        console.error(error);
-        quasar.notify({
-          type: 'negative',
-          message: 'Nie udało się wczytać planu',
-        });
-      }
-      optivumLoading.value = false;
-    };
-
-    const historyLimit = ref(3);
-    watch(() => configStore.optivumHistory.length, (value) => {
-      while (historyLimit.value > value + 5) historyLimit.value -= 5;
-    });
-    const increaseHistoryLimit = () => {
-      historyLimit.value += 5;
-    };
-
-    const removeHistoryEntry = (index: number) => {
-      quasar.dialog({
-        title: 'Usunąć adres z historii połączeń?',
-        message: 'Twoje preferencje dotyczące planu nie zostaną usunięte',
-        cancel: true,
-      }).onOk(() => {
-        configStore.removeHistoryEntry(index);
-      });
-    };
 
     const favouriteUnits = ref<FavouriteUnitItem[] | null>(null);
 
@@ -286,24 +156,6 @@ export default defineComponent({
     });
 
     return {
-      url,
-      urlRules: [
-        (v: string) => isUrl(v) || 'Podaj poprawny adres URL',
-      ],
-      optivumLoading,
-      submitOptivum,
-      historyItems: computed(() => configStore.optivumHistory
-        .slice(0, historyLimit.value)
-        .map((item) => ({
-          ...item,
-          to: { name: 'SelectClass', params: { tri: OptivumClient.createTri(item.baseUrl, item.listPath) } },
-          absoluteImageSrc: item.logoSrc
-            ? toProxied(new URL(item.logoSrc, new URL(item.listPath, item.baseUrl)).toString()).url.toString()
-            : undefined,
-        }))),
-      historyOverflow: computed(() => configStore.optivumHistory.length > historyLimit.value),
-      increaseHistoryLimit,
-      removeHistoryEntry,
       favouriteUnits,
     };
   },
