@@ -3,15 +3,34 @@
     greedy
     @submit.prevent="submit"
   >
-    <q-card-section class="text-h6">
-      Plan lekcji OPTIVUM
+    <q-card-section class="text-h6 row items-center justify-between">
+      <div>Plan lekcji OPTIVUM</div>
+      <q-btn
+        v-if="$q.screen.width > 380"
+        flat
+        color="primary"
+        no-caps
+        @click="helpDialogVisible = true"
+      >
+        Co to jest?
+      </q-btn>
+      <q-btn
+        v-else
+        icon="help"
+        color="primary"
+        flat
+        round
+        @click="helpDialogVisible = true"
+      >
+        <q-tooltip>Co to jest?</q-tooltip>
+      </q-btn>
     </q-card-section>
     <q-card-section class="q-pt-none q-sm-xs">
       <q-input
         v-model="url"
         type="url"
         filled
-        label="URL Planu"
+        label="Adres URL Planu"
         :readonly="loading"
         hide-bottom-space
         :error="url !== '' && !urlValid"
@@ -90,6 +109,9 @@
       </q-btn>
     </q-card-actions>
   </template>
+  <q-dialog v-model="helpDialogVisible">
+    <optivum-help />
+  </q-dialog>
 </template>
 
 <script lang="ts">
@@ -103,8 +125,10 @@ import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import isUrl from 'is-url-superb';
 import { toProxied } from 'src/api/common';
+import OptivumHelp from 'components/OptivumHelp.vue';
 
 export default defineComponent({
+  components: { OptivumHelp },
   setup: () => {
     const config = useConfigStore();
     const quasar = useQuasar();
@@ -114,6 +138,7 @@ export default defineComponent({
     const urlValid = computed(() => isUrl(url.value));
     const urlValidBefore = ref(false);
     const loading = ref(false);
+    const helpDialogVisible = ref(false);
 
     watch(urlValid, (value) => {
       if (value) urlValidBefore.value = true;
@@ -164,6 +189,7 @@ export default defineComponent({
       loading,
       urlValid,
       urlValidBefore,
+      helpDialogVisible,
       submit,
       increaseHistoryLimit,
       removeHistoryEntry,
