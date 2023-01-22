@@ -70,11 +70,13 @@
           avatar
         >
           <q-avatar rounded>
-            <img
-              :src="item.absoluteImageSrc"
-              alt="Logo"
-              crossorigin="anonymous"
-            >
+            <div class="optivum-timetable-picker__school-logo">
+              <img
+                :src="item.absoluteImageSrc"
+                alt="Logo"
+                crossorigin="anonymous"
+              >
+            </div>
           </q-avatar>
         </q-item-section>
         <q-item-section>
@@ -207,3 +209,22 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss">
+.optivum-timetable-picker__school-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+  }
+}
+</style>
