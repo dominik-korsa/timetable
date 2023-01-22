@@ -5,19 +5,23 @@ import { VLoClient } from 'src/api/v-lo';
 import { AllClassesLessons, TableDataWithHours, UnitType } from 'src/api/common';
 import { OptivumClient } from 'src/api/optivum';
 
-export interface ClassListItem {
+export interface UnitListItem {
   unit: string;
   name: string;
 }
 
-export interface ClassList {
-  items: ClassListItem[];
+export interface UnitLists {
+  classes: UnitListItem[];
+
+  teachers?: UnitListItem[];
+
+  rooms?: UnitListItem[];
 }
 
 export interface BaseClient {
   tri: string;
   key: string;
-  getClassList(cacheMode: CacheMode): Promise<ClassList>;
+  getUnitLists(cacheMode: CacheMode): Promise<UnitLists>;
   getTitle(cacheMode: CacheMode): Promise<string>;
   supportsOffsets: boolean;
   getLessons(
