@@ -76,7 +76,7 @@
     v-model="roomDialogVisible"
   >
     <unit-list
-      unit-type="teacher"
+      unit-type="room"
       :units="data.rooms"
     />
   </q-dialog>

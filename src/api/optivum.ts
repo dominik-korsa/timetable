@@ -200,11 +200,16 @@ export class OptivumClient implements BaseClient {
   }
 
   async getUnitNameMapper(cacheMode: CacheMode) {
-    const { classes } = await this.getUnitLists(cacheMode);
-    const classMap = Object.fromEntries(classes.map(({ name, unit }) => ([unit, name])));
-    return (unitType: UnitType, unit: string) => {
-      if (unitType !== 'class') return unit;
-      return classMap[unit] ?? unit;
+    const { classes, rooms, teachers } = await this.getUnitLists(cacheMode);
+    const constructMap = (units: UnitListItem[] | undefined) => {
+      if (!units) return {};
+      return Object.fromEntries(units.map(({ name, unit }) => ([unit, name])));
     };
+    const map = {
+      class: constructMap(classes),
+      room: constructMap(rooms),
+      teacher: constructMap(teachers),
+    };
+    return (unitType: UnitType, unit: string) => map[unitType][unit] ?? unit;
   }
 }
