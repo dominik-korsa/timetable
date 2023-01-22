@@ -73,8 +73,13 @@ export class OptivumClient implements BaseClient {
     this.key = `o,${baseUrl}`;
   }
 
-  private static mapListItem(item: ListItem): UnitListItem {
-    return { name: item.name, unit: item.value };
+  private static mapUnitList(items: ListItem[]): UnitListItem[] {
+    return items.map((item) => ({ name: item.name, unit: item.value }));
+  }
+
+  private static mapUnitListOptional(items: ListItem[] | undefined): UnitListItem[] | undefined {
+    if (!items || items.length === 0) return undefined;
+    return this.mapUnitList(items);
   }
 
   async getUnitLists(cacheMode: CacheMode): Promise<OptivumUnitLists> {
@@ -90,9 +95,9 @@ export class OptivumClient implements BaseClient {
     const timetableList = new TimetableList(await response.text());
     const { classes, rooms, teachers } = timetableList.getList();
     return {
-      classes: classes.map(OptivumClient.mapListItem),
-      rooms: rooms?.map(OptivumClient.mapListItem),
-      teachers: teachers?.map(OptivumClient.mapListItem),
+      classes: OptivumClient.mapUnitList(classes),
+      rooms: OptivumClient.mapUnitListOptional(rooms),
+      teachers: OptivumClient.mapUnitListOptional(teachers),
       logoSrc: timetableList.getLogoSrc(),
     };
   }
