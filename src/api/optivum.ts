@@ -101,9 +101,12 @@ export class OptivumClient implements BaseClient {
     return timetable.getTitle();
   }
 
+  private static getTableUrl(unitType: UnitType, unit: string): string {
+    return `plany/${{ class: 'o', room: 's', teacher: 'n' }[unitType]}${unit}.html`;
+  }
+
   async getLessons(fromCache: boolean, unitType: UnitType, unit: string): Promise<TableDataWithHours> {
-    if (unitType !== 'class') throw new Error('Not implemented');
-    const tableUrl = new URL(`plany/o${unit}.html`, this.baseUrl);
+    const tableUrl = new URL(OptivumClient.getTableUrl(unitType, unit), this.baseUrl);
     const proxied = toProxied(tableUrl);
     const response = await fetchWithCache(
       fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly,
