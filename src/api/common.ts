@@ -19,6 +19,8 @@ export interface TableLesson {
     key: string;
     name: string;
   } | undefined;
+
+  className: string | undefined;
   color: string | undefined;
   removed: boolean;
 }

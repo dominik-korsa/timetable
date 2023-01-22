@@ -22,6 +22,7 @@
           :style="`grid-row: ${item.gridRow}`"
           :moment="item.moment"
           :hour="item.hour"
+          :unit-type="data.unitType"
           :small="dense"
         />
         <div

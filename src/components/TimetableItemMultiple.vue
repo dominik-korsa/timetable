@@ -22,6 +22,7 @@
     <timetable-item-single
       v-else-if="small"
       :lesson="favouriteLesson"
+      :unit-type="unitType"
       show-color
       small
     >
@@ -35,6 +36,7 @@
     >
       <timetable-item-single
         :lesson="favouriteLesson"
+        :unit-type="unitType"
         show-color
       />
       <q-separator vertical />
@@ -46,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { TableLesson } from 'src/api/common';
+import { TableLesson, UnitType } from 'src/api/common';
 import {
   computed, defineComponent, PropType,
 } from 'vue';
@@ -70,6 +72,10 @@ export default defineComponent({
       default: undefined,
     },
     small: Boolean,
+    unitType: {
+      type: String as PropType<UnitType>,
+      required: true,
+    },
   },
   setup: (props) => ({
     groupsText: computed(() => ({

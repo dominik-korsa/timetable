@@ -16,6 +16,7 @@
     <timetable-item-single
       v-if="moment.lessons.length === 1"
       :lesson="moment.lessons[0]"
+      :unit-type="unitType"
       :show-color="favourite !== null"
       :small="small"
     />
@@ -23,6 +24,7 @@
       v-else
       :lessons="moment.lessons"
       :favourite="favourite"
+      :unit-type="unitType"
       :small="small"
     />
     <q-dialog
@@ -45,7 +47,7 @@ import {
 } from 'vue';
 import TimetableItemSingle from 'components/TimetableItemSingle.vue';
 import TimetableItemMultiple from 'components/TimetableItemMultiple.vue';
-import { TableHour, TableLessonMoment } from 'src/api/common';
+import { TableHour, TableLessonMoment, UnitType } from 'src/api/common';
 import { useConfigStore } from 'stores/config';
 import TimetableDialog from 'components/TimetableDialog.vue';
 
@@ -60,6 +62,10 @@ export default defineComponent({
     small: Boolean,
     hour: {
       type: Object as PropType<TableHour>,
+      required: true,
+    },
+    unitType: {
+      type: String as PropType<UnitType>,
       required: true,
     },
   },
