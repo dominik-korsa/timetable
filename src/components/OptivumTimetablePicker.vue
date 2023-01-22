@@ -220,8 +220,8 @@ export default defineComponent({
   overflow: hidden;
 
   img {
-    width: auto;
-    height: auto;
+    width: auto !important;
+    height: auto !important;
     max-width: 100%;
     max-height: 100%;
     margin: auto;
