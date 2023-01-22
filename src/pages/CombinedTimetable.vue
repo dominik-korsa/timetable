@@ -13,6 +13,7 @@
           :weekday="weekdays[dayIndex]"
           :hours="data.hours"
           :is-current-week="offset?.isCurrentWeek ?? true"
+          unit-type="class"
         />
       </div>
     </template>

@@ -30,24 +30,56 @@
           Zestawienie klas
         </q-btn>
         <q-btn
+          v-if="data?.teachers"
+          no-caps
+          :outline="!$q.dark.isActive"
+          :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
+          class="full-width"
+          @click="teacherDialogVisible = true"
+        >
+          Nauczyciele
+        </q-btn>
+        <q-btn
+          v-if="data?.rooms"
+          no-caps
+          :outline="!$q.dark.isActive"
+          :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
+          class="full-width"
+          @click="roomDialogVisible = true"
+        >
+          Sale
+        </q-btn>
+        <q-btn
           v-if="isVlo"
           no-caps
           :outline="!$q.dark.isActive"
           :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
-          class="full-width q-mt-sm"
+          class="full-width"
           :to="selectRoomRoute"
         >
-          <q-badge
-            color="red"
-            floating
-          >
-            Nowość!
-          </q-badge>
           Mapa pomieszczeń
         </q-btn>
       </div>
     </div>
   </q-page>
+  <q-dialog
+    v-if="data?.teachers"
+    v-model="teacherDialogVisible"
+  >
+    <unit-list
+      unit-type="teacher"
+      :units="data.teachers"
+    />
+  </q-dialog>
+  <q-dialog
+    v-if="data?.rooms"
+    v-model="roomDialogVisible"
+  >
+    <unit-list
+      unit-type="room"
+      :units="data.rooms"
+    />
+  </q-dialog>
 </template>
 
 <script lang="ts">
@@ -61,9 +93,10 @@ import { DefaultsMap } from 'src/utils';
 import _ from 'lodash';
 import { useConfigStore } from 'stores/config';
 import SelectClassGroup from 'components/SelectClassGroup.vue';
-import { useClientRef } from 'src/api/client';
+import { UnitListItem, useClientRef } from 'src/api/client';
 import { useIsFavourite } from 'src/shared';
-import { OptivumClassList } from 'src/api/optivum.js';
+import { OptivumUnitLists } from 'src/api/optivum.js';
+import UnitList from 'components/UnitList.vue';
 
 interface ClassItem {
   unit: string;
@@ -71,11 +104,18 @@ interface ClassItem {
   to: RouteLocationRaw;
 }
 
+interface Data {
+  classItems: ClassItem[];
+  teachers?: UnitListItem[];
+
+  rooms?: UnitListItem[];
+}
+
 const classDigitRegex = /^\d+/;
 
 export default defineComponent({
   name: 'SelectClass',
-  components: { SelectClassGroup },
+  components: { UnitList, SelectClassGroup },
   setup: () => {
     const quasar = useQuasar();
     const config = useConfigStore();
@@ -85,13 +125,13 @@ export default defineComponent({
 
     const containerWidth = ref(100);
 
-    const classItems = ref<ClassItem[] | null>(null);
+    const data = ref<Data | null>(null);
     watch(() => clientRef.value, async (client) => {
-      classItems.value = null;
+      data.value = null;
       if (client === undefined) return;
       try {
-        const newClassList = await client.getClassList(CacheMode.LazyUpdate);
-        classItems.value = newClassList.items.map((item) => ({
+        const unitLists = await client.getUnitLists(CacheMode.LazyUpdate);
+        const classItems = unitLists.classes.map((item) => ({
           ...item,
           to: {
             name: 'UnitTimetable',
@@ -102,12 +142,17 @@ export default defineComponent({
             },
           },
         }));
+        data.value = {
+          classItems,
+          teachers: unitLists.teachers,
+          rooms: unitLists.rooms,
+        };
         if (client.type === 'optivum') {
           config.addHistoryEntry({
             title: await client.getTitle(CacheMode.CacheFirst),
             baseUrl: client.baseUrl,
             listPath: client.listPath,
-          }, (newClassList as OptivumClassList).logoSrc);
+          }, (unitLists as OptivumUnitLists).logoSrc);
         }
       } catch (error) {
         console.error(error);
@@ -122,11 +167,11 @@ export default defineComponent({
 
     return {
       containerWidth,
-      classItems,
+      data,
       isVlo: computed(() => clientRef.value?.type === 'v-lo'),
       classGroups: computed(() => {
-        if (classItems.value === null) return null;
-        const classItemsCopy = classItems.value.map((item) => ({
+        if (data.value === null) return null;
+        const classItemsCopy = data.value.classItems.map((item) => ({
           ...item,
           isFavourite: isFavourite.value('class', item.unit),
         }));
@@ -151,6 +196,8 @@ export default defineComponent({
         name: 'SelectRoom',
         params: route.params,
       })),
+      teacherDialogVisible: ref(false),
+      roomDialogVisible: ref(false),
     };
   },
 });
@@ -164,6 +211,10 @@ export default defineComponent({
   .select-class__items {
     margin: 0 auto;
     width: fit-content;
+
+    > .q-btn:not(:last-child) {
+      margin-bottom: 8px;
+    }
   }
 }
 </style>

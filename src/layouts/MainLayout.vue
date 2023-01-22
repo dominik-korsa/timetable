@@ -67,9 +67,9 @@ export default defineComponent({
       showBack: computed(() => _.last(route.matched)?.name !== 'Home'),
       title: computed(() => _.last(route.matched)?.meta?.title),
       goBack: () => {
-        const backTo = route.name === 'SelectRoom'
-          ? { name: 'SelectClass', params: route.params }
-          : { name: 'Home' };
+        const backTo = route.name === 'SelectClass'
+          ? { name: 'Home' }
+          : { name: 'SelectClass', params: route.params };
         const resolved = router.resolve(backTo);
         if (resolved.href === window.history.state.back) router.back();
         else router.push(backTo);

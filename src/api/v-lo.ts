@@ -18,7 +18,7 @@ import {
   Substitution,
 } from '@wulkanowy/asc-timetable-parser';
 import { Temporal } from '@js-temporal/polyfill';
-import { BaseClient, ClassList } from 'src/api/client';
+import { BaseClient, UnitLists } from 'src/api/client';
 import { DefaultsMap } from 'src/utils';
 import { roomRawToIdMap } from 'src/api/v-lo-rooms';
 
@@ -70,11 +70,11 @@ export class VLoClient implements BaseClient {
 
   readonly supportsOffsets = true;
 
-  async getClassList(cacheMode: CacheMode): Promise<ClassList> {
+  async getUnitLists(cacheMode: CacheMode): Promise<UnitLists> {
     const response = await fetchWithCache(cacheMode, new URL('/v1/vlo/listclass', v1ApiOrigin).toString());
     const classes = await response.json() as string[];
     return {
-      items: classes.map((value) => ({
+      classes: classes.map((value) => ({
         unit: value,
         name: value,
       })),
@@ -147,6 +147,7 @@ export class VLoClient implements BaseClient {
               key: lesson.group_raw,
               name: lesson.group,
             } : undefined,
+            className: unit,
             color: lesson.color,
             removed: lesson.removed ?? false,
           });
@@ -199,11 +200,11 @@ export class VLoClient implements BaseClient {
   }
 
   async getLessonsOfAllClasses(fromCache: boolean, offset: number): Promise<AllClassesLessons> {
-    const classList = await this.getClassList(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
+    const { classes } = await this.getUnitLists(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
     const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
     const [hours, lessons, substitutions] = await Promise.all([
       loadVLoHours(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
-      Promise.all(classList.items.map((item) => this.getLessonsPartial(fromCache, 'class', item.unit, offset))),
+      Promise.all(classes.map((item) => this.getLessonsPartial(fromCache, 'class', item.unit, offset))),
       Promise.all([0, 1, 2, 3, 4].map((value) => VLoClient.loadVLoSubstitutions(
         fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly,
         monday.add({ days: value }),

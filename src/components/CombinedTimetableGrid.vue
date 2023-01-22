@@ -44,6 +44,7 @@
         :moment="item.moment"
         :hour="item.hour"
         :style="item.style"
+        :unit-type="unitType"
         small
       />
     </div>
@@ -71,7 +72,7 @@ import {
   computed, defineComponent, onMounted, PropType, ref,
 } from 'vue';
 import {
-  calculateRows, calculateTimestamps, TableHour, TableLessonMoment,
+  calculateRows, calculateTimestamps, TableHour, TableLessonMoment, UnitType,
 } from 'src/api/common';
 import TimetableItem from 'components/TimetableItem.vue';
 import SubstitutionsButton from 'components/SubstitutionsButton.vue';
@@ -94,6 +95,10 @@ export default defineComponent({
       required: true,
     },
     isCurrentWeek: Boolean,
+    unitType: {
+      type: String as PropType<UnitType>,
+      required: true,
+    },
   },
   setup: (props) => {
     const config = useConfigStore();

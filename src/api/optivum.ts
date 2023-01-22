@@ -1,4 +1,6 @@
-import { Table, Timetable, TimetableList } from '@wulkanowy/timetable-parser';
+import {
+  ListItem, Table, Timetable, TimetableList,
+} from '@wulkanowy/timetable-parser';
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   AllClassesLessons,
@@ -10,7 +12,7 @@ import {
 import {
   bangEncode, createArray, parseHour, randomColor,
 } from 'src/utils';
-import { BaseClient, ClassList } from 'src/api/client';
+import { BaseClient, UnitListItem, UnitLists } from 'src/api/client';
 
 export interface OptivumTimetableInfo {
   title: string;
@@ -18,7 +20,7 @@ export interface OptivumTimetableInfo {
   listPath: string;
 }
 
-export interface OptivumClassList extends ClassList {
+export interface OptivumUnitLists extends UnitLists {
   logoSrc: string | null;
 }
 
@@ -71,7 +73,16 @@ export class OptivumClient implements BaseClient {
     this.key = `o,${baseUrl}`;
   }
 
-  async getClassList(cacheMode: CacheMode): Promise<OptivumClassList> {
+  private static mapUnitList(items: ListItem[]): UnitListItem[] {
+    return items.map((item) => ({ name: item.name, unit: item.value }));
+  }
+
+  private static mapUnitListOptional(items: ListItem[] | undefined): UnitListItem[] | undefined {
+    if (!items || items.length === 0) return undefined;
+    return this.mapUnitList(items);
+  }
+
+  async getUnitLists(cacheMode: CacheMode): Promise<OptivumUnitLists> {
     const listUrl = new URL(this.listPath, this.baseUrl);
     const proxied = toProxied(listUrl);
     const response = await fetchWithCache(
@@ -82,8 +93,11 @@ export class OptivumClient implements BaseClient {
       },
     );
     const timetableList = new TimetableList(await response.text());
+    const { classes, rooms, teachers } = timetableList.getList();
     return {
-      items: timetableList.getList().classes.map((item) => ({ name: item.name, unit: item.value })),
+      classes: OptivumClient.mapUnitList(classes),
+      rooms: OptivumClient.mapUnitListOptional(rooms),
+      teachers: OptivumClient.mapUnitListOptional(teachers),
       logoSrc: timetableList.getLogoSrc(),
     };
   }
@@ -101,9 +115,12 @@ export class OptivumClient implements BaseClient {
     return timetable.getTitle();
   }
 
+  private static getTableUrl(unitType: UnitType, unit: string): string {
+    return `plany/${{ class: 'o', room: 's', teacher: 'n' }[unitType]}${unit}.html`;
+  }
+
   async getLessons(fromCache: boolean, unitType: UnitType, unit: string): Promise<TableDataWithHours> {
-    if (unitType !== 'class') throw new Error('Not implemented');
-    const tableUrl = new URL(`plany/o${unit}.html`, this.baseUrl);
+    const tableUrl = new URL(OptivumClient.getTableUrl(unitType, unit), this.baseUrl);
     const proxied = toProxied(tableUrl);
     const response = await fetchWithCache(
       fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly,
@@ -135,6 +152,7 @@ export class OptivumClient implements BaseClient {
           } : undefined,
           room: lesson.room,
           roomId: undefined,
+          className: lesson.className,
           teacher: lesson.teacher,
           color: randomColor(`${lesson.subject}|${lesson.teacher}`),
           removed: false,
@@ -145,9 +163,9 @@ export class OptivumClient implements BaseClient {
   }
 
   async getLessonsOfAllClasses(fromCache: boolean): Promise<AllClassesLessons> {
-    const classList = await this.getClassList(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
+    const { classes } = await this.getUnitLists(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
     const tables = await Promise.all(
-      classList.items.map(async (item) => this.getLessons(fromCache, 'class', item.unit)),
+      classes.map(async (item) => this.getLessons(fromCache, 'class', item.unit)),
     );
     const getHourId = (hour: TableHour) => `${hour.begin}-${hour.end}`;
     const hoursMap: Record<string, TableHour> = {};
@@ -182,11 +200,16 @@ export class OptivumClient implements BaseClient {
   }
 
   async getUnitNameMapper(cacheMode: CacheMode) {
-    const classList = await this.getClassList(cacheMode);
-    const classMap = Object.fromEntries(classList.items.map(({ name, unit }) => ([unit, name])));
-    return (unitType: UnitType, unit: string) => {
-      if (unitType !== 'class') return unit;
-      return classMap[unit] ?? unit;
+    const { classes, rooms, teachers } = await this.getUnitLists(cacheMode);
+    const constructMap = (units: UnitListItem[] | undefined) => {
+      if (!units) return {};
+      return Object.fromEntries(units.map(({ name, unit }) => ([unit, name])));
     };
+    const map = {
+      class: constructMap(classes),
+      room: constructMap(rooms),
+      teacher: constructMap(teachers),
+    };
+    return (unitType: UnitType, unit: string) => map[unitType][unit] ?? unit;
   }
 }

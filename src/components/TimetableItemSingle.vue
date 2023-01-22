@@ -8,10 +8,10 @@
   >
     <div class="timetable-item-single__top">
       <div class="timetable-item-single__subject">
-        {{ fullSubject ? lesson.subject : lesson.subjectShort }}
+        {{ lesson.subjectShort }}
       </div>
       <div class="timetable-item-single__room">
-        {{ lesson.room }}
+        {{ unitType === 'room' ? lesson.className : lesson.room }}
       </div>
     </div>
     <div
@@ -28,7 +28,7 @@
         {{ lesson.group?.name }}
       </div>
       <div class="timetable-item-single__teacher">
-        {{ lesson.teacher }}
+        {{ unitType === 'teacher' ? lesson.className : lesson.teacher }}
       </div>
       <slot />
     </div>
@@ -40,7 +40,7 @@ import { PropType } from 'vue/dist/vue';
 import { computed, defineComponent } from 'vue';
 import { useConfigStore } from 'stores/config';
 import { withOpacity } from 'src/utils';
-import { TableLesson } from '../api/common';
+import { TableLesson, UnitType } from '../api/common';
 
 export default defineComponent({
   name: 'TimetableItemSingle',
@@ -49,9 +49,12 @@ export default defineComponent({
       type: Object as PropType<TableLesson>,
       required: true,
     },
-    fullSubject: Boolean,
     showColor: Boolean,
     small: Boolean,
+    unitType: {
+      type: String as PropType<UnitType>,
+      required: true,
+    },
   },
   setup: (props) => {
     const config = useConfigStore();
