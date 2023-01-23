@@ -11,7 +11,7 @@
         <q-item
           v-for="(lesson, i) in items"
           :key="i"
-          class="q-px-sm timetable-dialog__item"
+          class="q-px-sm q-py-none timetable-dialog__item"
         >
           <q-item-section
             v-if="many || lesson.isFavourite"
@@ -26,7 +26,7 @@
               @click="lesson.favouriteClick"
             />
           </q-item-section>
-          <q-item-section class="timetable-dialog__item-content">
+          <q-item-section class="timetable-dialog__item-content q-py-xs">
             <div class="timetable-dialog__item-top">
               <div
                 v-if="lesson.teacher"
@@ -40,33 +40,46 @@
               >
                 (brak nauczyciela)
               </div>
-              <router-link
-                v-if="lesson.roomId !== undefined"
-                class="timetable-dialog__item-room"
-                :to="{
-                  name: 'SelectRoom',
-                  params: $route.params,
-                  query: { selected: lesson.roomId },
-                }"
-              >
-                {{ lesson.room }}
-              </router-link>
-              <div
-                v-else
-                class="timetable-dialog__item-room"
-              >
-                {{ lesson.room }}
+              <div class="timetable-dialog__item-top-right">
+                <router-link
+                  v-if="lesson.roomId !== undefined"
+                  class="timetable-dialog__item-room"
+                  :to="{
+                    name: 'SelectRoom',
+                    params: $route.params,
+                    query: { selected: lesson.roomId },
+                  }"
+                >
+                  {{ lesson.room }}
+                </router-link>
+                <div
+                  v-else
+                  class="timetable-dialog__item-room"
+                >
+                  {{ lesson.room }}
+                </div>
+                <div
+                  v-if="!lesson.group"
+                  class="timetable-dialog__item-classes"
+                >
+                  {{ lesson.classes.join(', ') }}
+                </div>
               </div>
             </div>
             <div
               v-if="lesson.group"
-              class="timetable-dialog__item-group"
+              class="timetable-dialog__item-bottom"
             >
-              {{ lesson.group.name }}
-              <span
-                v-if="lesson.group.name !== lesson.group.key"
-                class="timetable-dialog__item-group-alt"
-              >({{ lesson.group.key }})</span>
+              <div class="timetable-dialog__item-group">
+                {{ lesson.group.name }}
+                <span
+                  v-if="lesson.group.name !== lesson.group.key"
+                  class="timetable-dialog__item-group-alt"
+                >({{ lesson.group.key }})</span>
+              </div>
+              <div class="timetable-dialog__item-classes">
+                {{ lesson.classes.join(', ') }}
+              </div>
             </div>
           </q-item-section>
         </q-item>
@@ -221,10 +234,20 @@ export default defineComponent({
     .timetable-dialog__item-top {
       display: flex;
       flex-direction: row;
+      align-items: center;
       justify-content: space-between;
 
       .timetable-dialog__item-teacher--empty {
         opacity: 0.7;
+      }
+
+      .timetable-dialog__item-top-right {
+        margin-left: 6px;
+        text-align: right;
+
+        .timetable-dialog__item-classes {
+          font-size: 0.8em;
+        }
       }
     }
 
@@ -232,13 +255,25 @@ export default defineComponent({
       color: $primary;
     }
 
-    .timetable-dialog__item-group {
-      font-style: italic;
+    .timetable-dialog__item-bottom {
+      display: flex;
+      align-items: baseline;
       font-size: 0.8em;
+      justify-content: space-between;
 
-      .timetable-dialog__item-group-alt {
-        font-weight: 300;
-        opacity: 0.7;
+      .timetable-dialog__item-group {
+        font-style: italic;
+        padding-right: 2px;
+
+        .timetable-dialog__item-group-alt {
+          font-weight: 300;
+          opacity: 0.7;
+        }
+      }
+
+      .timetable-dialog__item-classes {
+        text-align: right;
+        margin-left: auto;
       }
     }
   }

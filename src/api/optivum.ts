@@ -1,10 +1,16 @@
 import {
-  ListItem, Table, Timetable, TimetableList, TableLesson,
+  ListItem,
+  Table,
+  TableLesson,
+  Timetable,
+  TimetableList,
 } from '@wulkanowy/timetable-parser';
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   AllClassesLessons,
-  TableDataWithHours, TableHour, TableLessonMoment,
+  TableDataWithHours,
+  TableHour,
+  TableLessonMoment,
   toProxied,
   toUmid,
   UnitType,
@@ -77,13 +83,12 @@ export class OptivumClient implements BaseClient {
     this.key = `o,${baseUrl}`;
   }
 
-  private static mapUnitList(items: ListItem[]): UnitListItem[] {
-    return items.map((item) => ({ name: item.name, unit: item.value }));
-  }
-
   private static mapUnitListOptional(items: ListItem[] | undefined): UnitListItem[] | undefined {
     if (!items || items.length === 0) return undefined;
-    return this.mapUnitList(items);
+    return items.map((item) => ({
+      name: item.name,
+      unit: item.value,
+    }));
   }
 
   async getUnitLists(cacheMode: CacheMode): Promise<OptivumUnitLists> {
@@ -99,7 +104,10 @@ export class OptivumClient implements BaseClient {
     const timetableList = new TimetableList(await response.text());
     const { classes, rooms, teachers } = timetableList.getList();
     return {
-      classes: OptivumClient.mapUnitList(classes),
+      classes: classes.map((item) => ({
+        name: OptivumClient.simplifyClassName(item.name),
+        unit: item.value,
+      })),
       rooms: OptivumClient.mapUnitListOptional(rooms),
       teachers: OptivumClient.mapUnitListOptional(teachers),
       logoSrc: timetableList.getLogoSrc(),
@@ -143,6 +151,10 @@ export class OptivumClient implements BaseClient {
     return [...groups.values()];
   }
 
+  static simplifyClassName(name: string) {
+    return name.split(' ')[0] || name;
+  }
+
   async getLessons(fromCache: boolean, unitType: UnitType, unit: string): Promise<TableDataWithHours> {
     const tableUrl = new URL(OptivumClient.getTableUrl(unitType, unit), this.baseUrl);
     const proxied = toProxied(tableUrl);
@@ -176,7 +188,9 @@ export class OptivumClient implements BaseClient {
           } : undefined,
           room: unitType === 'room' ? unitName : lesson.room,
           roomId: undefined,
-          classes: lesson.classes,
+          classes: (
+            lesson.classes.length === 0 && unitType === 'class' ? [unitName] : lesson.classes
+          ).map(OptivumClient.simplifyClassName),
           teacher: unitType === 'teacher' ? unitName : lesson.teacher,
           color: randomColor(`${lesson.subject}|${lesson.teacher}`),
           removed: false,
@@ -208,6 +222,7 @@ export class OptivumClient implements BaseClient {
       hours,
       units: tables.map((unit) => ({
         ...unit,
+        unitName: OptivumClient.simplifyClassName(unit.unitName),
         lessons: unit.lessons.map((day, weekday) => {
           const result = createArray<TableLessonMoment>(hours.length, (momentIndex) => ({
             lessons: [],
