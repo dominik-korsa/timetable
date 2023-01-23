@@ -9,7 +9,7 @@ import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   AllClassesLessons,
   TableDataWithHours,
-  TableHour,
+  TableHour, TableLessonClass,
   TableLessonMoment,
   toProxied,
   toUmid,
@@ -31,7 +31,10 @@ export interface OptivumUnitLists extends UnitLists {
 }
 
 interface CombinedTableLesson extends Omit<TableLesson, 'className'> {
-  classes: string[];
+  classes: {
+    name: string;
+    id: string | undefined;
+  }[];
 }
 
 export class OptivumClient implements BaseClient {
@@ -139,20 +142,34 @@ export class OptivumClient implements BaseClient {
       if (!group) {
         group = {
           room: lesson.room,
+          roomId: lesson.roomId,
           teacher: lesson.teacher,
+          teacherId: lesson.teacherId,
           subject: lesson.subject,
           groupName: lesson.groupName,
           classes: [],
         };
         groups.set(groupId, group);
       }
-      if (lesson.className !== undefined) group.classes.push(lesson.className);
+      if (lesson.className !== undefined) {
+        group.classes.push({
+          name: lesson.className,
+          id: lesson.classId,
+        });
+      }
     });
     return [...groups.values()];
   }
 
   static simplifyClassName(name: string) {
     return name.split(' ')[0] || name;
+  }
+
+  static simplifyClassObject({ name, id }: TableLessonClass) {
+    return {
+      name: OptivumClient.simplifyClassName(name),
+      id,
+    };
   }
 
   async getLessons(fromCache: boolean, unitType: UnitType, unit: string): Promise<TableDataWithHours> {
@@ -187,11 +204,15 @@ export class OptivumClient implements BaseClient {
             key: lesson.groupName,
           } : undefined,
           room: unitType === 'room' ? unitName : lesson.room,
-          roomId: undefined,
+          roomId: lesson.roomId,
           classes: (
-            lesson.classes.length === 0 && unitType === 'class' ? [unitName] : lesson.classes
-          ).map(OptivumClient.simplifyClassName),
+            lesson.classes.length === 0 && unitType === 'class' ? [{
+              name: unitName,
+              id: unit,
+            }] : lesson.classes
+          ).map(OptivumClient.simplifyClassObject),
           teacher: unitType === 'teacher' ? unitName : lesson.teacher,
+          teacherId: lesson.teacherId,
           color: randomColor(`${lesson.subject}|${lesson.teacher}`),
           removed: false,
         })),

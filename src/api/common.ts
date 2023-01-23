@@ -9,18 +9,23 @@ export interface TableHour {
   display: string;
 }
 
+export interface TableLessonClass {
+  name: string;
+  id: string | undefined;
+}
+
 export interface TableLesson {
   subject: string;
   subjectShort: string;
   teacher: string | undefined;
+  teacherId: string | undefined;
   room: string | undefined;
   roomId: string | undefined;
   group: {
     key: string;
     name: string;
   } | undefined;
-
-  classes: string[];
+  classes: TableLessonClass[];
   color: string | undefined;
   removed: boolean;
 }

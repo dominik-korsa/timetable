@@ -141,13 +141,17 @@ export class VLoClient implements BaseClient {
             subject: lesson.subject,
             subjectShort: lesson.subject_short,
             teacher: lesson.teacher || undefined,
+            teacherId: undefined,
             room: lesson.classroom || undefined,
             roomId: roomRawToIdMap[lesson.classroom],
             group: lesson.group_raw ? {
               key: lesson.group_raw,
               name: lesson.group,
             } : undefined,
-            classes: [unit],
+            classes: [{
+              name: unit,
+              id: undefined,
+            }],
             color: lesson.color,
             removed: lesson.removed ?? false,
           });

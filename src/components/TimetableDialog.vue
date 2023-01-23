@@ -29,26 +29,29 @@
           <q-item-section class="timetable-dialog__item-content q-py-xs">
             <div class="timetable-dialog__item-top">
               <div
-                v-if="lesson.teacher"
-                class="timetable-dialog__item-teacher"
-              >
-                {{ lesson.teacher }}
-              </div>
-              <div
-                v-else
+                v-if="!lesson.teacher"
                 class="timetable-dialog__item-teacher timetable-dialog__item-teacher--empty"
               >
                 (brak nauczyciela)
               </div>
+              <router-link
+                v-else-if="lesson.teacherTo"
+                class="timetable-dialog__item-teacher"
+                :to="lesson.teacherTo"
+              >
+                {{ lesson.teacher }}
+              </router-link>
+              <div
+                v-else
+                class="timetable-dialog__item-teacher"
+              >
+                {{ lesson.teacher }}
+              </div>
               <div class="timetable-dialog__item-top-right">
                 <router-link
-                  v-if="lesson.roomId !== undefined"
+                  v-if="lesson.roomTo !== undefined"
                   class="timetable-dialog__item-room"
-                  :to="{
-                    name: 'SelectRoom',
-                    params: $route.params,
-                    query: { selected: lesson.roomId },
-                  }"
+                  :to="lesson.roomTo"
                 >
                   {{ lesson.room }}
                 </router-link>
@@ -58,12 +61,10 @@
                 >
                   {{ lesson.room }}
                 </div>
-                <div
+                <timetable-dialog-classes
                   v-if="!lesson.group"
-                  class="timetable-dialog__item-classes"
-                >
-                  {{ lesson.classes.join(', ') }}
-                </div>
+                  :classes="lesson.classes"
+                />
               </div>
             </div>
             <div
@@ -77,9 +78,7 @@
                   class="timetable-dialog__item-group-alt"
                 >({{ lesson.group.key }})</span>
               </div>
-              <div class="timetable-dialog__item-classes">
-                {{ lesson.classes.join(', ') }}
-              </div>
+              <timetable-dialog-classes :classes="lesson.classes" />
             </div>
           </q-item-section>
         </q-item>
@@ -119,14 +118,20 @@ import { computed, defineComponent, PropType } from 'vue';
 import { FavouriteLesson, useConfigStore } from 'stores/config';
 import { TableHour, TableLesson, TableLessonMoment } from 'src/api/common';
 import { weekdayNames } from 'src/shared';
+import TimetableDialogClasses from 'components/TimetableDialogClasses.vue';
+import { RouteLocationRaw, useRoute } from 'vue-router';
 
 interface LessonItem extends TableLesson {
   isFavourite: boolean | null | undefined;
   favouriteClick: () => void;
+  roomTo: RouteLocationRaw | undefined;
+
+  teacherTo: RouteLocationRaw | undefined;
 }
 
 export default defineComponent({
   name: 'TimetableDialog',
+  components: { TimetableDialogClasses },
   props: {
     moment: {
       type: Object as PropType<TableLessonMoment>,
@@ -141,10 +146,12 @@ export default defineComponent({
       required: false,
       default: undefined,
     },
+    isVlo: Boolean,
   },
   emits: ['close'],
   setup: (props, { emit }) => {
     const config = useConfigStore();
+    const route = useRoute();
 
     const setFavourite = (value: FavouriteLesson | null | undefined) => {
       config.setFavourite(`${props.moment.umid}|#`, value);
@@ -174,6 +181,27 @@ export default defineComponent({
                 group: lesson.group?.key,
               });
               emit('close');
+            },
+            roomTo: lesson.roomId === undefined ? undefined
+              : props.isVlo ? {
+                name: 'SelectRoom',
+                params: route.params,
+                query: { selected: lesson.roomId },
+              } : {
+                name: 'UnitTimetable',
+                params: {
+                  ...route.params,
+                  unitType: 'room',
+                  unit: lesson.roomId,
+                },
+              },
+            teacherTo: lesson.teacherId === undefined ? undefined : {
+              name: 'UnitTimetable',
+              params: {
+                ...route.params,
+                unitType: 'teacher',
+                unit: lesson.teacherId,
+              },
             },
           });
         });
@@ -245,7 +273,7 @@ export default defineComponent({
         margin-left: 6px;
         text-align: right;
 
-        .timetable-dialog__item-classes {
+        .timetable-dialog-classes {
           font-size: 0.8em;
         }
       }
@@ -267,7 +295,7 @@ export default defineComponent({
         }
       }
 
-      .timetable-dialog__item-classes {
+      .timetable-dialog-classes {
         text-align: right;
         margin-left: auto;
       }

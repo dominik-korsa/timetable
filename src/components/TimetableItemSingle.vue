@@ -14,7 +14,7 @@
         v-if="unitType === 'room'"
         class="timetable-item-single__class-name"
       >
-        {{ lesson.classes.join(', ') }}
+        {{ classNames }}
       </div>
       <div
         v-else
@@ -40,7 +40,7 @@
         v-if="unitType === 'teacher'"
         class="timetable-item-single__class-name"
       >
-        {{ lesson.classes.join(', ') }}
+        {{ classNames }}
       </div>
       <div
         v-else
@@ -77,6 +77,7 @@ export default defineComponent({
   setup: (props) => {
     const config = useConfigStore();
     return ({
+      classNames: computed(() => props.lesson.classes.map((e) => e.name).join(', ')),
       background: computed(
         () => (props.showColor && config.showColors && props.lesson.color
           ? withOpacity(props.lesson.color, 45)
