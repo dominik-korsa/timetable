@@ -147,7 +147,7 @@ export class VLoClient implements BaseClient {
               key: lesson.group_raw,
               name: lesson.group,
             } : undefined,
-            className: unit,
+            classes: [unit],
             color: lesson.color,
             removed: lesson.removed ?? false,
           });

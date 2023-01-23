@@ -1,5 +1,5 @@
 import {
-  ListItem, Table, Timetable, TimetableList,
+  ListItem, Table, Timetable, TimetableList, TableLesson,
 } from '@wulkanowy/timetable-parser';
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
@@ -22,6 +22,10 @@ export interface OptivumTimetableInfo {
 
 export interface OptivumUnitLists extends UnitLists {
   logoSrc: string | null;
+}
+
+interface CombinedTableLesson extends Omit<TableLesson, 'className'> {
+  classes: string[];
 }
 
 export class OptivumClient implements BaseClient {
@@ -119,6 +123,26 @@ export class OptivumClient implements BaseClient {
     return `plany/${{ class: 'o', room: 's', teacher: 'n' }[unitType]}${unit}.html`;
   }
 
+  static combineTableLessons(lessons: TableLesson[]): CombinedTableLesson[] {
+    const groups = new Map<string, CombinedTableLesson>();
+    lessons.forEach((lesson) => {
+      const groupId = `${lesson.groupName ?? '#'}|${lesson.subject}|${lesson.teacher ?? '#'}|${lesson.room ?? '#'}`;
+      let group = groups.get(groupId);
+      if (!group) {
+        group = {
+          room: lesson.room,
+          teacher: lesson.teacher,
+          subject: lesson.subject,
+          groupName: lesson.groupName,
+          classes: [],
+        };
+        groups.set(groupId, group);
+      }
+      if (lesson.className !== undefined) group.classes.push(lesson.className);
+    });
+    return [...groups.values()];
+  }
+
   async getLessons(fromCache: boolean, unitType: UnitType, unit: string): Promise<TableDataWithHours> {
     const tableUrl = new URL(OptivumClient.getTableUrl(unitType, unit), this.baseUrl);
     const proxied = toProxied(tableUrl);
@@ -143,7 +167,7 @@ export class OptivumClient implements BaseClient {
       lessons: table.getDays().map((day, weekday) => day.map((moment, momentIndex) => ({
         umid: toUmid(this.key, unitType, unit, weekday, momentIndex),
         weekday,
-        lessons: moment.map((lesson) => ({
+        lessons: OptivumClient.combineTableLessons(moment).map((lesson) => ({
           subject: lesson.subject,
           subjectShort: lesson.subject,
           group: lesson.groupName ? {
@@ -152,7 +176,7 @@ export class OptivumClient implements BaseClient {
           } : undefined,
           room: unitType === 'room' ? unitName : lesson.room,
           roomId: undefined,
-          className: lesson.className,
+          classes: lesson.classes,
           teacher: unitType === 'teacher' ? unitName : lesson.teacher,
           color: randomColor(`${lesson.subject}|${lesson.teacher}`),
           removed: false,

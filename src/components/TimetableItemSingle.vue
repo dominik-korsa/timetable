@@ -14,7 +14,7 @@
         v-if="unitType === 'room'"
         class="timetable-item-single__class-name"
       >
-        {{ lesson.className }}
+        {{ lesson.classes.join(', ') }}
       </div>
       <div
         v-else
@@ -40,7 +40,7 @@
         v-if="unitType === 'teacher'"
         class="timetable-item-single__class-name"
       >
-        {{ lesson.className }}
+        {{ lesson.classes.join(', ') }}
       </div>
       <div
         v-else

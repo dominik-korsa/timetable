@@ -20,7 +20,7 @@ export interface TableLesson {
     name: string;
   } | undefined;
 
-  className: string | undefined;
+  classes: string[];
   color: string | undefined;
   removed: boolean;
 }
