@@ -124,9 +124,5 @@ export default defineComponent({
     user-select: none;
     cursor: text;
   }
-
-  a {
-    color: $primary;
-  }
 }
 </style>

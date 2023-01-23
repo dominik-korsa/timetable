@@ -367,7 +367,6 @@ export default defineComponent({
     a {
       display: block;
       margin-top: 8px;
-      color: $primary;
       white-space: nowrap;
       font-size: 1.3em;
     }

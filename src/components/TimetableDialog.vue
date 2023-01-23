@@ -251,10 +251,6 @@ export default defineComponent({
       }
     }
 
-    a.timetable-dialog__item-room {
-      color: $primary;
-    }
-
     .timetable-dialog__item-bottom {
       display: flex;
       align-items: baseline;

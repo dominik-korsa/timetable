@@ -35,4 +35,12 @@ body {
   background: $v-lo-institute;
 }
 
+a:not(.q-btn):not(.q-item) {
+  color: $primary;
+
+  &:not(:hover):not(:active) {
+    text-decoration: none;
+  }
+}
+
 @import "time-marker";
