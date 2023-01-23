@@ -10,8 +10,17 @@
       <div class="timetable-item-single__subject">
         {{ lesson.subjectShort }}
       </div>
-      <div class="timetable-item-single__room">
-        {{ unitType === 'room' ? lesson.className : lesson.room }}
+      <div
+        v-if="unitType === 'room'"
+        class="timetable-item-single__class-name"
+      >
+        {{ lesson.className }}
+      </div>
+      <div
+        v-else
+        class="timetable-item-single__room"
+      >
+        {{ lesson.room }}
       </div>
     </div>
     <div
@@ -27,8 +36,17 @@
       >
         {{ lesson.group?.name }}
       </div>
-      <div class="timetable-item-single__teacher">
-        {{ unitType === 'teacher' ? lesson.className : lesson.teacher }}
+      <div
+        v-if="unitType === 'teacher'"
+        class="timetable-item-single__class-name"
+      >
+        {{ lesson.className }}
+      </div>
+      <div
+        v-else
+        class="timetable-item-single__teacher"
+      >
+        {{ lesson.teacher }}
       </div>
       <slot />
     </div>
@@ -123,6 +141,11 @@ export default defineComponent({
     text-align: right;
     padding-left: 2px;
     font-weight: 300;
+  }
+
+  .timetable-item-single__class-name {
+    padding-left: 2px;
+    font-size: 1.2em;
   }
 
   .timetable-item-single__subject, .timetable-item-single__room,

@@ -130,9 +130,9 @@ export class OptivumClient implements BaseClient {
       },
     );
     const table = new Table(await response.text());
-
+    const unitName = table.getTitle();
     return {
-      unitName: table.getTitle(),
+      unitName,
       unitType,
       unit,
       hours: Object.values(table.getHours()).map(({ number, timeFrom, timeTo }) => ({
@@ -150,10 +150,10 @@ export class OptivumClient implements BaseClient {
             name: lesson.groupName,
             key: lesson.groupName,
           } : undefined,
-          room: lesson.room,
+          room: unitType === 'room' ? unitName : lesson.room,
           roomId: undefined,
           className: lesson.className,
-          teacher: lesson.teacher,
+          teacher: unitType === 'teacher' ? unitName : lesson.teacher,
           color: randomColor(`${lesson.subject}|${lesson.teacher}`),
           removed: false,
         })),
