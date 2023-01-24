@@ -101,6 +101,7 @@ export default defineComponent({
 
   .timetable-item-single__top {
     padding-top: 4px;
+    flex-grow: 1;
   }
 
   .timetable-item-single__bottom {
