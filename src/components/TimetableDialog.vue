@@ -146,7 +146,7 @@ export default defineComponent({
       required: false,
       default: undefined,
     },
-    isVlo: Boolean,
+    isVLo: Boolean,
   },
   emits: ['close'],
   setup: (props, { emit }) => {
@@ -183,7 +183,7 @@ export default defineComponent({
               emit('close');
             },
             roomTo: lesson.roomId === undefined ? undefined
-              : props.isVlo ? {
+              : route.params.tri === 'v-lo' ? {
                 name: 'SelectRoom',
                 params: route.params,
                 query: { selected: lesson.roomId },

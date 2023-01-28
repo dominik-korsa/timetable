@@ -234,7 +234,7 @@ export default defineComponent({
     });
 
     return {
-      config: useConfigStore(),
+      config,
       daysEl,
       rows: computed(() => calculateRows(timestamps.value, hourPixels.value)),
       markerPosition,
