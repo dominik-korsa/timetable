@@ -8,6 +8,7 @@
     }"
   >
     <ul
+      :ref="el => headersEl = el"
       class="timetable-grid__headers"
       aria-label="Dni tygodnia"
     >
@@ -20,13 +21,21 @@
         }"
       >
         <div class="timetable-grid__header-inner q-pb-xs">
-          <div class="timetable-grid__header-content col-grow">
-            <div class="timetable-grid__header-name">
+          <div
+            class="timetable-grid__header-content col-grow"
+            tabindex="-1"
+            :aria-label="header.date === null ? header.name : `${header.name} ${header.date}`"
+          >
+            <div
+              class="timetable-grid__header-name"
+              aria-hidden="true"
+            >
               {{ header.name }}
             </div>
             <div
               v-if="header.date !== null"
               class="timetable-grid__header-date"
+              aria-hidden="true"
             >
               {{ header.date }}
             </div>
@@ -39,7 +48,7 @@
           />
         </div>
         <div
-          class="timetable-grid__header-jump bg-page"
+          class="timetable-grid__header-jump tab-navigation bg-page"
           tabindex="0"
           role="button"
           @click="focusLesson(i)"
@@ -68,6 +77,16 @@
         :key="i"
         class="timetable-grid__day"
       >
+        <div
+          class="timetable-grid__day-jump tab-navigation"
+          tabindex="0"
+          role="button"
+          @click="focusHeader(i)"
+          @keyup.space="focusHeader(i)"
+          @keyup.enter="focusHeader(i)"
+        >
+          Skocz do nagłówka
+        </div>
         <timetable-item
           v-for="item in day"
           :key="item.gridRow"
@@ -188,6 +207,7 @@ export default defineComponent({
     });
 
     const daysEl = ref<HTMLDivElement>();
+    const headersEl = ref<HTMLDivElement>();
 
     onMounted(() => {
       if (!daysEl.value || dayIndex.value === null) return;
@@ -256,9 +276,18 @@ export default defineComponent({
       ((day.querySelector('.timetable-item') ?? day) as HTMLElement).focus();
     };
 
+    const focusHeader = (weekday: number) => {
+      (
+        headersEl.value
+          ?.querySelectorAll('.timetable-grid__header .timetable-grid__header-content')
+          ?.[weekday] as HTMLElement | undefined
+      )?.focus();
+    };
+
     return {
       config,
       daysEl,
+      headersEl,
       rows: computed(() => calculateRows(timestamps.value, hourPixels.value)),
       markerPosition,
       markerOffsetPx: computed(() => `${markerPosition.value?.offset ?? 0}px`),
@@ -267,6 +296,7 @@ export default defineComponent({
       gridWrapper: wrapper,
       gridHeaderDense: computed(() => props.dense && quasar.screen.width < 650),
       focusLesson,
+      focusHeader,
     };
   },
 });
@@ -352,21 +382,11 @@ $timetable-gap: 4px;
       .timetable-grid__header-jump {
         height: 15px;
         line-height: 15px;
-        font-size: 0.75em;
-        color: $primary;
-        text-decoration: underline;
-        cursor: pointer;
         margin: 0 8px -16px;
         border-bottom-left-radius: $generic-border-radius;
         border-bottom-right-radius: $generic-border-radius;
         border: solid var(--separator-color) 1px;
         border-top: none;
-        user-select: none;
-
-        &:not(:focus) {
-          opacity: 0;
-          pointer-events: none;
-        }
       }
 
       &:first-of-type {
@@ -389,6 +409,14 @@ $timetable-gap: 4px;
     grid-column: 2;
     grid-row: 2;
     display: flex;
+
+    .timetable-grid__day-jump {
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 4px 8px;
+    }
 
     .timetable-grid__day {
       width: var(--column-width);
