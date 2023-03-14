@@ -14,28 +14,40 @@
       <li
         v-for="(header, i) in headers"
         :key="i"
-        class="timetable-grid__header bg-page text-center q-pb-xs"
+        class="timetable-grid__header bg-page"
         :class="{
           'timetable-grid__header--dense': gridHeaderDense
         }"
       >
-        <div class="timetable-grid__header-content col-grow">
-          <div class="timetable-grid__header-name">
-            {{ header.name }}
+        <div class="timetable-grid__header-inner q-pb-xs">
+          <div class="timetable-grid__header-content col-grow">
+            <div class="timetable-grid__header-name">
+              {{ header.name }}
+            </div>
+            <div
+              v-if="header.date !== null"
+              class="timetable-grid__header-date"
+            >
+              {{ header.date }}
+            </div>
           </div>
-          <div
-            v-if="header.date !== null"
-            class="timetable-grid__header-date"
-          >
-            {{ header.date }}
-          </div>
+          <substitutions-button
+            v-if="header.substitutions && header.substitutions.length > 0"
+            :substitutions="header.substitutions"
+            :block="gridHeaderDense"
+            :small="gridHeaderDense && $q.screen.lt.sm"
+          />
         </div>
-        <substitutions-button
-          v-if="header.substitutions && header.substitutions.length > 0"
-          :substitutions="header.substitutions"
-          :block="gridHeaderDense"
-          :small="gridHeaderDense && $q.screen.lt.sm"
-        />
+        <div
+          class="timetable-grid__header-jump bg-page"
+          tabindex="0"
+          role="button"
+          @click="focusLesson(i)"
+          @keyup.space="focusLesson(i)"
+          @keyup.enter="focusLesson(i)"
+        >
+          Skocz do lekcji
+        </div>
       </li>
     </ul>
 
@@ -238,6 +250,12 @@ export default defineComponent({
       wrapper.value.scrollTo({ left: newDayPos * columnWidth, behavior: 'smooth' });
     });
 
+    const focusLesson = (weekday: number) => {
+      const day = daysEl.value?.getElementsByClassName('timetable-grid__day')[weekday];
+      if (!day) return;
+      ((day.querySelector('.timetable-item') ?? day) as HTMLElement).focus();
+    };
+
     return {
       config,
       daysEl,
@@ -248,6 +266,7 @@ export default defineComponent({
       headers,
       gridWrapper: wrapper,
       gridHeaderDense: computed(() => props.dense && quasar.screen.width < 650),
+      focusLesson,
     };
   },
 });
@@ -309,9 +328,13 @@ $timetable-gap: 4px;
       border-bottom: solid var(--separator-color) 1px;
       padding-right: $timetable-gap;
       font-size: 0.85rem;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
+      text-align: center;
+
+      .timetable-grid__header-inner {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
 
       .timetable-grid__header-name {
         line-height: 1.4;
@@ -324,6 +347,26 @@ $timetable-gap: 4px;
 
       .substitutions-button {
         margin-bottom: -4px;
+      }
+
+      .timetable-grid__header-jump {
+        height: 15px;
+        line-height: 15px;
+        font-size: 0.75em;
+        color: $primary;
+        text-decoration: underline;
+        cursor: pointer;
+        margin: 0 8px -16px;
+        border-bottom-left-radius: $generic-border-radius;
+        border-bottom-right-radius: $generic-border-radius;
+        border: solid var(--separator-color) 1px;
+        border-top: none;
+        user-select: none;
+
+        &:not(:focus) {
+          opacity: 0;
+          pointer-events: none;
+        }
       }
 
       &:first-of-type {
