@@ -44,12 +44,17 @@
               v-for="(tab, i) in tabs"
               :key="i"
               :name="i"
+              :aria-label="tab.label"
             >
-              <div class="text-weight-medium">
+              <div
+                class="text-weight-medium"
+                aria-hidden="true"
+              >
                 {{ tab.name }}
               </div>
               <div
                 v-if="tab.date !== null"
+                aria-hidden="true"
                 class="text-caption combined-timetable__tab-date"
               >
                 {{ tab.date }}
@@ -222,8 +227,10 @@ export default defineComponent({
           weekOffset,
           tabs: (quasar.screen.lt.sm ? weekdayNamesShort : weekdayNames).map((name, weekdayIndex) => {
             const date = monday?.add({ weeks: weekOffset }).add({ days: weekdayIndex }) ?? null;
+            const fullWeekdayName = weekdayNames[weekdayIndex];
             return ({
               name,
+              label: date === null ? fullWeekdayName : `${fullWeekdayName} ${date.toLocaleString()}`,
               date: date === null ? null : (config.iso8601 ? date.toString() : date.toLocaleString()),
             });
           }),

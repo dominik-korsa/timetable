@@ -79,9 +79,9 @@ export default defineComponent({
       dialogVisible: ref(false),
       description: computed(
         () => {
-          const text = `${
-            weekdayNames[props.moment.weekday]
-          }, godzina ${props.hour.begin}. Lekcja numer ${props.hour.display}.`;
+          const text = `${weekdayNames[props.moment.weekday]}, `
+            + `godzina ${props.hour.begin}. `
+            + `Lekcja numer ${props.hour.display}.`;
           if (favourite.value === null) return `Lekcja ukryta. ${text}`;
           return text;
         },
