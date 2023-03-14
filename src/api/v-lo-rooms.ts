@@ -53,6 +53,13 @@ otherRooms.forEach((room) => {
   vLoRooms.push(room);
 });
 
+export const floorNames: Record<FloorType, string> = {
+  dungeons: 'piwnice',
+  groundFloor: 'parter',
+  firstFloor: '1. piętro',
+  secondFloor: '2. piętro',
+};
+
 export const locationDescription: Record<RoomLocation, string> = {
   dungeons: 'V LO, piwnice',
   groundFloor: 'V LO, parter',

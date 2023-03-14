@@ -10,6 +10,7 @@
       y="112"
       class="v-lo-map__floor-number"
       text-anchor="middle"
+      :aria-label="floorName"
     >
       {{ floorNumber }}
     </text>
@@ -101,6 +102,7 @@
         'v-lo-map__room--vertical': !!room.vertical,
         'v-lo-map__room--selected': room.id === selectedId,
       }"
+      :aria-label="room.full"
       @click="onRoomClick(room.id)"
       @keydown.enter="onRoomClick(room.id)"
       @keydown.space="onRoomClick(room.id)"
@@ -125,7 +127,10 @@
         :x="room.x*8"
         :y="room.y*8"
       >
-        <div class="v-lo-map__room-text">
+        <div
+          class="v-lo-map__room-text"
+          aria-hidden="true"
+        >
           <div>
             {{ room.short }}
           </div>
@@ -187,7 +192,7 @@
 </template>
 
 <script lang="ts">
-import { floorRooms, FloorType } from 'src/api/v-lo-rooms';
+import { floorNames, floorRooms, FloorType } from 'src/api/v-lo-rooms';
 import { computed, defineComponent, PropType } from 'vue';
 
 export default defineComponent({
@@ -218,6 +223,7 @@ export default defineComponent({
       firstFloor: '+1',
       secondFloor: '+2',
     }[props.floor])),
+    floorName: computed(() => floorNames[props.floor]),
     viewboxValue: computed(() => ({
       default: '-4 -36 296 288',
       'reduced-height': '-4 12 296 242',

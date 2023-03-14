@@ -23,10 +23,10 @@
           rounded
           no-wrap
           :options="[
-            {label: '-1', value: 'dungeons'},
-            {label: '0', value: 'groundFloor'},
-            {label: '+1', value: 'firstFloor'},
-            {label: '+2', value: 'secondFloor'},
+            {label: '-1', value: 'dungeons', 'aria-label': 'piwnice'},
+            {label: '0', value: 'groundFloor', 'aria-label': 'parter'},
+            {label: '+1', value: 'firstFloor', 'aria-label': '1. piętro'},
+            {label: '+2', value: 'secondFloor', 'aria-label': '2. piętro'},
           ]"
           @update:model-value="selectFloor"
         />
@@ -71,6 +71,7 @@
             [`select-room__other-room--${room.location}`]: true,
             'select-room__other--selected': selectedRoom?.id === room.id
           }"
+          :aria-label="room.full"
           @click="selectRoom(room.id)"
           @keydown.enter="selectRoom(room.id)"
           @keydown.space="selectRoom(room.id)"
@@ -98,6 +99,7 @@
               flat
               round
               icon="close"
+              aria-label="Odznacz pomieszczenie"
               @click="selectRoom(undefined)"
             />
           </q-card-section>
