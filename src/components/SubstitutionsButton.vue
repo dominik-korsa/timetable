@@ -8,6 +8,7 @@
     class="substitutions-button"
     no-caps
     :dense="block"
+    :aria-label="`Zastępstwa - ${substitutions.length} ${changesText}`"
     @click="dialogVisible = true"
   >
     {{ substitutions.length }}
@@ -28,7 +29,10 @@
           v-for="(item, i) in items"
           :key="i"
         >
-          <q-item-section avatar>
+          <q-item-section
+            avatar
+            :aria-label="`Lekcja ${item.timeSignature}`"
+          >
             {{ item.timeSignature }}
           </q-item-section>
           <q-item-section>

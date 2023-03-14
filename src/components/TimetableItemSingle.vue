@@ -7,18 +7,23 @@
     }"
   >
     <div class="timetable-item-single__top">
-      <div class="timetable-item-single__subject">
+      <div
+        class="timetable-item-single__subject"
+        :aria-label="lesson.subject"
+      >
         {{ lesson.subjectShort }}
       </div>
       <div
         v-if="unitType === 'room'"
         class="timetable-item-single__class-name"
+        :aria-label="`Klasa ${classNames}`"
       >
         {{ classNames }}
       </div>
       <div
         v-else
         class="timetable-item-single__room"
+        :aria-label="`Sala ${lesson.room}`"
       >
         {{ lesson.room }}
       </div>
@@ -26,6 +31,8 @@
     <div
       v-if="small"
       class="timetable-item-single__group"
+      :aria-hidden="!lesson.group?.name"
+      :aria-label="`Grupa ${lesson.group?.name}`"
     >
       {{ lesson.group?.name }}
     </div>
@@ -33,12 +40,15 @@
       <div
         v-if="!small"
         class="timetable-item-single__group"
+        :aria-hidden="!lesson.group?.name"
+        :aria-label="`Grupa ${lesson.group?.name}`"
       >
         {{ lesson.group?.name }}
       </div>
       <div
         v-if="unitType === 'teacher'"
         class="timetable-item-single__class-name"
+        :aria-label="`Klasa ${classNames}`"
       >
         {{ classNames }}
       </div>

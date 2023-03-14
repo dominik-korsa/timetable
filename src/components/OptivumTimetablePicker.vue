@@ -1,10 +1,13 @@
 <template>
   <q-form
     greedy
+    aria-label="Formularz plan lekcji OPTIVUM"
     @submit.prevent="submit"
   >
     <q-card-section class="text-h6 row items-center justify-between">
-      <div>Plan lekcji OPTIVUM</div>
+      <div role="heading">
+        Plan lekcji OPTIVUM
+      </div>
       <q-btn
         v-if="$q.screen.width > 380"
         flat
@@ -53,9 +56,15 @@
       </q-card-actions>
     </q-slide-transition>
   </q-form>
-  <template v-if="historyItems.length > 0">
-    <q-separator />
-    <q-item-label header>
+  <section
+    v-if="historyItems.length > 0"
+    aria-label="Ostatnio używane plany OPTIVUM"
+  >
+    <q-separator aria-hidden="true" />
+    <q-item-label
+      header
+      role="heading"
+    >
       Ostatnio używane
     </q-item-label>
     <q-list>
@@ -95,6 +104,7 @@
             icon="remove_circle_outline"
             round
             flat
+            aria-label="Usuń z historii"
             @click.prevent="removeHistoryEntry(i)"
           />
         </q-item-section>
@@ -110,7 +120,7 @@
         Pokaż więcej
       </q-btn>
     </q-card-actions>
-  </template>
+  </section>
   <q-dialog v-model="helpDialogVisible">
     <optivum-help />
   </q-dialog>

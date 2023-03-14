@@ -1,17 +1,24 @@
 <template>
   <q-card class="timetable-dialog">
-    <div class="timetable-dialog__list">
+    <div
+      class="timetable-dialog__list"
+      role="list"
+    >
       <div
         v-for="(items, subject) in groups"
         :key="subject"
       >
-        <div class="timetable-dialog__list-header">
+        <div
+          class="timetable-dialog__list-header"
+          role="heading"
+        >
           {{ subject }}
         </div>
         <q-item
           v-for="(lesson, i) in items"
           :key="i"
           class="q-px-sm q-py-none timetable-dialog__item"
+          role="listitem"
         >
           <q-item-section
             v-if="many || lesson.isFavourite"
@@ -21,6 +28,7 @@
             <q-btn
               :icon="lesson.isFavourite ? 'star' : 'star_border'"
               :color="lesson.isFavourite ? 'amber' : undefined"
+              :aria-label="lesson.isFavourite ? 'Usuń lekcję z ulubionych' : 'Dodaj lekcję do ulubionych'"
               flat
               round
               @click="lesson.favouriteClick"
@@ -52,12 +60,14 @@
                   v-if="lesson.roomTo !== undefined"
                   class="timetable-dialog__item-room"
                   :to="lesson.roomTo"
+                  :aria-label="`Sala ${lesson.room}`"
                 >
                   {{ lesson.room }}
                 </router-link>
                 <div
                   v-else
                   class="timetable-dialog__item-room"
+                  :aria-label="`Sala ${lesson.room}`"
                 >
                   {{ lesson.room }}
                 </div>
@@ -71,7 +81,10 @@
               v-if="lesson.group"
               class="timetable-dialog__item-bottom"
             >
-              <div class="timetable-dialog__item-group">
+              <div
+                class="timetable-dialog__item-group"
+                :aria-label="lesson.group.name"
+              >
                 {{ lesson.group.name }}
                 <span
                   v-if="lesson.group.name !== lesson.group.key"
@@ -86,7 +99,10 @@
     </div>
     <q-separator />
     <div class="q-px-md q-pt-sm row items-baseline justify-between full-width text-caption">
-      <div class="q-mr-sm">
+      <div
+        class="q-mr-sm"
+        :aria-label="`Lekcja numer ${hour.display}. Od godziny ${hour.begin} do ${hour.end}`"
+      >
         Lekcja {{ hour.display }}, {{ hour.begin }} - {{ hour.end }}
       </div>
       <div>
@@ -103,6 +119,7 @@
           flat
           round
           :color="favourite === null ? 'negative' : undefined"
+          :aria-label="favourite === null ? 'Pokaż lekcję' : 'Ukryj lekcję'"
           @click="hideClick"
         />
       </q-item-section>

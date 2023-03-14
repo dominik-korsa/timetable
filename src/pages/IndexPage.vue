@@ -55,8 +55,12 @@
       flat
       bordered
       class="full-width q-mb-md"
+      role="region"
     >
-      <q-card-section class="text-h6 q-pb-sm">
+      <q-card-section
+        class="text-h6 q-pb-sm"
+        role="heading"
+      >
         Ulubione
       </q-card-section>
       <q-list separator>
@@ -83,6 +87,7 @@
                 outline
                 no-caps
                 color="amber-9"
+                :aria-label="item.label"
               >
                 {{ item.name }}
               </q-btn>
@@ -111,6 +116,7 @@ import OptivumTimetablePicker from 'components/OptivumTimetablePicker.vue';
 interface UnitItem {
   key: string;
   name: string;
+  label: string;
   to: RouteLocationRaw;
 }
 
@@ -142,14 +148,26 @@ export default defineComponent({
               tri,
               title,
               subtitle: client.type === 'optivum' ? client.baseUrl : null,
-              items: units.map(({ unitType, unit }) => ({
-                key: `${unitType}|${unit}`,
-                name: getUnitName(unitType, unit),
-                to: {
-                  name: 'UnitTimetable',
-                  params: { tri, unitType, unit },
-                },
-              })).sort((lhs, rhs) => lhs.name.localeCompare(rhs.name)),
+              items: units.map(({ unitType, unit }) => {
+                const unitName = getUnitName(unitType, unit);
+                return ({
+                  key: `${unitType}|${unit}`,
+                  name: unitName,
+                  label: `Plan lekcji ${{
+                    class: 'klasy',
+                    room: 'sali',
+                    teacher: 'nauczyciela',
+                  }[unitType]} ${unitName}`,
+                  to: {
+                    name: 'UnitTimetable',
+                    params: {
+                      tri,
+                      unitType,
+                      unit,
+                    },
+                  },
+                });
+              }).sort((lhs, rhs) => lhs.name.localeCompare(rhs.name)),
             });
           }),
       );

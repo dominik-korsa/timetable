@@ -21,6 +21,7 @@
             :class="{
               'combined-timetable-grid__unit-name--favourite': unit.isFavourite,
             }"
+            :aria-label="`Klasa ${unit.unitName}`"
           >
             {{ unit.unitName }}
           </div>
@@ -36,18 +37,6 @@
         </div>
       </div>
     </div>
-    <div class="combined-timetable-grid__grid">
-      <timetable-item
-        v-for="item in items"
-        :key="item.key"
-        class="combined-timetable-grid__grid-item"
-        :moment="item.moment"
-        :hour="item.hour"
-        :style="item.style"
-        :unit-type="unitType"
-        small
-      />
-    </div>
     <div
       v-if="markerPositionPx !== null"
       class="time-marker combined-timetable-grid__marker"
@@ -60,6 +49,21 @@
       <div
         v-if="markerPositionPx !== null"
         class="time-marker-triangle time-marker-triangle--left combined-timetable-grid__time-marker-triangle"
+      />
+    </div>
+    <div
+      class="combined-timetable-grid__grid"
+      aria-label="Siatka planu lekcji"
+    >
+      <timetable-item
+        v-for="item in items"
+        :key="item.key"
+        class="combined-timetable-grid__grid-item"
+        :moment="item.moment"
+        :hour="item.hour"
+        :style="item.style"
+        :unit-type="unitType"
+        small
       />
     </div>
     <div class="combined-timetable-grid__corner bg-page" />
@@ -176,6 +180,7 @@ $column-gap: 4px;
     position: sticky;
     left: 0;
     display: flex;
+    z-index: 1;
 
     .combined-timetable-grid__time-marker-triangle {
       transform: translateY(v-bind(markerPositionPx)) translateY(-1px);
@@ -250,6 +255,7 @@ $column-gap: 4px;
     grid-row: 2;
     grid-column: 3;
     transform: translateY(v-bind(markerPositionPx));
+    z-index: 1;
 
     &::before {
       content: none;

@@ -43,4 +43,17 @@ a:not(.q-btn):not(.q-item) {
   }
 }
 
+.tab-navigation {
+  font-size: 0.75em;
+  color: $primary;
+  text-decoration: underline;
+  cursor: pointer;
+  user-select: none;
+
+  &:not(:focus) {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
 @import "time-marker";
