@@ -4,7 +4,10 @@
     flat
     bordered
   >
-    <q-card-section class="text-h6">
+    <q-card-section
+      class="text-h6"
+      role="heading"
+    >
       Zainstaluj jako aplikację (PWA)
     </q-card-section>
     <q-card-section class="q-py-none">

@@ -29,7 +29,10 @@
           v-for="(item, i) in items"
           :key="i"
         >
-          <q-item-section avatar>
+          <q-item-section
+            avatar
+            :aria-label="`Lekcja ${item.timeSignature}`"
+          >
             {{ item.timeSignature }}
           </q-item-section>
           <q-item-section>
