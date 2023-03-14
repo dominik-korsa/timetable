@@ -13,3 +13,4 @@ Aplikacja do planów wygenerowanych narzędziem **Plan lekcji OPTIVUM** oraz do 
 - Wybór ulubionych klas
 - Ukrywanie lekcji, wybór grup (np. grup językowych)
 - PWA - możliwość zainstalowania na telefonie
+- Dostosowany pod czytniki ekranu
