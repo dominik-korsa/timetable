@@ -9,6 +9,7 @@
     }"
     tabindex="0"
     role="button"
+    :aria-description="description"
     @click="dialogVisible = true"
     @keyup.enter="dialogVisible = true"
     @keyup.space="dialogVisible = true"
@@ -50,6 +51,7 @@ import TimetableItemMultiple from 'components/TimetableItemMultiple.vue';
 import { TableHour, TableLessonMoment, UnitType } from 'src/api/common';
 import { useConfigStore } from 'stores/config';
 import TimetableDialog from 'components/TimetableDialog.vue';
+import { weekdayNames } from 'src/shared';
 
 export default defineComponent({
   name: 'TimetableItem',
@@ -74,6 +76,11 @@ export default defineComponent({
     return ({
       favourite: computed(() => config.favouriteLessons[`${props.moment.umid}|#`]),
       dialogVisible: ref(false),
+      description: computed(
+        () => `${
+          weekdayNames[props.moment.weekday]
+        }, godzina ${props.hour.begin}. Lekcja ${props.hour.display}.`,
+      ),
     });
   },
 });

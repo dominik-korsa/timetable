@@ -10,10 +10,11 @@
       class="timetable-item-multiple__generic"
     >
       <div
-        v-if="commonSubject !== undefined"
+        v-if="commonSubjectShort !== undefined"
         class="timetable-item-multiple__common-subject"
+        :aria-label="commonSubject ?? commonSubjectShort"
       >
-        {{ commonSubject }}
+        {{ commonSubjectShort }}
       </div>
       <div class="timetable-item-multiple__count">
         <b>{{ lessons.length }}</b> {{ groupsText }}
@@ -26,7 +27,10 @@
       show-color
       small
     >
-      <div class="timetable-item-multiple__more-small bg-page">
+      <div
+        class="timetable-item-multiple__more-small bg-page"
+        :aria-label="otherGroupsLabel"
+      >
         +{{ lessons.length-1 }}
       </div>
     </timetable-item-single>
@@ -40,7 +44,10 @@
         show-color
       />
       <q-separator vertical />
-      <div class="timetable-item-multiple__more">
+      <div
+        class="timetable-item-multiple__more"
+        :aria-label="otherGroupsLabel"
+      >
         +{{ lessons.length-1 }}
       </div>
     </div>
@@ -57,6 +64,24 @@ import TimetableItemSingle from 'components/TimetableItemSingle.vue';
 import { FavouriteLesson } from 'stores/config';
 
 const pluralRules = new Intl.PluralRules('pl-PL');
+
+const groupPlural: Record<Intl.LDMLPluralRule, string> = {
+  zero: 'grup',
+  one: 'grupa',
+  two: 'grupy',
+  few: 'grupy',
+  many: 'grup',
+  other: 'grupy',
+};
+
+const otherLessonsPlural: Record<Intl.LDMLPluralRule, string> = {
+  zero: 'innych grup',
+  one: 'inna grupa',
+  two: 'inne grupy',
+  few: 'inne grupy',
+  many: 'innych grup',
+  other: 'innych grup',
+};
 
 export default defineComponent({
   name: 'TimetableItemMultiple',
@@ -78,16 +103,17 @@ export default defineComponent({
     },
   },
   setup: (props) => ({
-    groupsText: computed(() => ({
-      zero: 'grup',
-      one: 'grupa',
-      two: 'grupy',
-      few: 'grupy',
-      many: 'grup',
-      other: 'grupy',
-    }[pluralRules.select(props.lessons.length)])),
-    commonSubject: computed(
+    groupsText: computed(() => (groupPlural[pluralRules.select(props.lessons.length)])),
+    otherGroupsLabel: computed(
+      () => `i ${props.lessons.length - 1} ${
+        otherLessonsPlural[pluralRules.select(props.lessons.length - 1)]
+      }`,
+    ),
+    commonSubjectShort: computed(
       () => common(props.lessons.map((lesson) => lesson.subjectShort)),
+    ),
+    commonSubject: computed(
+      () => common(props.lessons.map((lesson) => lesson.subject)),
     ),
     favouriteLesson: computed(() => {
       const { favourite } = props;
