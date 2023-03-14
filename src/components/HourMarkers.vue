@@ -1,22 +1,35 @@
 <template>
-  <div class="hour-markers bg-page">
-    <div
+  <ul
+    class="hour-markers bg-page"
+    aria-label="Godziny lekcji"
+  >
+    <li
       v-for="(hour, i) in hours"
       :key="i"
       class="hour-marker"
       :style="`grid-row: ${i*2+2}`"
+      :aria-label="`Lekcja numer ${hour.display}. Od godziny ${hour.begin} do ${hour.end}`"
     >
-      <div class="hour-marker__number">
+      <div
+        class="hour-marker__number"
+        aria-hidden="true"
+      >
         {{ hour.display }}
       </div>
-      <div class="hour-marker__start">
+      <div
+        class="hour-marker__start"
+        aria-hidden="true"
+      >
         {{ hour.begin }}
       </div>
-      <div class="hour-marker__end">
+      <div
+        class="hour-marker__end"
+        aria-hidden="true"
+      >
         {{ hour.end }}
       </div>
-    </div>
-  </div>
+    </li>
+  </ul>
 </template>
 
 <script lang="ts">
@@ -43,6 +56,9 @@ export default defineComponent({
   display: grid;
   grid-template-columns: 1fr;
   border-right: solid var(--separator-color) 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
   .hour-marker {
     display: grid;

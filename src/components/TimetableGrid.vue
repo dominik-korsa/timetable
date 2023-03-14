@@ -7,33 +7,11 @@
       'timetable-grid__wrapper--dense': dense,
     }"
   >
-    <div
-      :ref="el => daysEl = el"
-      class="timetable-grid__days"
+    <ul
+      class="timetable-grid__headers"
+      aria-label="Dni tygodnia"
     >
-      <div
-        v-for="(day, i) in lessonItems"
-        :key="i"
-        class="timetable-grid__day"
-      >
-        <timetable-item
-          v-for="item in day"
-          :key="item.gridRow"
-          :style="`grid-row: ${item.gridRow}`"
-          :moment="item.moment"
-          :hour="item.hour"
-          :unit-type="data.unitType"
-          :small="dense"
-        />
-        <div
-          v-if="markerPosition !== null && markerPosition.dayIndex === i"
-          class="time-marker timetable-grid__marker"
-        />
-      </div>
-    </div>
-
-    <div class="timetable-grid__headers">
-      <div
+      <li
         v-for="(header, i) in headers"
         :key="i"
         class="timetable-grid__header bg-page text-center q-pb-xs"
@@ -58,14 +36,41 @@
           :block="gridHeaderDense"
           :small="gridHeaderDense && $q.screen.lt.sm"
         />
-      </div>
-    </div>
+      </li>
+    </ul>
 
     <hour-markers
       class="timetable-grid__hours"
       :hours="data.hours"
       :rows="rows"
     />
+
+    <div
+      :ref="el => daysEl = el"
+      class="timetable-grid__days"
+      aria-label="Siatka planu lekcji"
+      role="region"
+    >
+      <div
+        v-for="(day, i) in lessonItems"
+        :key="i"
+        class="timetable-grid__day"
+      >
+        <timetable-item
+          v-for="item in day"
+          :key="item.gridRow"
+          :style="`grid-row: ${item.gridRow}`"
+          :moment="item.moment"
+          :hour="item.hour"
+          :unit-type="data.unitType"
+          :small="dense"
+        />
+        <div
+          v-if="markerPosition !== null && markerPosition.dayIndex === i"
+          class="time-marker timetable-grid__marker"
+        />
+      </div>
+    </div>
 
     <div class="timetable-grid__corner bg-page" />
   </div>
@@ -282,6 +287,7 @@ $timetable-gap: 4px;
     grid-row: 2;
     position: sticky;
     left: 0;
+    z-index: 1;
   }
 
   .timetable-grid__headers {
@@ -289,11 +295,14 @@ $timetable-gap: 4px;
     grid-row: 1;
     position: sticky;
     top: -1px;
-    margin-top: -1px;
+    padding: 0;
+    margin: -1px 0 0;
     display: grid;
     grid-template-columns: calc(var(--column-width) + #{$timetable-gap});
     grid-auto-columns: var(--column-width);
     min-width: 0;
+    z-index: 1;
+    list-style: none;
 
     .timetable-grid__header {
       grid-row: 1;
@@ -371,6 +380,7 @@ $timetable-gap: 4px;
     margin-top: -1px;
     margin-right: -1px;
     left: 0;
+    z-index: 1;
   }
 
   &.timetable-grid__wrapper--dense {

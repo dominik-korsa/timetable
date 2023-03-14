@@ -8,6 +8,7 @@
     class="substitutions-button"
     no-caps
     :dense="block"
+    :aria-label="`Zastępstwa - ${substitutions.length} ${changesText}`"
     @click="dialogVisible = true"
   >
     {{ substitutions.length }}
