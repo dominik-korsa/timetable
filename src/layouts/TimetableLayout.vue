@@ -9,6 +9,7 @@
           flat
           round
           icon="arrow_back"
+          aria-label="Wróć do wyboru klasy"
           @click="goBack"
         />
 
@@ -32,6 +33,7 @@
             :color="offset.decreaseDisabled ? 'grey' : 'primary'"
             :disable="offset.decreaseDisabled"
             :dense="$q.screen.lt.sm"
+            aria-label="Poprzedni tydzień"
             @click="changeOffset(-1)"
           />
           <q-btn
@@ -40,6 +42,7 @@
             class="q-mx-xs"
             :disable="offset.isCurrentWeek"
             :dense="$q.screen.lt.sm"
+            aria-label="Dzisiaj - przywróć obecny tydzień"
             @click="offset.reset()"
           >
             Dzisiaj
@@ -52,6 +55,7 @@
             :color="offset.increaseDisabled ? 'grey' : 'primary'"
             :disable="offset.increaseDisabled"
             :dense="$q.screen.lt.sm"
+            aria-label="Następny tydzień"
             @click="changeOffset(1)"
           />
         </template>
@@ -61,6 +65,7 @@
           round
           class="q-ml-xs"
           :dense="$q.screen.lt.sm"
+          aria-label="Więcej opcji"
         >
           <q-menu>
             <q-card class="timetable-layout__menu">

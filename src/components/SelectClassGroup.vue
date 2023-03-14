@@ -13,12 +13,14 @@
       :color="$q.dark.isActive ? 'grey-9' : undefined"
       no-caps
       no-wrap
+      :aria-label="`Klasa ${item.name}`"
     >
       <div class="select-class-group__button-value">
         {{ item.name }}
       </div>
       <div
         v-if="item.isFavourite"
+        aria-label="Ulubiona"
         class="select-class-group__favourite"
       />
     </q-btn>

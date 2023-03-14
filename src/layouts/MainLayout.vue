@@ -13,6 +13,7 @@
           flat
           round
           icon="arrow_back"
+          aria-label="Wróć"
           @click="goBack"
         />
 
@@ -27,6 +28,7 @@
         <q-btn
           flat
           round
+          aria-label="Wybierz motyw"
           :icon="$q.dark.isActive ? 'dark_mode' : 'light_mode'"
         >
           <q-menu>
