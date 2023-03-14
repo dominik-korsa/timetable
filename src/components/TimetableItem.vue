@@ -73,13 +73,18 @@ export default defineComponent({
   },
   setup: (props) => {
     const config = useConfigStore();
+    const favourite = computed(() => config.favouriteLessons[`${props.moment.umid}|#`]);
     return ({
-      favourite: computed(() => config.favouriteLessons[`${props.moment.umid}|#`]),
+      favourite,
       dialogVisible: ref(false),
       description: computed(
-        () => `${
-          weekdayNames[props.moment.weekday]
-        }, godzina ${props.hour.begin}. Lekcja ${props.hour.display}.`,
+        () => {
+          const text = `${
+            weekdayNames[props.moment.weekday]
+          }, godzina ${props.hour.begin}. Lekcja numer ${props.hour.display}.`;
+          if (favourite.value === null) return `Lekcja ukryta. ${text}`;
+          return text;
+        },
       ),
     });
   },
