@@ -364,6 +364,7 @@ $timetable-gap: 4px;
         display: flex;
         flex-direction: row;
         align-items: center;
+        height: 100%;
       }
 
       .timetable-grid__header-name {
@@ -393,7 +394,7 @@ $timetable-gap: 4px;
         padding-left: $timetable-gap;
       }
 
-      &.timetable-grid__header--dense {
+      &.timetable-grid__header--dense .timetable-grid__header-inner {
         display: block;
 
         .substitutions-button {
