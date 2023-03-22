@@ -5,7 +5,9 @@
     :is-loading="isLoading"
     :offset="offset"
     :error-message="errorMessage"
+    :is-startup="isStartup"
     @retry-load="retryLoad"
+    @startup-toggle="onStartupToggle"
   >
     <template #default="{ changeOffset }">
       <timetable-grid
@@ -29,28 +31,6 @@
         </q-item-section>
         <q-item-section>
           {{ isFavourite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych' }}
-        </q-item-section>
-      </q-item>
-      <q-item
-        clickable
-        class="non-selectable standalone"
-        @click="onStartupToggle"
-      >
-        <q-item-section side>
-          <q-icon
-            name="bolt"
-            :color="isStartupTable ? 'primary' : undefined"
-          />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>Otwieraj przy starcie</q-item-label>
-          <q-item-label
-            v-if="isStartupTable"
-            caption
-            class="text-primary"
-          >
-            Włączono
-          </q-item-label>
         </q-item-section>
       </q-item>
       <q-item
@@ -205,10 +185,10 @@ export default defineComponent({
         ?.some((item) => item.unitType === unitType && item.unit === unit)
         ?? false;
     });
-    const isStartupTable = computed(
+    const isStartup = computed(
       () => config.startupUnit !== null
         && tableRef.value !== null
-        && config.startupUnit.tri === tableRef.value?.client.tri
+        && config.startupUnit.tri === tableRef.value.client.tri
         && config.startupUnit.unitType === tableRef.value.unitType
         && config.startupUnit.unit === tableRef.value.unit,
     );
@@ -238,10 +218,10 @@ export default defineComponent({
           );
         }
       },
-      isStartupTable,
+      isStartup,
       onStartupToggle: () => {
         if (!tableRef.value) return;
-        config.setStartupTable(isStartupTable.value ? null : {
+        config.setStartupTable(isStartup.value ? null : {
           tri: tableRef.value.client.tri,
           unitType: tableRef.value.unitType,
           unit: tableRef.value.unit,

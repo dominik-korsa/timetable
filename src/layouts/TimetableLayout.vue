@@ -73,6 +73,28 @@
                 <slot name="menu" />
                 <q-item
                   clickable
+                  class="non-selectable standalone"
+                  @click="$emit('startupToggle')"
+                >
+                  <q-item-section side>
+                    <q-icon
+                      name="bolt"
+                      :color="isStartup ? 'primary' : undefined"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Otwieraj przy starcie</q-item-label>
+                    <q-item-label
+                      v-if="isStartup"
+                      caption
+                      class="text-primary"
+                    >
+                      Włączono
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
                   class="non-selectable"
                   @click="onColorsToggle"
                 >
@@ -179,8 +201,9 @@ export default defineComponent({
       required: false,
       default: null,
     },
+    isStartup: Boolean,
   },
-  emits: ['retryLoad'],
+  emits: ['retryLoad', 'startupToggle'],
   setup(props) {
     const router = useRouter();
     const route = useRoute();

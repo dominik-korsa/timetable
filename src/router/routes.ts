@@ -69,6 +69,12 @@ const routes: RouteRecordRaw[] = [
       const config = useConfigStore();
 
       if (config.startupUnit === null) return { name: 'Home' };
+      if (config.startupUnit.unitType === 'combined') {
+        return {
+          name: 'CombinedTimetable',
+          params: { tri: config.startupUnit.tri },
+        };
+      }
       return {
         name: 'UnitTimetable',
         params: config.startupUnit,

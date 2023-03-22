@@ -5,7 +5,9 @@
     :is-loading="isLoading"
     :has-data="weekdays !== null"
     :error-message="errorMessage"
-    @retry-load="retryLoad()"
+    :is-startup="isStartup"
+    @retry-load="retryLoad"
+    @startup-toggle="onStartupToggle"
   >
     <template #default>
       <div class="combined-timetable__wrapper">
@@ -206,9 +208,24 @@ export default defineComponent({
       }));
     });
 
+    const isStartup = computed(
+      () => config.startupUnit !== null
+        && dataRef.value !== null
+        && config.startupUnit.tri === dataRef.value.client.tri
+        && config.startupUnit.unitType === 'combined',
+    );
+
     return {
       offset,
       retryLoad,
+      isStartup,
+      onStartupToggle: () => {
+        if (!dataRef.value) return;
+        config.setStartupTable(isStartup.value ? null : {
+          tri: dataRef.value.client.tri,
+          unitType: 'combined',
+        });
+      },
       isLoading,
       data,
       errorMessage,

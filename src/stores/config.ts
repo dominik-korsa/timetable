@@ -3,13 +3,13 @@ import { Temporal } from '@js-temporal/polyfill';
 import { OptivumTimetableInfo } from 'src/api/optivum';
 import { UnitType } from 'src/api/common';
 import {
-  ConfigHistoryV1, ConfigV1, FavouriteLessonV1, StartupUnitV1,
+  ConfigHistoryV1, ConfigV1, FavouriteLessonV1, Startup,
 } from 'stores/versions/1';
 import { ConfigV0 } from 'stores/versions/0';
 import _ from 'lodash';
 
 export type ConfigHistory = ConfigHistoryV1;
-export type StartupUnit = StartupUnitV1;
+export type StartupUnit = Startup;
 export type FavouriteLesson = FavouriteLessonV1;
 export type Config = ConfigV1;
 

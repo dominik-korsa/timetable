@@ -14,18 +14,26 @@ export interface FavouriteLessonV1 {
   group: string | undefined;
 }
 
-export interface StartupUnitV1 {
+interface StartupUnitV1 {
   tri: string,
   unitType: UnitType;
   unit: string;
 }
+
+interface StartupCombinedV1 {
+  tri: string;
+
+  unitType: 'combined';
+}
+
+export type Startup = StartupUnitV1 | StartupCombinedV1;
 
 export interface ConfigV1 {
   version: 1;
   optivumHistory: ConfigHistoryV1[];
   favouriteLessons: Record<string, FavouriteLessonV1 | null | undefined>;
   favouriteUnits: Record<string, { unitType: UnitType; unit: string; }[]>;
-  startupUnit: StartupUnitV1 | null;
+  startupUnit: Startup | null;
   dark: boolean | 'auto';
   superSecretSettingsEnabled: boolean;
   scrollSnap: boolean;
