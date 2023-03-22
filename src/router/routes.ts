@@ -1,7 +1,5 @@
-import { RouteLocation, RouteLocationRaw, RouteRecordRaw } from 'vue-router';
+import { RouteRecordRaw } from 'vue-router';
 import { useConfigStore } from 'stores/config';
-
-export type BackTo = (route: RouteLocation) => RouteLocationRaw;
 
 const routes: RouteRecordRaw[] = [
   {

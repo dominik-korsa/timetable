@@ -69,7 +69,7 @@ export default defineComponent({
       showBack: computed(() => _.last(route.matched)?.name !== 'Home'),
       title: computed(() => _.last(route.matched)?.meta?.title),
       goBack: () => {
-        const backTo = route.name === 'SelectClass'
+        const backTo = (route.name === 'SelectClass' || route.name === 'SuperSecretSettings')
           ? { name: 'Home' }
           : { name: 'SelectClass', params: route.params };
         const resolved = router.resolve(backTo);
