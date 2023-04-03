@@ -8,7 +8,14 @@
         "width": 6,
         "height": 8,
         "x": 6,
-        "y": 2
+        "y": 2,
+        "entrances": [
+          {
+            "x": 11,
+            "y": 10,
+            "rotation": 0
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -19,7 +26,14 @@
         "width": 4,
         "height": 4,
         "x": 6,
-        "y": 12
+        "y": 12,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 13,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -30,7 +44,14 @@
         "width": 4,
         "height": 4,
         "x": 6,
-        "y": 16
+        "y": 16,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 17,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -41,7 +62,14 @@
         "width": 4,
         "height": 4,
         "x": 6,
-        "y": 20
+        "y": 20,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 21,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "teachers",
@@ -50,7 +78,19 @@
         "width": 6,
         "height": 2,
         "x": 4,
-        "y": 24
+        "y": 24,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 25,
+            "rotation": 270
+          },
+          {
+            "x": 5,
+            "y": 26,
+            "rotation": 0
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -61,7 +101,19 @@
         "width": 10,
         "height": 4,
         "x": 2,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 5,
+            "y": 26,
+            "rotation": 180
+          },
+          {
+            "x": 12,
+            "y": 28,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "bathroom",
@@ -70,7 +122,14 @@
         "width": 2,
         "height": 4,
         "x": 12,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 13,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "bathroom",
@@ -79,7 +138,14 @@
         "width": 2,
         "height": 2.5,
         "x": 14,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 15,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "bathroom",
@@ -88,7 +154,14 @@
         "width": 2,
         "height": 2.5,
         "x": 14,
-        "y": 28.5
+        "y": 28.5,
+        "entrances": [
+          {
+            "x": 14,
+            "y": 29.375,
+            "rotation": 90
+          }
+        ]
       },
       {
         "type": "facility",
@@ -97,7 +170,14 @@
         "width": 2,
         "height": 5,
         "x": 22,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 23,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -108,7 +188,14 @@
         "width": 6,
         "height": 4,
         "x": 24,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 29,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "facility",
@@ -117,7 +204,14 @@
         "width": 2,
         "height": 4,
         "x": 30,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 31,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "facility",
@@ -126,7 +220,14 @@
         "width": 4,
         "height": 6,
         "x": 32,
-        "y": 24
+        "y": 24,
+        "entrances": [
+          {
+            "x": 32,
+            "y": 25,
+            "rotation": 90
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -137,7 +238,14 @@
         "width": 4,
         "height": 4,
         "x": 26,
-        "y": 20
+        "y": 20,
+        "entrances": [
+          {
+            "x": 30,
+            "y": 23,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -148,7 +256,14 @@
         "width": 4,
         "height": 6,
         "x": 26,
-        "y": 14
+        "y": 14,
+        "entrances": [
+          {
+            "x": 30,
+            "y": 15,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "facility",
@@ -157,7 +272,14 @@
         "width": 6,
         "height": 12,
         "x": 26,
-        "y": 2
+        "y": 2,
+        "entrances": [
+          {
+            "x": 31,
+            "y": 14,
+            "rotation": 0
+          }
+        ]
       }
     ],
     "groundFloor": [
@@ -191,7 +313,14 @@
         "width": 6,
         "height": 2,
         "x": 6,
-        "y": 2
+        "y": 2,
+        "entrances": [
+          {
+            "x": 11,
+            "y": 4,
+            "rotation": 0
+          }
+        ]
       },
       {
         "type": "other",
@@ -200,7 +329,14 @@
         "width": 4,
         "height": 2,
         "x": 6,
-        "y": 4
+        "y": 4,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 5,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -211,7 +347,14 @@
         "width": 4,
         "height": 4,
         "x": 6,
-        "y": 6
+        "y": 6,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 7,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -222,7 +365,14 @@
         "width": 4,
         "height": 4,
         "x": 6,
-        "y": 12
+        "y": 12,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 13,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "teachers",
@@ -231,7 +381,19 @@
         "width": 2,
         "height": 4,
         "x": 10,
-        "y": 14
+        "y": 14,
+        "entrances": [
+          {
+            "x": 11,
+            "y": 14,
+            "rotation": 180
+          },
+          {
+            "x": 11,
+            "y": 18,
+            "rotation": 0
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -242,7 +404,14 @@
         "width": 4,
         "height": 4,
         "x": 6,
-        "y": 16
+        "y": 16,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 19,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -253,7 +422,14 @@
         "width": 4,
         "height": 4,
         "x": 6,
-        "y": 20
+        "y": 20,
+        "entrances": [
+          {
+            "x": 8,
+            "y": 24,
+            "rotation": 0
+          }
+        ]
       },
       {
         "type": "facility",
@@ -262,7 +438,19 @@
         "width": 4,
         "height": 2,
         "x": 2,
-        "y": 24
+        "y": 24,
+        "entrances": [
+          {
+            "x": 6,
+            "y": 25,
+            "rotation": 270
+          },
+          {
+            "x": 2,
+            "y": 25,
+            "rotation": 90
+          }
+        ]
       },
       {
         "type": "facility",
@@ -271,7 +459,14 @@
         "width": 4,
         "height": 4,
         "x": 2,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 6,
+            "y": 28,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "other",
@@ -280,7 +475,14 @@
         "width": 2,
         "height": 4,
         "x": 6,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 7,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "other",
@@ -289,7 +491,19 @@
         "width": 4,
         "height": 4,
         "x": 8,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 8,
+            "y": 28,
+            "rotation": 90
+          },
+          {
+            "x": 11,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "other",
@@ -298,13 +512,27 @@
         "x": 12,
         "y": 26,
         "width": 2,
-        "height": 4
+        "height": 4,
+        "entrances": [
+          {
+            "x": 14,
+            "y": 27.75,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "other",
         "id": "pedagog",
         "full": "Gabinet pedagoga",
-        "d": "M 112 228 h 8 l 8 -8 v 28 h -16 Z"
+        "d": "M 112 228 h 8 l 8 -8 v 28 h -16 Z",
+        "entrances": [
+          {
+            "x": 15.5,
+            "y": 28,
+            "rotation": 135
+          }
+        ]
       },
       {
         "type": "other",
@@ -313,7 +541,14 @@
         "width": 2,
         "height": 5,
         "x": 22,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 23,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "management",
@@ -322,7 +557,14 @@
         "width": 4,
         "height": 4,
         "x": 24,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 25,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "management",
@@ -331,7 +573,14 @@
         "width": 2,
         "height": 4,
         "x": 28,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 29,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "management",
@@ -340,7 +589,14 @@
         "width": 2,
         "height": 4,
         "x": 30,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 31,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -351,7 +607,14 @@
         "width": 4,
         "height": 6,
         "x": 32,
-        "y": 24
+        "y": 24,
+        "entrances": [
+          {
+            "x": 32,
+            "y": 25,
+            "rotation": 90
+          }
+        ]
       },
       {
         "type": "teachers",
@@ -360,7 +623,14 @@
         "width": 4,
         "height": 2,
         "x": 26,
-        "y": 22
+        "y": 22,
+        "entrances": [
+          {
+            "x": 29,
+            "y": 24,
+            "rotation": 0
+          }
+        ]
       },
       {
         "type": "management",
@@ -369,7 +639,14 @@
         "width": 4,
         "height": 2,
         "x": 26,
-        "y": 20
+        "y": 20,
+        "entrances": [
+          {
+            "x": 30,
+            "y": 21,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -380,7 +657,14 @@
         "width": 4,
         "height": 6,
         "x": 26,
-        "y": 14
+        "y": 14,
+        "entrances": [
+          {
+            "x": 30,
+            "y": 15,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -391,7 +675,14 @@
         "width": 4,
         "height": 4,
         "x": 26,
-        "y": 10
+        "y": 10,
+        "entrances": [
+          {
+            "x": 30,
+            "y": 11,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -402,13 +693,30 @@
         "width": 4,
         "height": 6,
         "x": 26,
-        "y": 4
+        "y": 4,
+        "entrances": [
+          {
+            "x": 30,
+            "y": 7,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "bathroom",
         "id": "wc-damskie-0",
         "full": "Toaleta damska - parter",
-        "d": "M 208 16 h 48 v 32 h -16 v -16 h -32 Z"
+        "x": 26,
+        "y": 2,
+        "width": 6,
+        "height": 2,
+        "entrances": [
+          {
+            "x": 31,
+            "y": 4,
+            "rotation": 0
+          }
+        ]
       }
     ],
     "firstFloor": [
@@ -416,7 +724,14 @@
         "type": "bathroom",
         "id": "wc-meskie-1",
         "full": "Toaleta męska - 1. piętro",
-        "d": "M 48 16 h 48 v 32 h -16 v -16 h -32 Z"
+        "d": "M 48 16 h 48 v 32 h -16 v -16 h -32 Z",
+        "entrances": [
+          {
+            "x": 11,
+            "y": 6,
+            "rotation": 0
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -427,7 +742,14 @@
         "width": 4,
         "height": 6,
         "x": 6,
-        "y": 4
+        "y": 4,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 7,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -438,7 +760,14 @@
         "width": 4,
         "height": 6,
         "x": 6,
-        "y": 12
+        "y": 12,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 13,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -449,7 +778,14 @@
         "width": 4,
         "height": 6,
         "x": 6,
-        "y": 18
+        "y": 18,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 19,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "teachers",
@@ -458,7 +794,14 @@
         "width": 4,
         "height": 2,
         "x": 2,
-        "y": 24
+        "y": 24,
+        "entrances": [
+          {
+            "x": 6,
+            "y": 25,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -469,7 +812,14 @@
         "width": 4,
         "height": 4,
         "x": 2,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 6,
+            "y": 26.875,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "teachers",
@@ -478,7 +828,14 @@
         "width": 2,
         "height": 2.25,
         "x": 6,
-        "y": 27.75
+        "y": 27.75,
+        "entrances": [
+          {
+            "x": 7,
+            "y": 27.75,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -489,7 +846,19 @@
         "width": 6,
         "height": 4,
         "x": 8,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 11,
+            "y": 26,
+            "rotation": 180
+          },
+          {
+            "x": 8,
+            "y": 26.875,
+            "rotation": 90
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -500,7 +869,14 @@
         "width": 6,
         "height": 5,
         "x": 14,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 17,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -511,7 +887,14 @@
         "width": 4,
         "height": 5,
         "x": 20,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 23,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -522,7 +905,19 @@
         "width": 6,
         "height": 4,
         "x": 24,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 25,
+            "y": 26,
+            "rotation": 180
+          },
+          {
+            "x": 30,
+            "y": 28,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "teachers",
@@ -531,7 +926,24 @@
         "width": 2,
         "height": 4,
         "x": 30,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 31,
+            "y": 26,
+            "rotation": 180
+          },
+          {
+            "x": 30,
+            "y": 28,
+            "rotation": 90
+          },
+          {
+            "x": 32,
+            "y": 28,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -542,7 +954,19 @@
         "width": 4,
         "height": 6,
         "x": 32,
-        "y": 24
+        "y": 24,
+        "entrances": [
+          {
+            "x": 32,
+            "y": 25,
+            "rotation": 90
+          },
+          {
+            "x": 32,
+            "y": 28,
+            "rotation": 90
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -553,7 +977,14 @@
         "width": 4,
         "height": 4,
         "x": 26,
-        "y": 20
+        "y": 20,
+        "entrances": [
+          {
+            "x": 29,
+            "y": 24,
+            "rotation": 0
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -564,7 +995,14 @@
         "width": 4,
         "height": 6,
         "x": 26,
-        "y": 14
+        "y": 14,
+        "entrances": [
+          {
+            "x": 30,
+            "y": 15,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -575,7 +1013,14 @@
         "width": 4,
         "height": 4,
         "x": 26,
-        "y": 10
+        "y": 10,
+        "entrances": [
+          {
+            "x": 30,
+            "y": 11,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -586,13 +1031,27 @@
         "width": 4,
         "height": 6,
         "x": 26,
-        "y": 4
+        "y": 4,
+        "entrances": [
+          {
+            "x": 30,
+            "y": 7,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "bathroom",
         "id": "wc-damskie-1",
         "full": "Toaleta damska - 1. piętro",
-        "d": "M 208 16 h 48 v 32 h -16 v -16 h -32 Z"
+        "d": "M 208 16 h 48 v 32 h -16 v -16 h -32 Z",
+        "entrances": [
+          {
+            "x": 31,
+            "y": 6,
+            "rotation": 0
+          }
+        ]
       }
     ],
     "secondFloor": [
@@ -600,7 +1059,14 @@
         "type": "bathroom",
         "id": "wc-meskie-2",
         "full": "Toaleta męska - 2. piętro",
-        "d": "M 48 16 h 48 v 32 h -16 v -16 h -32 Z"
+        "d": "M 48 16 h 48 v 32 h -16 v -16 h -32 Z",
+        "entrances": [
+          {
+            "x": 11,
+            "y": 6,
+            "rotation": 0
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -611,7 +1077,14 @@
         "width": 4,
         "height": 6,
         "x": 6,
-        "y": 4
+        "y": 4,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 7,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -622,7 +1095,14 @@
         "width": 4,
         "height": 6,
         "x": 6,
-        "y": 12
+        "y": 12,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 13,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -633,7 +1113,14 @@
         "width": 4,
         "height": 6,
         "x": 6,
-        "y": 18
+        "y": 18,
+        "entrances": [
+          {
+            "x": 10,
+            "y": 19,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "management",
@@ -642,7 +1129,14 @@
         "width": 4,
         "height": 2,
         "x": 2,
-        "y": 24
+        "y": 24,
+        "entrances": [
+          {
+            "x": 6,
+            "y": 25,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "teachers",
@@ -651,7 +1145,14 @@
         "width": 6,
         "height": 4,
         "x": 2,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 7,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "management",
@@ -660,16 +1161,35 @@
         "width": 2,
         "height": 4,
         "x": 8,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 8,
+            "y": 27,
+            "rotation": 90
+          }
+        ]
       },
       {
         "type": "facility",
-        "id": "zaplecze-auli",
-        "full": "Zaplecze auli",
+        "id": "scena",
+        "full": "Scena auli",
         "width": 2,
         "height": 4,
         "x": 12,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 13,
+            "y": 26,
+            "rotation": 180
+          },
+          {
+            "x": 14,
+            "y": 28,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -680,7 +1200,29 @@
         "width": 10,
         "height": 5,
         "x": 14,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 17,
+            "y": 26,
+            "rotation": 180
+          },
+          {
+            "x": 19,
+            "y": 26,
+            "rotation": 180
+          },
+          {
+            "x": 21,
+            "y": 26,
+            "rotation": 180
+          },
+          {
+            "x": 14,
+            "y": 28,
+            "rotation": 90
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -691,7 +1233,14 @@
         "width": 6,
         "height": 4,
         "x": 24,
-        "y": 26
+        "y": 26,
+        "entrances": [
+          {
+            "x": 25,
+            "y": 26,
+            "rotation": 180
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -702,7 +1251,14 @@
         "width": 4,
         "height": 6,
         "x": 32,
-        "y": 24
+        "y": 24,
+        "entrances": [
+          {
+            "x": 32,
+            "y": 25,
+            "rotation": 90
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -713,7 +1269,14 @@
         "width": 4,
         "height": 4,
         "x": 26,
-        "y": 20
+        "y": 20,
+        "entrances": [
+          {
+            "x": 29,
+            "y": 24,
+            "rotation": 0
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -724,7 +1287,14 @@
         "width": 4,
         "height": 6,
         "x": 26,
-        "y": 14
+        "y": 14,
+        "entrances": [
+          {
+            "x": 30,
+            "y": 15,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "classroom",
@@ -735,7 +1305,19 @@
         "width": 4,
         "height": 8,
         "x": 26,
-        "y": 6
+        "y": 6,
+        "entrances": [
+          {
+            "x": 30,
+            "y": 7,
+            "rotation": 270
+          },
+          {
+            "x": 30,
+            "y": 11,
+            "rotation": 270
+          }
+        ]
       },
       {
         "type": "teachers",
@@ -744,13 +1326,30 @@
         "width": 4,
         "height": 2,
         "x": 26,
-        "y": 4
+        "y": 4,
+        "entrances": [
+          {
+            "x": 29,
+            "y": 6,
+            "rotation": 0
+          }
+        ]
       },
       {
         "type": "bathroom",
         "id": "wc-damskie-2",
         "full": "Toaleta damska - 2. piętro",
-        "d": "M 208 16 h 48 v 32 h -16 v -16 h -32 Z"
+        "x": 26,
+        "y": 2,
+        "width": 6,
+        "height": 2,
+        "entrances": [
+          {
+            "x": 31,
+            "y": 4,
+            "rotation": 0
+          }
+        ]
       }
     ]
   },

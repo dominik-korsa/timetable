@@ -8,6 +8,12 @@ interface BaseRoom {
   type: 'classroom';
 }
 
+interface Entrance {
+  x: number;
+  y: number;
+  rotation: number;
+}
+
 export type FloorType = 'dungeons' | 'groundFloor' | 'firstFloor' | 'secondFloor';
 export type OtherLocation = 'institute' | 'dh' | 'uj';
 export type RoomLocation = FloorType | OtherLocation;
@@ -24,14 +30,18 @@ interface FloorPathRoom extends BaseRoom {
   d: string;
 }
 
-type FloorRoom = FloorRectRoom | FloorPathRoom;
+type FloorRoom = (FloorRectRoom | FloorPathRoom) & {
+  entrances?: Entrance[];
+};
+
+type FullFloorRoom = (FloorRoom & { location: FloorType; entrances: Entrance[]; });
 
 interface OtherRoom extends BaseRoom {
   location: OtherLocation;
   short: string;
 }
 
-type Room = (FloorRoom & { location: FloorType }) | OtherRoom;
+type Room = FullFloorRoom | OtherRoom;
 
 export const floorRooms: Record<FloorType, FloorRoom[]> = vLoRoomsRaw.floors as Record<FloorType, FloorRoom[]>;
 export const otherRooms: OtherRoom[] = vLoRoomsRaw.other as OtherRoom[];
@@ -45,6 +55,7 @@ Object.entries(floorRooms).forEach(([floor, rooms]) => rooms.forEach((room) => {
   roomRawToIdMap[room.raw] = room.id;
   vLoRooms.push({
     ...room,
+    entrances: room.entrances ?? [],
     location: floor as FloorType,
   });
 }));

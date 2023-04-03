@@ -53,7 +53,7 @@
       />
       <path
         class="v-lo-map__corridor"
-        d="M 240,48 V 192 H 96 v -48 H 80 v 48 H 48 16 v 16 H 112 v 20 h 8 l 8,-8 v 28 H 176 v -40 H 256 V 48 Z"
+        d="M 240,32 V 192 H 96 v -48 H 80 v 48 H 16 v 16 H 112 v 20 h 8 l 8,-8 v 28 H 176 v -40 H 256 V 32 Z"
       />
       <rect
         class="v-lo-map__corridor-outline"
@@ -64,7 +64,7 @@
       />
       <path
         class="v-lo-map__corridor-outline"
-        d="M 240,48 V 192 H 96 v -48 H 80 v 48 H 48 16 v 16 H 112 v 20 h 8 l 8,-8 v 28 H 176 v -40 H 256 V 48 Z"
+        d="M 240,32 V 192 H 96 v -48 H 80 v 48 H 16 v 16 H 112 v 20 h 8 l 8,-8 v 28 H 176 v -40 H 256 V 32 Z"
       />
       <path
         class="v-lo-map__corridor-outline"
@@ -84,11 +84,11 @@
     <template v-else-if="floor === 'secondFloor'">
       <path
         class="v-lo-map__corridor"
-        d="M 80,48 V 192 H 48 v 16 H 256 V 48 h -16 V 192 H 96 V 48 Z"
+        d="M 80,48 V 192 H 48 v 16 H 256 V 32 h -16 V 192 H 96 V 48 Z"
       />
       <path
         class="v-lo-map__corridor-outline"
-        d="M 80,48 V 192 H 48 v 16 H 256 V 48 h -16 V 192 H 96 V 48 Z"
+        d="M 80,48 V 192 H 48 v 16 H 256 V 32 h -16 V 192 H 96 V 48 Z"
       />
     </template>
     <g
@@ -136,6 +136,30 @@
           </div>
         </div>
       </foreignObject>
+    </g>
+    <g
+      v-for="entrance in selectedRoomEntrances"
+      :key="entrance.id"
+      :transform="`translate(${entrance.x * 8}, ${entrance.y * 8})`"
+      class="v-lo-map__entrance"
+      aria-hidden="true"
+    >
+      <g :transform="`rotate(${entrance.rotation})`">
+        <!--        <path-->
+        <!--          class="v-lo-map__entrance-door"-->
+        <!--          d="M -4,0 h 8"-->
+        <!--          stroke="red"-->
+        <!--          stroke-width="2"-->
+        <!--        />-->
+        <path
+          class="v-lo-map__entrance-arrow-back"
+          d="M -4,8 l 4,-6 l 4,6"
+        />
+        <path
+          class="v-lo-map__entrance-arrow"
+          d="M -4,8 l 4,-6 l 4,6"
+        />
+      </g>
     </g>
 
     <g v-if="campaign13c">
@@ -192,7 +216,9 @@
 </template>
 
 <script lang="ts">
-import { floorNames, floorRooms, FloorType } from 'src/api/v-lo-rooms';
+import {
+  floorNames, floorRooms, FloorType,
+} from 'src/api/v-lo-rooms';
 import { computed, defineComponent, PropType } from 'vue';
 
 export default defineComponent({
@@ -215,24 +241,34 @@ export default defineComponent({
     },
   },
   emits: ['roomClick'],
-  setup: (props, { emit }) => ({
-    rooms: computed(() => floorRooms[props.floor]),
-    floorNumber: computed(() => ({
-      dungeons: '-1',
-      groundFloor: '0',
-      firstFloor: '+1',
-      secondFloor: '+2',
-    }[props.floor])),
-    floorName: computed(() => floorNames[props.floor]),
-    viewboxValue: computed(() => ({
-      default: '-4 -36 296 288',
-      'reduced-height': '-4 12 296 242',
-      centered: '-4 -36 312 288',
-    }[props.viewbox])),
-    onRoomClick: (id: string) => {
-      emit('roomClick', id);
-    },
-  }),
+  setup: (props, { emit }) => {
+    const rooms = computed(() => floorRooms[props.floor]);
+    return ({
+      rooms,
+      floorNumber: computed(() => ({
+        dungeons: '-1',
+        groundFloor: '0',
+        firstFloor: '+1',
+        secondFloor: '+2',
+      }[props.floor])),
+      floorName: computed(() => floorNames[props.floor]),
+      viewboxValue: computed(() => ({
+        default: '-4 -36 296 288',
+        'reduced-height': '-4 12 296 242',
+        centered: '-4 -36 312 288',
+      }[props.viewbox])),
+      onRoomClick: (id: string) => {
+        emit('roomClick', id);
+      },
+      selectedRoomEntrances: computed(() => {
+        if (props.selectedId === undefined) return [];
+        return rooms.value.find((room) => room.id === props.selectedId)?.entrances?.map((entrance, index) => ({
+          ...entrance,
+          id: `${props.selectedId}:${index}`,
+        })) ?? [];
+      }),
+    });
+  },
 });
 </script>
 
@@ -242,6 +278,7 @@ export default defineComponent({
   max-width: 100%;
 
   $corridor: #ddd;
+  $selected-animation-duration: 600ms;
 
   .v-lo-map__bg {
     fill: #999;
@@ -311,7 +348,7 @@ export default defineComponent({
     }
 
     &.v-lo-map__room--selected .v-lo-map__room-shape {
-      animation: selected-rect ease-in-out alternate infinite 800ms;
+      animation: selected-rect ease-in-out alternate infinite $selected-animation-duration;
 
       @keyframes selected-rect {
         to {
@@ -348,6 +385,33 @@ export default defineComponent({
     &.v-lo-map__room--vertical .v-lo-map__room-text > div {
       writing-mode: vertical-rl;
       transform: rotate(180deg);
+    }
+  }
+
+  .v-lo-map__entrance {
+    pointer-events: none;
+    filter: drop-shadow(0 2px 1px #0003);
+
+    @keyframes mapEntranceArrow {
+      from { transform: translateY(5px); }
+      to { transform: none; }
+    }
+
+    .v-lo-map__entrance-arrow-back {
+      stroke-width: 3.5px;
+      stroke: $red;
+    }
+
+    .v-lo-map__entrance-arrow {
+      stroke-width: 1.5px;
+      stroke: white;
+    }
+
+    .v-lo-map__entrance-arrow-back, .v-lo-map__entrance-arrow {
+      animation: mapEntranceArrow alternate infinite $selected-animation-duration ease-in-out;
+      fill: none;
+      stroke-linecap: square;
+      stroke-linejoin: round;
     }
   }
 
