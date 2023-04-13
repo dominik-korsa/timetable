@@ -36,7 +36,7 @@
             {{ item.timeSignature }}
           </q-item-section>
           <q-item-section>
-            {{ item.info }}
+            <substitution-info :info="item.info" />
           </q-item-section>
         </q-item>
       </q-list>
@@ -48,7 +48,8 @@
 import {
   computed, defineComponent, PropType, ref,
 } from 'vue';
-import { LessonRange, Substitution } from '@wulkanowy/asc-timetable-parser';
+import { LessonRange, Substitution } from 'src/api/common.js';
+import SubstitutionInfo from 'components/SubstitutionInfo.vue';
 
 function formatTimeSignature(range: LessonRange | null): string {
   if (range === null) return 'Cały dzień';
@@ -57,6 +58,7 @@ function formatTimeSignature(range: LessonRange | null): string {
 }
 
 export default defineComponent({
+  components: { SubstitutionInfo },
   props: {
     substitutions: {
       type: Array as PropType<Substitution[]>,

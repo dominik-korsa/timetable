@@ -1,25 +1,17 @@
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   AllClassesLessons,
-  TableDataBase,
+  Substitution, SubstitutionInfo, TableData,
   TableDataWithHours,
   TableHour,
   TableLessonMoment,
-  toProxied,
   toUmid,
   UnitType,
 } from 'src/api/common';
 import _ from 'lodash';
 import { mondayOf } from 'src/date-utils';
-import {
-  getSubstitutionsBody,
-  getSubstitutionsUrl,
-  parseSubstitutions,
-  Substitution,
-} from '@wulkanowy/asc-timetable-parser';
 import { Temporal } from '@js-temporal/polyfill';
 import { BaseClient, UnitLists } from 'src/api/client';
-import { DefaultsMap } from 'src/utils';
 import { roomRawToIdMap } from 'src/api/v-lo-rooms';
 
 interface TimestampsResponseItem {
@@ -47,6 +39,48 @@ interface LessonResponseItem {
 interface LessonResponse {
   ttdata: LessonResponseItem[][][];
 }
+
+interface SubstitutionResponseCancellation {
+  type: 'cancellation';
+  group: string | null;
+  subject: string | null;
+  teacher: string | null;
+  comment: string | null;
+}
+
+interface SubstitutionResponseTeacherDecl {
+  type: 'teacher_decl';
+  group: string | null;
+  subject: string;
+  teacher: string;
+  comment: string | null;
+}
+
+interface SubstitutionResponseSubstitution {
+  type: 'substitution';
+  group: string | null;
+  subject_before: string | null;
+  subject: string;
+  teacher_before: string | null;
+  teacher: string;
+  comment: string | null;
+}
+
+interface SubstitutionResponseOther {
+  type: 'teacher_decl_untagged' | 'other';
+}
+
+type SubstitutionResponseItem = (
+  SubstitutionResponseCancellation
+  | SubstitutionResponseTeacherDecl
+  | SubstitutionResponseSubstitution
+  | SubstitutionResponseOther
+) & {
+  content: string;
+  time: number | [number, number];
+}
+
+type SubstitutionResponse = SubstitutionResponseItem[];
 
 const v1ApiOrigin = process.env.VLO_V1_API_ORIGIN ?? 'https://api.cld.sh';
 const v2ApiOrigin = process.env.VLO_V2_API_ORIGIN ?? 'https://api.cld.sh';
@@ -81,42 +115,76 @@ export class VLoClient implements BaseClient {
     };
   }
 
-  private static async loadVLoSubstitutions(
+  private static mapSubstitutionInfo(item: SubstitutionResponseItem): SubstitutionInfo {
+    if (item.type === 'cancellation') {
+      if (item.content === 'Absent') {
+        return {
+          type: 'classAbsent',
+        };
+      }
+      return {
+        type: 'cancellation',
+        group: item.subject === null ? null : item.group,
+        subject: item.subject ?? item.group ?? '(Brak przedmiotu)',
+        teacher: item.teacher,
+        comment: item.comment,
+      };
+    }
+
+    if (item.type === 'teacher_decl') {
+      return {
+        type: 'change',
+        group: item.group,
+        subject: item.subject,
+        teacher: item.teacher,
+        comment: item.comment && item.comment.startsWith('(') && item.comment.endsWith(')')
+          ? item.comment.substring(1, item.comment.length - 1)
+          : item.comment,
+      };
+    }
+
+    if (item.type === 'substitution') return item;
+
+    return {
+      type: 'other',
+      comment: item.content,
+    };
+  }
+
+  private async loadSubstitutions(
     cacheMode: CacheMode,
+    unitType: UnitType,
+    unit: string,
     date: Temporal.PlainDate,
-  ): Promise<(classValue: string) => Substitution[]> {
-    const url = new URL(getSubstitutionsUrl(), 'https://www.v-lo.krakow.pl/');
-    const proxied = toProxied(url);
+  ): Promise<Substitution[]> {
+    if (unitType !== 'class') throw new Error('Not implemented');
     const response = await fetchWithCache(
       cacheMode,
-      proxied.url.toString(),
-      {
-        method: 'POST',
-        body: JSON.stringify(getSubstitutionsBody(date.toString(), false)),
-        headers: proxied.headers,
-      },
-      `${proxied.url}|${date.toString()},`,
+      new URL(
+        `/v2/substitutions?classid=${encodeURIComponent(unit)}&date=${date.toString()}`,
+        v2ApiOrigin,
+      ).toString(),
+      undefined,
     );
-    const body = await response.text();
-    const parsed = parseSubstitutions(body);
-    const substitutions = new DefaultsMap<string, Substitution[]>(() => []);
-    parsed.sections.forEach((section) => {
-      substitutions.get(section.name.toLowerCase()).push(...section.changes);
-    });
-    return (classValue: string) => substitutions.get(classValue.toLowerCase());
+    const body = await response.json() as SubstitutionResponse;
+    return body.map((item) => ({
+      lessons: typeof item.time === 'number'
+        ? { first: item.time, last: item.time }
+        : { first: item.time[0], last: item.time[1] },
+      info: VLoClient.mapSubstitutionInfo(item),
+    }));
   }
 
   private async loadLessons(
     cacheMode: CacheMode,
     unitType: UnitType,
     unit: string,
-    offset: number,
+    monday: Temporal.PlainDate,
   ): Promise<{
     date: Temporal.PlainDate,
     moments: TableLessonMoment[],
   }[]> {
     if (unitType !== 'class') throw new Error('Not implemented');
-    const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
     const response = await fetchWithCache(
       cacheMode,
       new URL(`/v2/ttdata?classid=${encodeURIComponent(unit)}&date=${monday.toString()}`, v2ApiOrigin).toString(),
@@ -169,60 +237,50 @@ export class VLoClient implements BaseClient {
     unitType: UnitType,
     unit: string,
     offset: number,
-  ): Promise<TableDataBase> {
+  ): Promise<TableData> {
     const cacheMode = fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly;
-    const days = await this.loadLessons(cacheMode, unitType, unit, offset);
+    const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
+    const [days, substitutions] = await Promise.all([
+      this.loadLessons(cacheMode, unitType, unit, monday),
+      Promise.all([0, 1, 2, 3, 4].map((value) => this.loadSubstitutions(
+        cacheMode,
+        unitType,
+        unit,
+        monday.add({ days: value }),
+      ))),
+    ]);
     return {
       lessons: days.map((day) => day.moments),
       unitName: unit,
       unitType,
       unit,
-      headers: days.map((day) => ({
+      headers: days.map((day, dayIndex) => ({
         date: day.date,
+        substitutions: substitutions[dayIndex],
       })),
     };
   }
 
   async getLessons(fromCache: boolean, unitType: UnitType, unit: string, offset: number): Promise<TableDataWithHours> {
-    const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
-    const [hours, partialData, substitutions] = await Promise.all([
+    const [hours, partialData] = await Promise.all([
       loadVLoHours(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
       this.getLessonsPartial(fromCache, unitType, unit, offset),
-      Promise.all([0, 1, 2, 3, 4].map((value) => VLoClient.loadVLoSubstitutions(
-        fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly,
-        monday.add({ days: value }),
-      ))),
     ]);
     return {
       ...partialData,
       hours,
-      headers: partialData.headers?.map((header, dayIndex) => ({
-        ...header,
-        substitutions: substitutions[dayIndex](unit),
-      })) ?? null,
     };
   }
 
   async getLessonsOfAllClasses(fromCache: boolean, offset: number): Promise<AllClassesLessons> {
     const { classes } = await this.getUnitLists(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
-    const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
-    const [hours, lessons, substitutions] = await Promise.all([
+    const [hours, units] = await Promise.all([
       loadVLoHours(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
       Promise.all(classes.map((item) => this.getLessonsPartial(fromCache, 'class', item.unit, offset))),
-      Promise.all([0, 1, 2, 3, 4].map((value) => VLoClient.loadVLoSubstitutions(
-        fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly,
-        monday.add({ days: value }),
-      ))),
     ]);
     return {
       hours,
-      units: lessons.map((unit) => ({
-        ...unit,
-        headers: unit.headers?.map((header, dayIndex) => ({
-          ...header,
-          substitutions: substitutions[dayIndex](unit.unit),
-        })) ?? null,
-      })),
+      units,
     };
   }
 

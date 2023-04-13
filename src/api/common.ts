@@ -1,4 +1,3 @@
-import { Substitution } from '@wulkanowy/asc-timetable-parser';
 import { Temporal } from '@js-temporal/polyfill';
 import _ from 'lodash';
 import { adjacentDifference, parseHour } from 'src/utils';
@@ -37,19 +36,65 @@ export interface TableLessonMoment {
   lessons: TableLesson[];
 }
 
+export interface LessonRange {
+  first: number;
+  last: number;
+}
+
+export interface SubstitutionOther {
+  type: 'other';
+  comment: string;
+}
+
+export interface SubstitutionClassAbsent {
+  type: 'classAbsent';
+}
+
+export interface SubstitutionCancellation {
+  type: 'cancellation';
+  teacher: string | null;
+  group: string | null;
+  subject: string;
+  comment: string | null;
+}
+
+export interface SubstitutionSubstitution {
+  type: 'substitution';
+  group: string | null;
+  subject_before: string | null;
+  subject: string;
+  teacher_before: string | null;
+  teacher: string;
+  comment: string | null;
+}
+
+export interface SubstitutionChange {
+  type: 'change';
+  group: string | null;
+  subject: string;
+  teacher: string;
+  comment: string | null;
+}
+
+export type SubstitutionInfo =
+  SubstitutionOther
+  | SubstitutionClassAbsent
+  | SubstitutionCancellation
+  | SubstitutionChange
+  | SubstitutionSubstitution;
+
+export interface Substitution {
+  info: SubstitutionInfo;
+  lessons: LessonRange;
+}
+
 export type UnitType = 'class' | 'teacher' | 'room';
 
-export interface TableDataBase {
+export interface TableData {
   lessons: TableLessonMoment[][];
   unitName: string;
   unitType: UnitType;
   unit: string;
-  headers: {
-    date: Temporal.PlainDate;
-  }[] | null;
-}
-
-export interface TableData extends TableDataBase {
   headers: {
     date: Temporal.PlainDate;
     substitutions: Substitution[];

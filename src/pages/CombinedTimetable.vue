@@ -77,11 +77,10 @@ import {
 } from 'src/shared';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useClientRef } from 'src/api/client';
-import { AllClassesLessons, TableLessonMoment } from 'src/api/common';
+import { AllClassesLessons, Substitution, TableLessonMoment } from 'src/api/common';
 import { NotInCacheError } from 'src/api/requests';
 import { useQuasar } from 'quasar';
 import CombinedTimetableGrid from 'components/CombinedTimetableGrid.vue';
-import { Substitution } from '@wulkanowy/asc-timetable-parser';
 import { Temporal } from '@js-temporal/polyfill';
 import { mondayOf } from 'src/date-utils';
 import { useConfigStore } from 'stores/config';
