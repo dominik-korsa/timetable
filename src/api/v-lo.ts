@@ -1,7 +1,7 @@
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   AllClassesLessons,
-  Substitution, SubstitutionInfo, TableData,
+  Substitution, SubstitutionChange, SubstitutionInfo, TableData,
   TableDataWithHours,
   TableHour,
   TableLessonMoment,
@@ -134,9 +134,13 @@ export class VLoClient implements BaseClient {
     if (item.type === 'teacher_decl') {
       return {
         type: 'change',
-        group: item.group,
-        subject: item.subject,
-        teacher: item.teacher,
+        groups: [
+          {
+            group: item.group,
+            subject: item.subject,
+            teacher: item.teacher,
+          },
+        ],
         comment: item.comment && item.comment.startsWith('(') && item.comment.endsWith(')')
           ? item.comment.substring(1, item.comment.length - 1)
           : item.comment,
@@ -167,12 +171,28 @@ export class VLoClient implements BaseClient {
       undefined,
     );
     const body = await response.json() as SubstitutionResponse;
-    return body.map((item) => ({
-      lessons: typeof item.time === 'number'
+    const result: Substitution[] = [];
+    const prevChanges = new Map<string, SubstitutionChange>();
+    body.forEach((item) => {
+      const lessons = typeof item.time === 'number'
         ? { first: item.time, last: item.time }
-        : { first: item.time[0], last: item.time[1] },
-      info: VLoClient.mapSubstitutionInfo(item),
-    }));
+        : { first: item.time[0], last: item.time[1] };
+      const info = VLoClient.mapSubstitutionInfo(item);
+      if (info.type === 'change') {
+        const id = `${lessons.first}-${lessons.last}:${info.comment}`;
+        const prev = prevChanges.get(id);
+        if (prev) {
+          prev.groups.push(...info.groups);
+          return;
+        }
+        prevChanges.set(id, info);
+      }
+      result.push({
+        lessons,
+        info,
+      });
+    });
+    return result;
   }
 
   private async loadLessons(

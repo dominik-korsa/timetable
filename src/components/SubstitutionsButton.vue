@@ -50,6 +50,7 @@ import {
 } from 'vue';
 import { LessonRange, Substitution } from 'src/api/common.js';
 import SubstitutionInfo from 'components/SubstitutionInfo.vue';
+import { changesPlural, pluralRules } from 'src/plural';
 
 function formatTimeSignature(range: LessonRange | null): string {
   if (range === null) return 'Cały dzień';
@@ -77,14 +78,7 @@ export default defineComponent({
         timeSignature: formatTimeSignature(change.lessons),
       }));
     }),
-    changesText: computed(() => ({
-      zero: 'zmiany',
-      one: 'zmiana',
-      two: 'zmiany',
-      few: 'zmiany',
-      many: 'zmian',
-      other: 'zmian',
-    }[new Intl.PluralRules('pl-PL').select(props.substitutions.length)])),
+    changesText: computed(() => (changesPlural[pluralRules.select(props.substitutions.length)])),
   }),
 });
 </script>

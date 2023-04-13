@@ -62,26 +62,7 @@ import {
 import { common } from 'src/utils';
 import TimetableItemSingle from 'components/TimetableItemSingle.vue';
 import { FavouriteLesson } from 'stores/config';
-
-const pluralRules = new Intl.PluralRules('pl-PL');
-
-const groupPlural: Record<Intl.LDMLPluralRule, string> = {
-  zero: 'grup',
-  one: 'grupa',
-  two: 'grupy',
-  few: 'grupy',
-  many: 'grup',
-  other: 'grupy',
-};
-
-const otherLessonsPlural: Record<Intl.LDMLPluralRule, string> = {
-  zero: 'innych grup',
-  one: 'inna grupa',
-  two: 'inne grupy',
-  few: 'inne grupy',
-  many: 'innych grup',
-  other: 'innych grup',
-};
+import { groupPlural, otherLessonsPlural, pluralRules } from 'src/plural';
 
 export default defineComponent({
   name: 'TimetableItemMultiple',

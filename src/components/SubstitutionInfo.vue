@@ -33,8 +33,35 @@
         size="xs"
       /> Zastępstwo
     </div>
+    <q-card
+      v-if="info.type === 'change' && info.groups.length > 1"
+      bordered
+      flat
+      class="q-mb-xs"
+    >
+      <q-expansion-item dense>
+        <template #header>
+          <q-item-section class="substitution-info__group-count">
+            <div><b>{{ info.groups.length }}</b> {{ getGroupsText(info.groups.length) }}</div>
+          </q-item-section>
+        </template>
+        <div class="q-px-sm q-py-xs">
+          <div
+            v-for="(group, i) in info.groups"
+            :key="i"
+          >
+            {{ group.subject }}
+            <span
+              v-if="group.group !== null"
+              class="substitution-info__group"
+            > ({{ group.group }})</span>
+            <span v-if="group.teacher !== null"> - {{ group.teacher }}</span>
+          </div>
+        </div>
+      </q-expansion-item>
+    </q-card>
     <div
-      v-if="info.type === 'cancellation' || info.type === 'change'"
+      v-else-if="info.type === 'cancellation' || info.type === 'change'"
       :class="{
         'text-strike': info.type === 'cancellation'
       }"
@@ -47,7 +74,7 @@
       <span v-if="info.teacher !== null"> - {{ info.teacher }}</span>
     </div>
     <div
-      v-if="info.type === 'substitution'"
+      v-else-if="info.type === 'substitution'"
     >
       <template v-if="info.subject_before !== null">
         <span class="text-strike">{{ info.subject_before }}</span>
@@ -97,6 +124,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { SubstitutionInfo } from 'src/api/common.js';
+import { groupPlural, pluralRules } from 'src/plural';
 
 export default defineComponent({
   props: {
@@ -105,11 +133,14 @@ export default defineComponent({
       required: true,
     },
   },
+  setup: () => ({
+    getGroupsText: (count: number) => groupPlural[pluralRules.select(count)],
+  }),
 });
 </script>
 
 <style lang="scss">
-.substitution-info__group {
+.substitution-info__group, .substitution-info__group-count {
   font-style: italic;
 }
 

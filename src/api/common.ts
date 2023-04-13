@@ -70,9 +70,11 @@ export interface SubstitutionSubstitution {
 
 export interface SubstitutionChange {
   type: 'change';
-  group: string | null;
-  subject: string;
-  teacher: string;
+  groups: {
+    group: string | null;
+    subject: string;
+    teacher: string;
+  }[];
   comment: string | null;
 }
 
