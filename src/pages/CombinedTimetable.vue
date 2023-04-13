@@ -77,7 +77,9 @@ import {
 } from 'src/shared';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useClientRef } from 'src/api/client';
-import { AllClassesLessons, Substitution, TableLessonMoment } from 'src/api/common';
+import {
+  AllClassesLessons, Substitution, TableLessonMoment, UnitType,
+} from 'src/api/common';
 import { NotInCacheError } from 'src/api/requests';
 import { useQuasar } from 'quasar';
 import CombinedTimetableGrid from 'components/CombinedTimetableGrid.vue';
@@ -90,7 +92,7 @@ export interface Weekday {
   name: string;
   index: number;
   units: {
-    unitType: string;
+    unitType: UnitType;
     unit: string;
     unitName: string;
     moments: TableLessonMoment[];

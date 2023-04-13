@@ -8,7 +8,7 @@
     class="substitutions-button"
     no-caps
     :dense="block"
-    :aria-label="`Zastępstwa - ${substitutions.length} ${changesText}`"
+    :aria-label="`${title} - ${substitutions.length} ${changesText}`"
     @click="dialogVisible = true"
   >
     {{ substitutions.length }}
@@ -20,8 +20,10 @@
   </q-btn>
   <q-dialog v-model="dialogVisible">
     <q-card>
-      <q-card-section class="text-h6">
-        Zastępstwa
+      <q-card-section>
+        <div class="text-h6">
+          {{ title }}
+        </div>
       </q-card-section>
       <q-separator />
       <q-list separator>
@@ -48,7 +50,7 @@
 import {
   computed, defineComponent, PropType, ref,
 } from 'vue';
-import { LessonRange, Substitution } from 'src/api/common.js';
+import { LessonRange, Substitution, UnitType } from 'src/api/common.js';
 import SubstitutionInfo from 'components/SubstitutionInfo.vue';
 import { changesPlural, pluralRules } from 'src/plural';
 
@@ -67,8 +69,21 @@ export default defineComponent({
     },
     small: Boolean,
     block: Boolean,
+    unitName: {
+      type: String,
+      required: true,
+    },
+    unitType: {
+      type: String as PropType<UnitType>,
+      required: true,
+    },
   },
   setup: (props) => ({
+    title: computed(() => `Zastępstwa ${{
+      class: 'dla klasy',
+      teacher: 'dla nauczyciela',
+      room: 'w sali',
+    }[props.unitType]} ${props.unitName}`),
     dialogVisible: ref(false),
     items: computed(() => {
       const substitutions = [...props.substitutions];

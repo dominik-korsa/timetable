@@ -45,6 +45,8 @@
             :substitutions="header.substitutions"
             :block="gridHeaderDense"
             :small="gridHeaderDense && $q.screen.lt.sm"
+            :unit-type="data.unitType"
+            :unit-name="data.unitName"
           />
         </div>
         <div

@@ -32,6 +32,8 @@
             <substitutions-button
               :substitutions="unit.substitutions"
               small
+              :unit-type="unit.unitType"
+              :unit-name="unit.unitName"
             />
           </div>
         </div>
