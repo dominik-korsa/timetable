@@ -41,10 +41,51 @@ export interface LessonRange {
   last: number;
 }
 
+export interface SubstitutionOther {
+  type: 'other';
+  comment: string;
+}
+
+export interface SubstitutionClassAbsent {
+  type: 'classAbsent';
+}
+
+export interface SubstitutionCancellation {
+  type: 'cancellation';
+  teacher: string | null;
+  group: string | null;
+  subject: string;
+  comment: string | null;
+}
+
+export interface SubstitutionSubstitution {
+  type: 'substitution';
+  group: string | null;
+  subject_before: string | null;
+  subject: string;
+  teacher_before: string | null;
+  teacher: string;
+  comment: string | null;
+}
+
+export interface SubstitutionChange {
+  type: 'change';
+  group: string | null;
+  subject: string;
+  teacher: string;
+  comment: string | null;
+}
+
+export type SubstitutionInfo =
+  SubstitutionOther
+  | SubstitutionClassAbsent
+  | SubstitutionCancellation
+  | SubstitutionChange
+  | SubstitutionSubstitution;
+
 export interface Substitution {
+  info: SubstitutionInfo;
   lessons: LessonRange;
-  info: string;
-  cancelled: boolean;
 }
 
 export type UnitType = 'class' | 'teacher' | 'room';

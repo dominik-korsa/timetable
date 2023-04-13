@@ -1,7 +1,7 @@
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   AllClassesLessons,
-  Substitution, TableData,
+  Substitution, SubstitutionInfo, TableData,
   TableDataWithHours,
   TableHour,
   TableLessonMoment,
@@ -40,11 +40,44 @@ interface LessonResponse {
   ttdata: LessonResponseItem[][][];
 }
 
-interface SubstitutionResponseItem {
+interface SubstitutionResponseCancellation {
+  type: 'cancellation';
+  group: string | null;
+  subject: string | null;
+  teacher: string | null;
+  comment: string | null;
+}
+
+interface SubstitutionResponseTeacherDecl {
+  type: 'teacher_decl';
+  group: string | null;
+  subject: string;
+  teacher: string;
+  comment: string | null;
+}
+
+interface SubstitutionResponseSubstitution {
+  type: 'substitution';
+  group: string | null;
+  subject_before: string | null;
+  subject: string;
+  teacher_before: string | null;
+  teacher: string;
+  comment: string | null;
+}
+
+interface SubstitutionResponseOther {
+  type: 'teacher_decl_untagged' | 'other';
+}
+
+type SubstitutionResponseItem = (
+  SubstitutionResponseCancellation
+  | SubstitutionResponseTeacherDecl
+  | SubstitutionResponseSubstitution
+  | SubstitutionResponseOther
+) & {
   content: string;
   time: number | [number, number];
-
-  type: 'cancellation' | string;
 }
 
 type SubstitutionResponse = SubstitutionResponseItem[];
@@ -82,6 +115,42 @@ export class VLoClient implements BaseClient {
     };
   }
 
+  private static mapSubstitutionInfo(item: SubstitutionResponseItem): SubstitutionInfo {
+    if (item.type === 'cancellation') {
+      if (item.content === 'Absent') {
+        return {
+          type: 'classAbsent',
+        };
+      }
+      return {
+        type: 'cancellation',
+        group: item.subject === null ? null : item.group,
+        subject: item.subject ?? item.group ?? '(Brak przedmiotu)',
+        teacher: item.teacher,
+        comment: item.comment,
+      };
+    }
+
+    if (item.type === 'teacher_decl') {
+      return {
+        type: 'change',
+        group: item.group,
+        subject: item.subject,
+        teacher: item.teacher,
+        comment: item.comment && item.comment.startsWith('(') && item.comment.endsWith(')')
+          ? item.comment.substring(1, item.comment.length - 1)
+          : item.comment,
+      };
+    }
+
+    if (item.type === 'substitution') return item;
+
+    return {
+      type: 'other',
+      comment: item.content,
+    };
+  }
+
   private async loadSubstitutions(
     cacheMode: CacheMode,
     unitType: UnitType,
@@ -102,8 +171,7 @@ export class VLoClient implements BaseClient {
       lessons: typeof item.time === 'number'
         ? { first: item.time, last: item.time }
         : { first: item.time[0], last: item.time[1] },
-      info: item.content,
-      cancelled: item.type === 'cancellation',
+      info: VLoClient.mapSubstitutionInfo(item),
     }));
   }
 
