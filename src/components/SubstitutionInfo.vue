@@ -45,8 +45,8 @@
             <div><b>{{ info.groups.length }}</b> {{ getGroupsText(info.groups.length) }}</div>
           </q-item-section>
         </template>
-        <div class="q-px-sm q-py-xs">
-          <div
+        <ul class="substitution-info__group-list">
+          <li
             v-for="(group, i) in info.groups"
             :key="i"
           >
@@ -56,8 +56,8 @@
               class="substitution-info__group"
             > ({{ group.group }})</span>
             <span v-if="group.teacher !== null"> - {{ group.teacher }}</span>
-          </div>
-        </div>
+          </li>
+        </ul>
       </q-expansion-item>
     </q-card>
     <div
@@ -146,5 +146,15 @@ export default defineComponent({
 
 .substitution-info__comment, .substitution-info__change {
   font-weight: 500;
+}
+
+.substitution-info__group-list {
+  margin: 0;
+  padding: 4px 8px;
+  list-style: none;
+
+  & > li:not(:last-child) {
+    margin-bottom: 6px;
+  }
 }
 </style>
