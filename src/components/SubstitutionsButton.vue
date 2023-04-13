@@ -48,7 +48,7 @@
 import {
   computed, defineComponent, PropType, ref,
 } from 'vue';
-import { LessonRange, Substitution } from '@wulkanowy/asc-timetable-parser';
+import { LessonRange, Substitution } from 'src/api/common.js';
 
 function formatTimeSignature(range: LessonRange | null): string {
   if (range === null) return 'Cały dzień';
