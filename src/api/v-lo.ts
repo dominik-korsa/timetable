@@ -174,12 +174,14 @@ export class VLoClient implements BaseClient {
     const result: Substitution[] = [];
     const prevChanges = new Map<string, SubstitutionChange>();
     body.forEach((item) => {
-      const lessons = typeof item.time === 'number'
-        ? { first: item.time, last: item.time }
-        : { first: item.time[0], last: item.time[1] };
+      const lessons = item.time === null
+        ? null
+        : typeof item.time === 'number'
+          ? { first: item.time, last: item.time }
+          : { first: item.time[0], last: item.time[1] };
       const info = VLoClient.mapSubstitutionInfo(item);
       if (info.type === 'change') {
-        const id = `${lessons.first}-${lessons.last}:${info.comment}`;
+        const id = `${lessons?.first ?? 'x'}-${lessons?.last ?? 'x'}:${info.comment}`;
         const prev = prevChanges.get(id);
         if (prev) {
           prev.groups.push(...info.groups);

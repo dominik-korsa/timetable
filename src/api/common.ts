@@ -87,7 +87,7 @@ export type SubstitutionInfo =
 
 export interface Substitution {
   info: SubstitutionInfo;
-  lessons: LessonRange;
+  lessons: LessonRange | null;
 }
 
 export type UnitType = 'class' | 'teacher' | 'room';
