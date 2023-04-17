@@ -130,8 +130,9 @@ export default defineComponent({
 
     watch(
       dataRef,
-      async (value) => {
+      async (value, prevValue) => {
         if (value === null) return;
+        if (prevValue && value.client === prevValue.client && value.monday.equals(prevValue.monday)) return;
 
         isLoading.value = true;
         refreshId += 1;
