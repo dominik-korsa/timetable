@@ -4,6 +4,8 @@ import { bangDecode, DefaultsMap } from 'src/utils';
 import { VLoClient } from 'src/api/v-lo';
 import { AllClassesLessons, TableDataWithHours, UnitType } from 'src/api/common';
 import { OptivumClient } from 'src/api/optivum';
+import { Temporal } from '@js-temporal/polyfill';
+import PlainDate = Temporal.PlainDate;
 
 export interface UnitListItem {
   unit: string;
@@ -28,9 +30,9 @@ export interface BaseClient {
     fromCache: boolean,
     unitType: UnitType,
     unit: string,
-    offset: number,
+    monday: Temporal.PlainDate,
   ): Promise<TableDataWithHours>;
-  getLessonsOfAllClasses(fromCache: boolean, offset: number): Promise<AllClassesLessons>;
+  getLessonsOfAllClasses(fromCache: boolean, monday: PlainDate): Promise<AllClassesLessons>;
   getUnitNameMapper(cacheMode: CacheMode): Promise<(unitType: UnitType, unit: string) => string>;
 }
 

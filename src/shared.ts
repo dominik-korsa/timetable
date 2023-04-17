@@ -1,10 +1,12 @@
 import { RouteLocationRaw, Router } from 'vue-router';
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { Temporal } from '@js-temporal/polyfill';
-import { getWeekOffsetSession } from 'src/session';
 import { useClientRef } from 'src/api/client';
 import { useConfigStore } from 'stores/config';
 import { UnitType } from 'src/api/common';
+import { mondayOf } from 'src/date-utils';
+import { useNow } from 'src/utils';
+import PlainDate = Temporal.PlainDate;
 
 export function shake(el: Element, reverse: boolean) {
   const keyframes = [
@@ -24,40 +26,80 @@ export function goBack(router: Router, to: RouteLocationRaw) {
 }
 
 export interface Offset {
-  current: number;
+  monday: Temporal.PlainDate,
   decreaseDisabled: boolean;
   increaseDisabled: boolean;
   change: (direction: -1 | 1) => boolean;
   reset: () => void;
   isCurrentWeek: boolean;
+  dayIndex: number;
+  const: boolean;
 }
 
 export const useOffset = (): Offset => {
-  const todayOffset = computed<number>(
-    () => ([6, 7].includes(Temporal.Now.plainDateISO().dayOfWeek) ? 1 : 0),
-  );
-  const currentOffset = getWeekOffsetSession(todayOffset.value);
-  const decreaseDisabled = computed(() => currentOffset.value <= -5);
-  const increaseDisabled = computed(() => currentOffset.value >= 5);
+  const now = useNow(20000);
+  const today = computed<PlainDate>(() => {
+    if (now.value.dayOfWeek > 5) {
+      return now.value.toPlainDate().add({
+        days: 8 - now.value.dayOfWeek,
+      });
+    }
+    if (now.value.dayOfWeek < 5 && now.value.hour >= 18) return now.value.toPlainDate().add({ days: 1 });
+    return now.value.toPlainDate();
+  });
+
+  const date = ref(today.value);
+  const monday = computed(() => mondayOf(date.value));
+
+  const decreaseDisabled = computed(() => {
+    const limit = mondayOf(today.value).subtract({ weeks: 10 });
+    return Temporal.PlainDate.compare(monday.value, limit) !== 1;
+  });
+  const increaseDisabled = computed(() => {
+    const limit = mondayOf(today.value).add({ weeks: 2 });
+    return Temporal.PlainDate.compare(monday.value, limit) !== -1;
+  });
+
   return reactive({
-    current: currentOffset,
+    monday,
     decreaseDisabled,
     increaseDisabled,
     change: (direction: -1 | 1) => {
       if (direction === -1 && !decreaseDisabled.value) {
-        currentOffset.value -= 1;
+        date.value = date.value.subtract({ weeks: 1 });
         return true;
       }
       if (direction === 1 && !increaseDisabled.value) {
-        currentOffset.value += 1;
+        date.value = date.value.add({ weeks: 1 });
         return true;
       }
       return false;
     },
-    reset: () => { currentOffset.value = todayOffset.value; },
-    isCurrentWeek: computed(() => currentOffset.value === todayOffset.value),
+    reset: () => { date.value = today.value; },
+    isCurrentWeek: computed(() => monday.value.equals(mondayOf(today.value))),
+    dayIndex: computed<number>({
+      get: () => date.value.dayOfWeek - 1,
+      set: (value) => {
+        if (value <= 0 || value > 5) throw new Error(`Invalid offset.dayIndex ${value}`);
+        date.value = monday.value.add({ days: value });
+      },
+    }),
+    const: false,
   });
 };
+
+const unixMonday = mondayOf(Temporal.PlainDate.from('1970-01-01'));
+
+export const useConstOffset = (): Offset => reactive({
+  monday: unixMonday,
+  decreaseDisabled: true,
+  increaseDisabled: true,
+  dayIndex: Temporal.Now.plainDateISO().dayOfWeek,
+  change: () => false,
+  isCurrentWeek: true,
+  reset: () => { /* Does nothing */ },
+  const: true,
+});
 
 export const weekdayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
 export const weekdayNamesShort = ['pon', 'wt', 'śr', 'czw', 'pt'];

@@ -9,7 +9,6 @@ import {
   UnitType,
 } from 'src/api/common';
 import _ from 'lodash';
-import { mondayOf } from 'src/date-utils';
 import { Temporal } from '@js-temporal/polyfill';
 import { BaseClient, UnitLists } from 'src/api/client';
 import { roomRawToIdMap } from 'src/api/v-lo-rooms';
@@ -258,10 +257,9 @@ export class VLoClient implements BaseClient {
     fromCache: boolean,
     unitType: UnitType,
     unit: string,
-    offset: number,
+    monday: Temporal.PlainDate,
   ): Promise<TableData> {
     const cacheMode = fromCache ? CacheMode.CacheOnly : CacheMode.NetworkOnly;
-    const monday = mondayOf(Temporal.Now.plainDateISO()).add({ weeks: offset });
     const [days, substitutions] = await Promise.all([
       this.loadLessons(cacheMode, unitType, unit, monday),
       Promise.all([0, 1, 2, 3, 4].map((value) => this.loadSubstitutions(
@@ -283,10 +281,15 @@ export class VLoClient implements BaseClient {
     };
   }
 
-  async getLessons(fromCache: boolean, unitType: UnitType, unit: string, offset: number): Promise<TableDataWithHours> {
+  async getLessons(
+    fromCache: boolean,
+    unitType: UnitType,
+    unit: string,
+    monday: Temporal.PlainDate,
+  ): Promise<TableDataWithHours> {
     const [hours, partialData] = await Promise.all([
       loadVLoHours(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
-      this.getLessonsPartial(fromCache, unitType, unit, offset),
+      this.getLessonsPartial(fromCache, unitType, unit, monday),
     ]);
     return {
       ...partialData,
@@ -294,11 +297,11 @@ export class VLoClient implements BaseClient {
     };
   }
 
-  async getLessonsOfAllClasses(fromCache: boolean, offset: number): Promise<AllClassesLessons> {
+  async getLessonsOfAllClasses(fromCache: boolean, monday: Temporal.PlainDate): Promise<AllClassesLessons> {
     const { classes } = await this.getUnitLists(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
     const [hours, units] = await Promise.all([
       loadVLoHours(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
-      Promise.all(classes.map((item) => this.getLessonsPartial(fromCache, 'class', item.unit, offset))),
+      Promise.all(classes.map((item) => this.getLessonsPartial(fromCache, 'class', item.unit, monday))),
     ]);
     return {
       hours,

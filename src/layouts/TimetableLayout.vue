@@ -24,7 +24,7 @@
           </template>
         </q-toolbar-title>
 
-        <template v-if="offset !== null">
+        <template v-if="!offset.const">
           <q-btn
             ref="offsetDownButton"
             icon="navigate_before"
@@ -197,9 +197,8 @@ export default defineComponent({
       default: null,
     },
     offset: {
-      type: Object as PropType<Offset | null>,
-      required: false,
-      default: null,
+      type: Object as PropType<Offset>,
+      required: true,
     },
     isStartup: Boolean,
   },

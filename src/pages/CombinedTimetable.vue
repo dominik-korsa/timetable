@@ -12,28 +12,28 @@
     <template #default>
       <div class="combined-timetable__wrapper">
         <combined-timetable-grid
-          :weekday="weekdays[dayIndex]"
+          :weekday="weekdays[offset.dayIndex]"
           :hours="data.hours"
-          :is-current-week="offset?.isCurrentWeek ?? true"
+          :is-current-week="offset.isCurrentWeek ?? true"
           unit-type="class"
         />
       </div>
     </template>
     <template #tabs>
       <q-tab-panels
-        :model-value="offset?.current ?? 0"
+        :model-value="offsetId"
         animated
         :swipeable="false"
         class="bg-transparent"
       >
         <q-tab-panel
-          v-for="{weekOffset, tabs} in tabPanels"
-          :key="weekOffset"
-          :name="weekOffset"
+          v-for="{id, tabs} in tabPanels"
+          :key="id"
+          :name="id"
           class="q-pa-none"
         >
           <q-tabs
-            v-model="dayIndex"
+            v-model="offset.dayIndex"
             align="justify"
             class="text-grey combined-timetable__tabs"
             active-color="primary"
@@ -73,7 +73,7 @@ import {
   computed, defineComponent, ref, watch,
 } from 'vue';
 import {
-  useIsFavourite, useOffset, weekdayNames, weekdayNamesShort,
+  useIsFavourite, useOffset, useConstOffset, weekdayNames, weekdayNamesShort,
 } from 'src/shared';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useClientRef } from 'src/api/client';
@@ -84,7 +84,6 @@ import { NotInCacheError } from 'src/api/requests';
 import { useQuasar } from 'quasar';
 import CombinedTimetableGrid from 'components/CombinedTimetableGrid.vue';
 import { Temporal } from '@js-temporal/polyfill';
-import { mondayOf } from 'src/date-utils';
 import { useConfigStore } from 'stores/config';
 import TimetableLayout from '../layouts/TimetableLayout.vue';
 
@@ -112,14 +111,12 @@ export default defineComponent({
     const data = ref<AllClassesLessons | null>(null);
     const errorMessage = ref<string | null>(null);
     const isLoading = ref(true);
-    const { dayOfWeek } = Temporal.Now.plainDateISO();
-    const dayIndex = ref([6, 7].includes(dayOfWeek) ? 0 : (dayOfWeek - 1));
 
     let refreshId = 0;
 
     const offset = computed(() => {
       if (clientRef.value !== undefined && clientRef.value.supportsOffsets) return useOffset();
-      return null;
+      return useConstOffset();
     });
     onBeforeRouteLeave(() => { offset.value?.reset(); });
 
@@ -127,7 +124,7 @@ export default defineComponent({
       if (clientRef.value === undefined) return null;
       return ({
         client: clientRef.value,
-        offset: offset.value?.current ?? 0,
+        monday: offset.value.monday,
       });
     });
 
@@ -147,7 +144,7 @@ export default defineComponent({
 
         let cacheFailed = false;
         try {
-          const cachedData = await value.client.getLessonsOfAllClasses(true, value.offset);
+          const cachedData = await value.client.getLessonsOfAllClasses(true, value.monday);
           if (currId !== refreshId) return;
           data.value = cachedData;
           clearTimeout(clearTimeoutId);
@@ -157,7 +154,7 @@ export default defineComponent({
         }
 
         try {
-          const networkData = await value.client.getLessonsOfAllClasses(false, value.offset);
+          const networkData = await value.client.getLessonsOfAllClasses(false, value.monday);
           if (currId !== refreshId) return;
           clearTimeout(clearTimeoutId);
           data.value = networkData;
@@ -183,7 +180,7 @@ export default defineComponent({
       data.value = null;
       errorMessage.value = null;
       try {
-        data.value = await dataRef.value.client.getLessonsOfAllClasses(false, dataRef.value.offset);
+        data.value = await dataRef.value.client.getLessonsOfAllClasses(false, dataRef.value.monday);
       } catch (error) {
         console.error(error);
         errorMessage.value = 'Nie udało się wczytać planu lekcji';
@@ -217,6 +214,12 @@ export default defineComponent({
     );
 
     return {
+      offsetId: computed({
+        set: (value: string) => {
+          offset.value.monday = Temporal.PlainDate.from(value);
+        },
+        get: () => offset.value.monday.toString(),
+      }),
       offset,
       retryLoad,
       isStartup,
@@ -231,25 +234,30 @@ export default defineComponent({
       data,
       errorMessage,
       weekdays,
-      dayIndex,
       tabPanels: computed(() => {
-        const monday = offset.value === null
-          ? null
-          : mondayOf(Temporal.Now.plainDateISO());
-        const offsets = offset.value === null ? [0] : [
-          offset.value.current - 1,
-          offset.value.current,
-          offset.value.current + 1,
-        ];
-        return offsets.map((weekOffset) => ({
-          weekOffset,
-          tabs: (quasar.screen.lt.sm ? weekdayNamesShort : weekdayNames).map((name, weekdayIndex) => {
-            const date = monday?.add({ weeks: weekOffset }).add({ days: weekdayIndex }) ?? null;
-            const fullWeekdayName = weekdayNames[weekdayIndex];
+        const names = quasar.screen.lt.sm ? weekdayNamesShort : weekdayNames;
+        if (offset.value.const) {
+          return [{
+            id: offset.value.monday.toString(),
+            tabs: names.map((name, weekdayIndex) => ({
+              name,
+              label: weekdayNames[weekdayIndex],
+              date: null,
+            })),
+          }];
+        }
+        return [
+          offset.value.monday.subtract({ weeks: 1 }),
+          offset.value.monday,
+          offset.value.monday.add({ weeks: 1 }),
+        ].map((monday) => ({
+          id: monday.toString(),
+          tabs: names.map((name, weekdayIndex) => {
+            const date = monday.add({ days: weekdayIndex });
             return ({
               name,
-              label: date === null ? fullWeekdayName : `${fullWeekdayName} ${date.toLocaleString()}`,
-              date: date === null ? null : (config.iso8601 ? date.toString() : date.toLocaleString()),
+              label: `${weekdayNames[weekdayIndex]} ${date.toLocaleString()}`,
+              date: config.iso8601 ? date.toString() : date.toLocaleString(),
             });
           }),
         }));

@@ -12,7 +12,7 @@
     <template #default="{ changeOffset }">
       <timetable-grid
         :data="data"
-        :is-current-week="offset?.isCurrentWeek ?? true"
+        :is-current-week="offset.isCurrentWeek"
         :change-offset="changeOffset"
         :dense="dense"
       />
@@ -64,12 +64,14 @@ import TimetableGrid from 'components/TimetableGrid.vue';
 import { useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
 import { Client, useClientRef } from 'src/api/client';
-import { useOffset } from 'src/shared';
+import { useConstOffset, useOffset } from 'src/shared';
 import TimetableLayout from 'layouts/TimetableLayout.vue';
+import { Temporal } from '@js-temporal/polyfill';
+import PlainDate = Temporal.PlainDate;
 
 interface TableRef {
   client: Client;
-  offset: number;
+  monday: PlainDate;
   unitType: UnitType;
   unit: string;
 }
@@ -91,9 +93,9 @@ export default defineComponent({
 
     const offset = computed(() => {
       if (clientRef.value !== undefined && clientRef.value.supportsOffsets) return useOffset();
-      return null;
+      return useConstOffset();
     });
-    onBeforeRouteLeave(() => { offset.value?.reset(); });
+    onBeforeRouteLeave(() => { offset.value.reset(); });
 
     const tableRef = computed<TableRef | null>(() => {
       if (
@@ -103,7 +105,7 @@ export default defineComponent({
       ) return null;
       return ({
         client: clientRef.value,
-        offset: offset.value?.current ?? 0,
+        monday: offset.value.monday,
         unitType: route.params.unitType as UnitType,
         unit: route.params.unit as string,
       });
@@ -116,7 +118,7 @@ export default defineComponent({
       fromCache,
       loadedTableRef.unitType,
       loadedTableRef.unit,
-      loadedTableRef.offset,
+      loadedTableRef.monday,
     );
 
     watch(
