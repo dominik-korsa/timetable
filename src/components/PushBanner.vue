@@ -1,10 +1,10 @@
 <template>
   <q-card
-    class="row items-center q-pa-sm"
+    class="row items-center q-pa-sm no-wrap"
     bordered
     flat
   >
-    <div class="col-grow q-mr-sm">
+    <div class="col-grow q-ml-sm q-mr-md no-basis">
       Powiadamiaj o nowych zastępstwach
     </div>
     <q-btn

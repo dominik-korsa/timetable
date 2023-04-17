@@ -56,4 +56,8 @@ a:not(.q-btn):not(.q-item) {
   }
 }
 
+.no-basis {
+  flex-basis: 0;
+}
+
 @import "time-marker";
