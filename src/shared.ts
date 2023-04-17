@@ -80,7 +80,7 @@ export const useOffset = (): Offset => {
     dayIndex: computed<number>({
       get: () => date.value.dayOfWeek - 1,
       set: (value) => {
-        if (value <= 0 || value > 5) throw new Error(`Invalid offset.dayIndex ${value}`);
+        if (value < 0 || value >= 5) throw new Error(`Invalid offset.dayIndex ${value}`);
         date.value = monday.value.add({ days: value });
       },
     }),
