@@ -7,6 +7,7 @@ Aplikacja do planów wygenerowanych narzędziem **Plan lekcji OPTIVUM** oraz do 
 - Wczytywanie planu lekcji OPTIVUM ze strony internetowej dowolnej szkoły
 - Plan dla klas, sal i nauczycieli (plan sal i nauczycieli tylko w szkołach, które taki plan opublikowały)
 - Zastępstwa (w V LO)
+- Powiadomienia push o zastępstwach
 - Widok zestawienia klas
 - Mapa pomieszczeń V LO
 - Lokalny caching danych - aplikacja działa offline
