@@ -59,6 +59,7 @@
         >
           Mapa pomieszczeń
         </q-btn>
+        <push-banner />
       </div>
     </div>
   </q-page>
@@ -95,8 +96,9 @@ import { useConfigStore } from 'stores/config';
 import SelectClassGroup from 'components/SelectClassGroup.vue';
 import { UnitListItem, useClientRef } from 'src/api/client';
 import { useIsFavourite } from 'src/shared';
-import { OptivumUnitLists } from 'src/api/optivum.js';
+import { OptivumUnitLists } from 'src/api/optivum';
 import UnitList from 'components/UnitList.vue';
+import PushBanner from 'components/PushBanner.vue';
 
 interface ClassItem {
   unit: string;
@@ -115,7 +117,7 @@ const classDigitRegex = /^\d+/;
 
 export default defineComponent({
   name: 'SelectClass',
-  components: { UnitList, SelectClassGroup },
+  components: { PushBanner, UnitList, SelectClassGroup },
   setup: () => {
     const quasar = useQuasar();
     const config = useConfigStore();
