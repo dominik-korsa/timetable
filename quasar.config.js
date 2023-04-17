@@ -93,6 +93,8 @@ module.exports = configure((ctx) => ({
       NEW_HOST: requireEnv('NEW_HOST'),
       VLO_V1_API_ORIGIN: process.env.VLO_V1_API_ORIGIN,
       VLO_V2_API_ORIGIN: process.env.VLO_V2_API_ORIGIN,
+      WEB_PUSH_BACKEND_ORIGIN: requireEnv('WEB_PUSH_BACKEND_ORIGIN'),
+      WEB_PUSH_VAPID_PUBLIC_KEY: requireEnv('WEB_PUSH_VAPID_PUBLIC_KEY'),
       BRANCH: process.env.BRANCH,
       DEPLOY_ID: process.env.DEPLOY_ID,
       REPOSITORY_URL: process.env.REPOSITORY_URL,
@@ -156,11 +158,8 @@ module.exports = configure((ctx) => ({
 
   // https://v2.quasar.dev/quasar-cli-webpack/developing-pwa/configuring-pwa
   pwa: {
-    workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
-    workboxOptions: {
-      skipWaiting: true,
-      clientsClaim: true,
-    }, // only for GenerateSW
+    workboxPluginMode: 'InjectManifest', // 'GenerateSW' or 'InjectManifest'
+    workboxOptions: {},
 
     // for the custom service worker ONLY (/src-pwa/custom-service-worker.[js|ts])
     // if using workbox in InjectManifest mode

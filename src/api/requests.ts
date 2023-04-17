@@ -7,6 +7,10 @@ function assertOk<T extends Response>(response: T): T {
   return response;
 }
 
+export async function fetchWithErrors(input: RequestInfo, init?: RequestInit) {
+  return assertOk(await fetch(input, init));
+}
+
 /*
 Make request and if successful store and return its response,
 otherwise throw error
