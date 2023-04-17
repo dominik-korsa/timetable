@@ -13,6 +13,7 @@ export async function showNotification(body: NotificationBody, swRegistration: S
       {
         lang: 'pl',
         body: formatBody(changes),
+        icon: '/icons/icon-512x512.png',
       },
     );
   }));
