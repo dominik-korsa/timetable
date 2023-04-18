@@ -1,5 +1,7 @@
 import { RouteLocationRaw, Router } from 'vue-router';
-import { computed, reactive, ref } from 'vue';
+import {
+  computed, reactive, ref,
+} from 'vue';
 import { Temporal } from '@js-temporal/polyfill';
 import { useClientRef } from 'src/api/client';
 import { useConfigStore } from 'stores/config';
@@ -36,7 +38,7 @@ export interface Offset {
   const: boolean;
 }
 
-export const useOffset = (): Offset => {
+const useDynamicOffset = (): Offset => {
   const now = useNow(20000);
   const today = computed<PlainDate>(() => {
     if (now.value.dayOfWeek > 5) {
@@ -90,7 +92,7 @@ export const useOffset = (): Offset => {
 
 const unixMonday = mondayOf(Temporal.PlainDate.from('1970-01-01'));
 
-export const useConstOffset = (): Offset => reactive({
+const useConstOffset = (): Offset => reactive({
   monday: unixMonday,
   decreaseDisabled: true,
   increaseDisabled: true,
@@ -100,6 +102,12 @@ export const useConstOffset = (): Offset => reactive({
   reset: () => { /* Does nothing */ },
   const: true,
 });
+
+export const useOffset = (isConst: () => boolean) => {
+  const dynamicOffset = useDynamicOffset();
+  const constOffset = useConstOffset();
+  return computed(() => (isConst() ? constOffset : dynamicOffset));
+};
 
 export const weekdayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
 export const weekdayNamesShort = ['pon', 'wt', 'śr', 'czw', 'pt'];

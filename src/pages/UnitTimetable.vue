@@ -64,7 +64,7 @@ import TimetableGrid from 'components/TimetableGrid.vue';
 import { useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
 import { Client, useClientRef } from 'src/api/client';
-import { useConstOffset, useOffset } from 'src/shared';
+import { useOffset } from 'src/shared';
 import TimetableLayout from 'layouts/TimetableLayout.vue';
 import { Temporal } from '@js-temporal/polyfill';
 import PlainDate = Temporal.PlainDate;
@@ -91,10 +91,9 @@ export default defineComponent({
 
     let refreshId = 0;
 
-    const offset = computed(() => {
-      if (clientRef.value !== undefined && clientRef.value.supportsOffsets) return useOffset();
-      return useConstOffset();
-    });
+    const offset = useOffset(
+      () => clientRef.value === undefined || !clientRef.value.supportsOffsets,
+    );
     onBeforeRouteLeave(() => { offset.value.reset(); });
 
     const tableRef = computed<TableRef | null>(() => {

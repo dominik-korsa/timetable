@@ -73,7 +73,7 @@ import {
   computed, defineComponent, ref, watch,
 } from 'vue';
 import {
-  useIsFavourite, useOffset, useConstOffset, weekdayNames, weekdayNamesShort,
+  useIsFavourite, weekdayNames, weekdayNamesShort, useOffset,
 } from 'src/shared';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useClientRef } from 'src/api/client';
@@ -114,10 +114,9 @@ export default defineComponent({
 
     let refreshId = 0;
 
-    const offset = computed(() => {
-      if (clientRef.value !== undefined && clientRef.value.supportsOffsets) return useOffset();
-      return useConstOffset();
-    });
+    const offset = useOffset(
+      () => clientRef.value === undefined || !clientRef.value.supportsOffsets,
+    );
     onBeforeRouteLeave(() => { offset.value?.reset(); });
 
     const dataRef = computed(() => {
