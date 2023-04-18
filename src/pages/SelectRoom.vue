@@ -293,7 +293,7 @@ export default defineComponent({
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      justify-content: end;
+      justify-content: flex-end;
 
       .select-room__other {
         flex-direction: row;
