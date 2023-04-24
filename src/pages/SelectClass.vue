@@ -59,7 +59,7 @@
         >
           Mapa pomieszczeń
         </q-btn>
-        <push-banner />
+        <push-banner v-if="isVlo" />#
       </div>
     </div>
   </q-page>
