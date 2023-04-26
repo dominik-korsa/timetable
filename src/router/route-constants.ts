@@ -17,3 +17,5 @@ export const routeNames = {
   campaign: Symbol('Campaign route'),
   superSecretSettings: Symbol('Super Secret Settings route'),
 } as const;
+
+export const getCombinedTimetableUrl = (tri: string, date: string) => `/${tri}/combined?date=${date}`;

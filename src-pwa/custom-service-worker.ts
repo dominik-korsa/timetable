@@ -7,6 +7,7 @@
 import { precacheAndRoute } from 'workbox-precaching';
 import { showNotification } from 'src/push/push-notifier';
 import { SubstitutionNotificationData } from 'src/push/push-types.js';
+import { getCombinedTimetableUrl } from 'src/router/route-constants.js';
 
 declare let self: ServiceWorkerGlobalScope;
 export {};
@@ -27,7 +28,7 @@ self.addEventListener('notificationclick', (event) => {
   const notificationData: SubstitutionNotificationData | undefined = event.notification.data;
   if (!notificationData) return;
   event.notification.close();
-  event.waitUntil(self.clients.openWindow(`/${notificationData.tri}/combined`));
+  event.waitUntil(self.clients.openWindow(getCombinedTimetableUrl(notificationData.tri, notificationData.date)));
 });
 
 self.addEventListener('install', () => {
