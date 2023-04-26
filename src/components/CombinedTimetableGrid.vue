@@ -57,21 +57,23 @@
       class="combined-timetable-grid__days"
       aria-label="Siatka planu lekcji"
     >
-      <div
+      <q-intersection
         v-for="(day, i) in items"
         :key="i"
-        class="combined-timetable-grid__day"
+        class="combined-timetable-grid__day-wrapper"
       >
-        <timetable-item
-          v-for="item in day"
-          :key="item.gridRow"
-          :moment="item.moment"
-          :time-slot="item.timeSlot"
-          :style="`grid-row: ${item.gridRow}`"
-          :unit-type="unitType"
-          small
-        />
-      </div>
+        <div class="combined-timetable-grid__day">
+          <timetable-item
+            v-for="item in day"
+            :key="item.gridRow"
+            :moment="item.moment"
+            :time-slot="item.timeSlot"
+            :style="`grid-row: ${item.gridRow}`"
+            :unit-type="unitType"
+            small
+          />
+        </div>
+      </q-intersection>
     </div>
     <div class="combined-timetable-grid__corner bg-page" />
   </div>
@@ -251,9 +253,12 @@ $column-gap: 4px;
     padding: 0 $column-gap/2;
   }
 
-  .combined-timetable-grid__day {
+  .combined-timetable-grid__day-wrapper {
     width: $column-width;
     box-sizing: border-box;
+  }
+
+  .combined-timetable-grid__day {
     padding: 0 $column-gap/2;
     display: grid;
     grid-template-rows: v-bind(rows);
