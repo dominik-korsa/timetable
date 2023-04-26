@@ -54,19 +54,24 @@
       />
     </div>
     <div
-      class="combined-timetable-grid__grid"
+      class="combined-timetable-grid__days"
       aria-label="Siatka planu lekcji"
     >
-      <timetable-item
-        v-for="item in items"
-        :key="item.key"
-        class="combined-timetable-grid__grid-item"
-        :moment="item.moment"
-        :time-slot="item.timeSlot"
-        :style="item.style"
-        :unit-type="unitType"
-        small
-      />
+      <div
+        v-for="(day, i) in items"
+        :key="i"
+        class="combined-timetable-grid__day"
+      >
+        <timetable-item
+          v-for="item in day"
+          :key="item.gridRow"
+          :moment="item.moment"
+          :time-slot="item.timeSlot"
+          :style="`grid-row: ${item.gridRow}`"
+          :unit-type="unitType"
+          small
+        />
+      </div>
     </div>
     <div class="combined-timetable-grid__corner bg-page" />
   </div>
@@ -78,7 +83,7 @@ import {
   computed, defineComponent, onMounted, PropType, ref,
 } from 'vue';
 import {
-  calculateRows, calculateTimestamps, TableTimeSlot, TableLessonMoment, UnitType,
+  calculateRows, calculateTimestamps, TableLessonMoment, TableTimeSlot, UnitType,
 } from 'src/api/common';
 import TimetableItem from 'components/TimetableItem.vue';
 import SubstitutionsButton from 'components/SubstitutionsButton.vue';
@@ -87,6 +92,12 @@ import { useClientRef } from 'src/api/client';
 import { useNow } from 'src/utils';
 import _ from 'lodash';
 import TimeSlotMarkers from 'components/TimeSlotMarkers.vue';
+
+interface TableItem {
+  moment: TableLessonMoment;
+  timeSlot: TableTimeSlot;
+  gridRow: number;
+}
 
 export default defineComponent({
   name: 'CombinedTimetableGrid',
@@ -124,20 +135,12 @@ export default defineComponent({
     return {
       grid,
       rows: computed(() => calculateRows(timestamps.value, hourPixels)),
-      items: computed(() => props.weekday.units.flatMap(({ moments }, unitIndex) => {
-        const items: {
-          key: string;
-          style: string;
-          moment: TableLessonMoment;
-          timeSlot: TableTimeSlot;
-        }[] = [];
+      items: computed(() => props.weekday.units.map(({ moments }) => {
+        const items: TableItem[] = [];
         moments.forEach((moment, momentIndex) => {
           if (moment.lessons.length === 0) return;
-          const gridColumn = unitIndex + 1;
-          const gridRow = momentIndex * 2 + 2;
           items.push(({
-            style: `grid-column: ${gridColumn}; grid-row: ${gridRow}`,
-            key: `${gridColumn}/${gridRow}`,
+            gridRow: momentIndex * 2 + 2,
             moment,
             timeSlot: props.timeSlots[momentIndex],
           }));
@@ -240,17 +243,20 @@ $column-gap: 4px;
     }
   }
 
-  .combined-timetable-grid__grid {
+  .combined-timetable-grid__days {
     grid-row: 2;
     grid-column: 3;
-    display: grid;
-    grid-template-rows: v-bind(rows);
-    grid-auto-columns: $column-width;
+    display: flex;
+    min-width: 0;
     padding: 0 $column-gap/2;
   }
 
-  .combined-timetable-grid__grid-item {
-    margin: 0 $column-gap/2;
+  .combined-timetable-grid__day {
+    width: $column-width;
+    box-sizing: border-box;
+    padding: 0 $column-gap/2;
+    display: grid;
+    grid-template-rows: v-bind(rows);
   }
 
   .combined-timetable-grid__marker {
