@@ -1,14 +1,16 @@
-import { RouteLocationRaw, Router } from 'vue-router';
 import {
-  computed, reactive, ref,
+  RouteLocationRaw, Router, useRoute, useRouter,
+} from 'vue-router';
+import {
+  computed, ComputedRef, reactive, readonly, ref, watch,
 } from 'vue';
 import { Temporal } from '@js-temporal/polyfill';
 import { useClientRef } from 'src/api/client';
 import { useConfigStore } from 'stores/config';
 import { UnitType } from 'src/api/common';
-import { mondayOf } from 'src/date-utils';
+import { mondayOf, normalizeDate } from 'src/date-utils';
 import { useNow } from 'src/utils';
-import PlainDate = Temporal.PlainDate;
+import { queryNames } from 'src/router/route-constants';
 
 export function shake(el: Element, reverse: boolean) {
   const keyframes = [
@@ -29,6 +31,7 @@ export function goBack(router: Router, to: RouteLocationRaw) {
 
 export interface Offset {
   monday: Temporal.PlainDate,
+  date: Temporal.PlainDate,
   decreaseDisabled: boolean;
   increaseDisabled: boolean;
   change: (direction: -1 | 1) => boolean;
@@ -38,20 +41,25 @@ export interface Offset {
   const: boolean;
 }
 
-const useDynamicOffset = (): Offset => {
+const useDynamicOffset = (dateSource: ComputedRef<Temporal.PlainDate | null>): Offset => {
   const now = useNow(20000);
-  const today = computed<PlainDate>(() => {
-    if (now.value.dayOfWeek > 5) {
-      return now.value.toPlainDate().add({
-        days: 8 - now.value.dayOfWeek,
-      });
-    }
+  const today = computed<Temporal.PlainDate>(() => {
     if (now.value.dayOfWeek < 5 && now.value.hour >= 18) return now.value.toPlainDate().add({ days: 1 });
-    return now.value.toPlainDate();
+    return normalizeDate(now.value.toPlainDate());
+  });
+  const normalizedDateSource = computed(() => {
+    if (dateSource.value === null) return null;
+    return normalizeDate(dateSource.value);
   });
 
-  const date = ref(today.value);
+  const date = ref(normalizedDateSource.value ?? today.value);
   const monday = computed(() => mondayOf(date.value));
+
+  watch(normalizedDateSource, (value, oldValue) => {
+    if (value === null) return;
+    if (oldValue !== null && value.equals(oldValue)) return;
+    date.value = value;
+  });
 
   const decreaseDisabled = computed(() => {
     const limit = mondayOf(today.value).subtract({ weeks: 10 });
@@ -64,6 +72,7 @@ const useDynamicOffset = (): Offset => {
 
   return reactive({
     monday,
+    date,
     decreaseDisabled,
     increaseDisabled,
     change: (direction: -1 | 1) => {
@@ -92,8 +101,9 @@ const useDynamicOffset = (): Offset => {
 
 const unixMonday = mondayOf(Temporal.PlainDate.from('1970-01-01'));
 
-const useConstOffset = (): Offset => reactive({
+const useConstOffset = (): Offset => readonly(reactive({
   monday: unixMonday,
+  date: unixMonday,
   decreaseDisabled: true,
   increaseDisabled: true,
   dayIndex: Temporal.Now.plainDateISO().dayOfWeek,
@@ -101,12 +111,43 @@ const useConstOffset = (): Offset => reactive({
   isCurrentWeek: true,
   reset: () => { /* Does nothing */ },
   const: true,
-});
+}));
 
-export const useOffset = (isConst: () => boolean) => {
-  const dynamicOffset = useDynamicOffset();
+export const useOffset = (isConst: () => boolean, dateSource: ComputedRef<Temporal.PlainDate | null>) => {
+  const dynamicOffset = useDynamicOffset(dateSource);
   const constOffset = useConstOffset();
   return computed(() => (isConst() ? constOffset : dynamicOffset));
+};
+
+export const useSyncedOffset = (isConst: () => boolean) => {
+  const router = useRouter();
+  const route = useRoute();
+
+  const queryDate = computed<Temporal.PlainDate | null>(() => {
+    const value = route.query[queryNames.date];
+    if (!value || typeof value !== 'string') return null;
+    try {
+      return Temporal.PlainDate.from(value);
+    } catch (error) {
+      console.error(`Failed to parse date ${value}`, error);
+      return null;
+    }
+  });
+
+  const offset = useOffset(isConst, queryDate);
+
+  watch(() => (offset.value.const ? null : offset.value.date), (value) => {
+    if (!value || !queryDate.value) return;
+    if (value.equals(queryDate.value)) return;
+    router.replace({
+      query: {
+        ...route.query,
+        [queryNames.date]: value.toString(),
+      },
+    });
+  }, { immediate: true });
+
+  return offset;
 };
 
 export const weekdayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
