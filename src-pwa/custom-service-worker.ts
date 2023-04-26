@@ -6,8 +6,8 @@
 
 import { precacheAndRoute } from 'workbox-precaching';
 import { showNotification } from 'src/push/push-notifier';
-import { SubstitutionNotificationData } from 'src/push/push-types.js';
-import { getCombinedTimetableUrl } from 'src/router/route-constants.js';
+import { SubstitutionNotificationData } from 'src/push/push-types';
+import { getCombinedTimetableUrl } from 'src/router/route-constants';
 
 declare let self: ServiceWorkerGlobalScope;
 export {};
