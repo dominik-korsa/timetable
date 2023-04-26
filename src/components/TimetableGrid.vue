@@ -426,6 +426,7 @@ $timetable-gap: 4px;
     grid-column: 2;
     grid-row: 2;
     display: flex;
+    min-width: 0;
 
     .timetable-grid__day-jump {
       text-align: center;
