@@ -21,6 +21,7 @@ import { UnitListItem } from 'src/api/client.js';
 import { PropType } from 'vue/dist/vue';
 import { useRoute } from 'vue-router';
 import { UnitType } from 'src/api/common.js';
+import { paramNames } from 'src/router/route-constants';
 
 export default defineComponent({
   props: {
@@ -42,8 +43,8 @@ export default defineComponent({
           name: 'UnitTimetable',
           params: {
             ...route.params,
-            unitType: props.unitType,
-            unit: unit.unit,
+            [paramNames.unitType]: props.unitType,
+            [paramNames.unit]: unit.unit,
           },
         },
       }))),

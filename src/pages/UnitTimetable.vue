@@ -67,11 +67,11 @@ import { Client, useClientRef } from 'src/api/client';
 import { useSyncedOffset } from 'src/shared';
 import TimetableLayout from 'layouts/TimetableLayout.vue';
 import { Temporal } from '@js-temporal/polyfill';
-import PlainDate = Temporal.PlainDate;
+import { paramNames } from 'src/router/route-constants';
 
 interface TableRef {
   client: Client;
-  monday: PlainDate;
+  monday: Temporal.PlainDate;
   unitType: UnitType;
   unit: string;
 }
@@ -98,14 +98,14 @@ export default defineComponent({
     const tableRef = computed<TableRef | null>(() => {
       if (
         clientRef.value === undefined
-        || route.params.unitType === undefined
-        || route.params.unit === undefined
+        || route.params[paramNames.unitType] === undefined
+        || route.params[paramNames.unit] === undefined
       ) return null;
       return ({
         client: clientRef.value,
         monday: offset.value.monday,
-        unitType: route.params.unitType as UnitType,
-        unit: route.params.unit as string,
+        unitType: route.params[paramNames.unitType] as UnitType,
+        unit: route.params[paramNames.unit] as string,
       });
     });
 

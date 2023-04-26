@@ -99,6 +99,7 @@ import { useIsFavourite } from 'src/shared';
 import { OptivumUnitLists } from 'src/api/optivum';
 import UnitList from 'components/UnitList.vue';
 import PushBanner from 'components/PushBanner.vue';
+import { paramNames } from 'src/router/route-constants';
 
 interface ClassItem {
   unit: string;
@@ -138,9 +139,9 @@ export default defineComponent({
           to: {
             name: 'UnitTimetable',
             params: {
-              tri: client.tri,
-              unitType: 'class',
-              unit: item.unit,
+              [paramNames.tri]: client.tri,
+              [paramNames.unitType]: 'class',
+              [paramNames.unit]: item.unit,
             },
           },
         }));

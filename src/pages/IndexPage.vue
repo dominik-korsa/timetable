@@ -12,7 +12,7 @@
     </q-card>
 
     <router-link
-      :to="{ name: 'SelectClass', params: { tri: 'v-lo' } }"
+      :to="vLoTo"
       class="index-page__v-lo-link q-mb-md"
     >
       <q-card
@@ -112,6 +112,7 @@ import BuildInfo from 'components/BuildInfo.vue';
 import PwaBanner from 'components/PwaBanner.vue';
 import { getClient } from 'src/api/client';
 import OptivumTimetablePicker from 'components/OptivumTimetablePicker.vue';
+import { paramNames } from 'src/router/route-constants';
 
 interface UnitItem {
   key: string;
@@ -161,9 +162,9 @@ export default defineComponent({
                   to: {
                     name: 'UnitTimetable',
                     params: {
-                      tri,
-                      unitType,
-                      unit,
+                      [paramNames.tri]: tri,
+                      [paramNames.unitType]: unitType,
+                      [paramNames.unit]: unit,
                     },
                   },
                 });
@@ -174,6 +175,10 @@ export default defineComponent({
     });
 
     return {
+      vLoTo: {
+        name: 'SelectClass',
+        params: { [paramNames.tri]: 'v-lo' },
+      },
       favouriteUnits,
     };
   },

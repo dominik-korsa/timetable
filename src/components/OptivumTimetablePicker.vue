@@ -138,6 +138,7 @@ import { useRouter } from 'vue-router';
 import isUrl from 'is-url-superb';
 import { toProxied } from 'src/api/common';
 import OptivumHelp from 'components/OptivumHelp.vue';
+import { paramNames } from 'src/router/route-constants';
 
 export default defineComponent({
   components: { OptivumHelp },
@@ -165,7 +166,7 @@ export default defineComponent({
         await router.push({
           name: 'SelectClass',
           params: {
-            tri: OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath),
+            [paramNames.tri]: OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath),
           },
         });
       } catch (error) {
@@ -209,7 +210,10 @@ export default defineComponent({
         .slice(0, historyLimit.value)
         .map((item) => ({
           ...item,
-          to: { name: 'SelectClass', params: { tri: OptivumClient.createTri(item.baseUrl, item.listPath) } },
+          to: {
+            name: 'SelectClass',
+            params: { [paramNames.tri]: OptivumClient.createTri(item.baseUrl, item.listPath) },
+          },
           absoluteImageSrc: item.logoSrc
             ? toProxied(new URL(item.logoSrc, new URL(item.listPath, item.baseUrl)).toString()).url.toString()
             : undefined,

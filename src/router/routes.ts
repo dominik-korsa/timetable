@@ -1,5 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { useConfigStore } from 'stores/config';
+import { paramNames } from './route-constants';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -23,7 +24,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'SelectClass',
-        path: ':tri',
+        path: `:${paramNames.tri}`,
         component: () => import('pages/SelectClass.vue'),
         meta: {
           title: 'Wybierz klasę',
@@ -31,7 +32,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'SelectRoom',
-        path: ':tri(v-lo)/room',
+        path: `:${paramNames.tri}(v-lo)/room`,
         component: () => import('pages/SelectRoom.vue'),
         meta: {
           title: 'Mapa pomieszczeń',
@@ -49,12 +50,12 @@ const routes: RouteRecordRaw[] = [
   },
   {
     name: 'UnitTimetable',
-    path: '/:tri/:unitType(class|teacher|room)/:unit/',
+    path: `/:${paramNames.tri}/:${paramNames.unitType}(class|teacher|room)/:${paramNames.unit}/`,
     component: () => import('pages/UnitTimetable.vue'),
   },
   {
     name: 'CombinedTimetable',
-    path: '/:tri/combined/',
+    path: `/:${paramNames.tri}/combined/`,
     component: () => import('pages/CombinedTimetable.vue'),
   },
   {
@@ -72,7 +73,7 @@ const routes: RouteRecordRaw[] = [
       if (config.startupUnit.unitType === 'combined') {
         return {
           name: 'CombinedTimetable',
-          params: { tri: config.startupUnit.tri },
+          params: { [paramNames.tri]: config.startupUnit.tri },
         };
       }
       return {

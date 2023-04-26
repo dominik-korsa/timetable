@@ -19,8 +19,9 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 import { PropType } from 'vue/dist/vue';
-import { TableLessonClass } from 'src/api/common.js';
+import { TableLessonClass } from 'src/api/common';
 import { useRoute } from 'vue-router';
+import { paramNames } from 'src/router/route-constants';
 
 export default defineComponent({
   props: {
@@ -41,8 +42,8 @@ export default defineComponent({
           name: 'UnitTimetable',
           params: {
             ...route.params,
-            unitType: 'class',
-            unit: id,
+            [paramNames.unitType]: 'class',
+            [paramNames.unit]: id,
           },
         },
       }))),

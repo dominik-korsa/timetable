@@ -12,6 +12,7 @@ import { useConfigStore } from 'stores/config';
 import OldDomainLayout from 'layouts/OldDomainLayout.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Client, clientSymbol, getClient } from 'src/api/client';
+import { paramNames } from 'src/router/route-constants';
 
 export default defineComponent({
   name: 'App',
@@ -24,7 +25,7 @@ export default defineComponent({
     const route = useRoute();
     const client = ref<Client|undefined>();
     provide(clientSymbol, client);
-    watch(() => route.params.tri, (tri: string | string[] | undefined, oldTri) => {
+    watch(() => route.params[paramNames.tri], (tri: string | string[] | undefined, oldTri) => {
       if (tri === oldTri || tri === undefined) return;
       if (typeof tri === 'object') [tri] = tri;
       try {
