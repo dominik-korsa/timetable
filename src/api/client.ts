@@ -2,7 +2,7 @@ import { ComputedRef, inject, InjectionKey } from 'vue';
 import { CacheMode } from 'src/api/requests';
 import { bangDecode, DefaultsMap } from 'src/utils';
 import { VLoClient } from 'src/api/v-lo';
-import { AllClassesLessons, TableDataWithHours, UnitType } from 'src/api/common';
+import { AllClassesLessons, TableDataWithTimeSlots, UnitType } from 'src/api/common';
 import { OptivumClient } from 'src/api/optivum';
 import { Temporal } from '@js-temporal/polyfill';
 import PlainDate = Temporal.PlainDate;
@@ -31,7 +31,7 @@ export interface BaseClient {
     unitType: UnitType,
     unit: string,
     monday: Temporal.PlainDate,
-  ): Promise<TableDataWithHours>;
+  ): Promise<TableDataWithTimeSlots>;
   getLessonsOfAllClasses(fromCache: boolean, monday: PlainDate): Promise<AllClassesLessons>;
   getUnitNameMapper(cacheMode: CacheMode): Promise<(unitType: UnitType, unit: string) => string>;
 }

@@ -52,7 +52,7 @@ export class DefaultsMap<K, V> extends Map<K, V> {
   }
 }
 
-export function parseHour(value: string): number {
+export function parseTimestamp(value: string): number {
   const [hours, minutes] = value.split(':').map((v) => parseInt(v, 10));
   return hours * 60 + minutes;
 }

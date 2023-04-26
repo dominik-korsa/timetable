@@ -2,8 +2,8 @@ import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   AllClassesLessons,
   Substitution, SubstitutionChange, SubstitutionInfo, TableData,
-  TableDataWithHours,
-  TableHour,
+  TableDataWithTimeSlots,
+  TableTimeSlot,
   TableLessonMoment,
   toUmid,
   UnitType,
@@ -84,7 +84,7 @@ type SubstitutionResponse = SubstitutionResponseItem[];
 const v1ApiOrigin = process.env.VLO_V1_API_ORIGIN ?? 'https://api.cld.sh';
 const v2ApiOrigin = process.env.VLO_V2_API_ORIGIN ?? 'https://api.cld.sh';
 
-export async function loadVLoHours(cacheMode: CacheMode): Promise<TableHour[]> {
+export async function loadVLoTimeSlots(cacheMode: CacheMode): Promise<TableTimeSlot[]> {
   const response = await fetchWithCache(cacheMode, new URL('/v1/vlo/timestamps', v1ApiOrigin).toString());
   const body = await response.json() as TimestampsResponseItem[];
   return Object.entries(body).map(([index, { begin, end }]) => ({
@@ -146,7 +146,17 @@ export class VLoClient implements BaseClient {
       };
     }
 
-    if (item.type === 'substitution') return item;
+    if (item.type === 'substitution') {
+      return {
+        type: 'substitution',
+        group: item.group,
+        subject: item.subject,
+        subjectBefore: item.subject_before,
+        teacher: item.teacher,
+        teacherBefore: item.teacher_before,
+        comment: item.comment,
+      };
+    }
 
     return {
       type: 'other',
@@ -286,25 +296,25 @@ export class VLoClient implements BaseClient {
     unitType: UnitType,
     unit: string,
     monday: Temporal.PlainDate,
-  ): Promise<TableDataWithHours> {
-    const [hours, partialData] = await Promise.all([
-      loadVLoHours(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
+  ): Promise<TableDataWithTimeSlots> {
+    const [timeSlots, partialData] = await Promise.all([
+      loadVLoTimeSlots(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
       this.getLessonsPartial(fromCache, unitType, unit, monday),
     ]);
     return {
       ...partialData,
-      hours,
+      timeSlots,
     };
   }
 
   async getLessonsOfAllClasses(fromCache: boolean, monday: Temporal.PlainDate): Promise<AllClassesLessons> {
     const { classes } = await this.getUnitLists(fromCache ? CacheMode.CacheOnly : CacheMode.NetworkFirst);
-    const [hours, units] = await Promise.all([
-      loadVLoHours(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
+    const [timeSlots, units] = await Promise.all([
+      loadVLoTimeSlots(fromCache ? CacheMode.CacheOnly : CacheMode.LazyUpdate),
       Promise.all(classes.map((item) => this.getLessonsPartial(fromCache, 'class', item.unit, monday))),
     ]);
     return {
-      hours,
+      timeSlots,
       units,
     };
   }

@@ -34,7 +34,7 @@
     >
       <timetable-dialog
         :moment="moment"
-        :hour="hour"
+        :time-slot="timeSlot"
         :favourite="favourite"
         @close="dialogVisible = false"
       />
@@ -48,7 +48,7 @@ import {
 } from 'vue';
 import TimetableItemSingle from 'components/TimetableItemSingle.vue';
 import TimetableItemMultiple from 'components/TimetableItemMultiple.vue';
-import { TableHour, TableLessonMoment, UnitType } from 'src/api/common';
+import { TableTimeSlot, TableLessonMoment, UnitType } from 'src/api/common';
 import { useConfigStore } from 'stores/config';
 import TimetableDialog from 'components/TimetableDialog.vue';
 import { weekdayNames } from 'src/shared';
@@ -62,8 +62,8 @@ export default defineComponent({
       required: true,
     },
     small: Boolean,
-    hour: {
-      type: Object as PropType<TableHour>,
+    timeSlot: {
+      type: Object as PropType<TableTimeSlot>,
       required: true,
     },
     unitType: {
@@ -80,8 +80,8 @@ export default defineComponent({
       description: computed(
         () => {
           const text = `${weekdayNames[props.moment.weekday]}, `
-            + `godzina ${props.hour.begin}. `
-            + `Lekcja numer ${props.hour.display}.`;
+            + `godzina ${props.timeSlot.begin}. `
+            + `Lekcja numer ${props.timeSlot.display}.`;
           if (favourite.value === null) return `Lekcja ukryta. ${text}`;
           return text;
         },

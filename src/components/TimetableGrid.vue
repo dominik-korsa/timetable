@@ -41,7 +41,7 @@
             </div>
           </div>
           <substitutions-button
-            v-if="header.substitutions && header.substitutions.length > 0"
+            v-if="header.substitutions !== null && header.substitutions.length > 0"
             :substitutions="header.substitutions"
             :block="gridHeaderDense"
             :small="gridHeaderDense && $q.screen.lt.sm"
@@ -62,9 +62,9 @@
       </li>
     </ul>
 
-    <hour-markers
-      class="timetable-grid__hours"
-      :hours="data.hours"
+    <time-slot-markers
+      class="timetable-grid__time-slots"
+      :time-slots="data.timeSlots"
       :rows="rows"
     />
 
@@ -94,7 +94,7 @@
           :key="item.gridRow"
           :style="`grid-row: ${item.gridRow}`"
           :moment="item.moment"
-          :hour="item.hour"
+          :time-slot="item.timeSlot"
           :unit-type="data.unitType"
           :small="dense"
         />
@@ -114,7 +114,7 @@ import {
   computed, defineComponent, onMounted, PropType, ref,
 } from 'vue';
 import {
-  calculateRows, calculateTimestamps, TableDataWithHours, TableHour, TableLessonMoment,
+  calculateRows, calculateTimestamps, TableDataWithTimeSlots, TableTimeSlot, TableLessonMoment, Substitution,
 } from 'src/api/common';
 import { useDocumentListener, useNow } from 'src/utils';
 import _ from 'lodash';
@@ -124,20 +124,28 @@ import { useConfigStore } from 'stores/config';
 import { ChangeOffsetFn } from 'layouts/TimetableLayout.vue';
 import { weekdayNames, weekdayNamesShort } from 'src/shared';
 import { useQuasar } from 'quasar';
-import HourMarkers from 'components/HourMarkers.vue';
+import TimeSlotMarkers from 'components/TimeSlotMarkers.vue';
 
 interface TableItem {
   moment: TableLessonMoment;
-  hour: TableHour;
+  timeSlot: TableTimeSlot;
   gridRow: number;
+}
+
+interface Header {
+  name: string;
+  date: string | null;
+  substitutions: Substitution[] | null;
 }
 
 export default defineComponent({
   name: 'TimetableGrid',
-  components: { HourMarkers, SubstitutionsButton, TimetableItem },
+  components: {
+    TimeSlotMarkers, SubstitutionsButton, TimetableItem,
+  },
   props: {
     data: {
-      type: Object as PropType<TableDataWithHours>,
+      type: Object as PropType<TableDataWithTimeSlots>,
       required: true,
     },
     isCurrentWeek: Boolean,
@@ -151,7 +159,7 @@ export default defineComponent({
     const config = useConfigStore();
     const quasar = useQuasar();
 
-    const timestamps = computed(() => calculateTimestamps(props.data.hours, 30));
+    const timestamps = computed(() => calculateTimestamps(props.data.timeSlots, 30));
     const now = useNow(5000);
 
     const hourPixels = computed(() => (props.dense ? 50 : 55));
@@ -184,17 +192,23 @@ export default defineComponent({
         if (moment.lessons.length === 0) return;
         items.push({
           moment,
-          hour: props.data.hours[momentIndex],
+          timeSlot: props.data.timeSlots[momentIndex],
           gridRow: momentIndex * 2 + 2,
         });
       });
       return items;
     }));
 
-    const headers = computed(() => {
+    const headers = computed<Header[]>(() => {
       const headersValue = props.data.headers;
       const adequateWeekdayNames = (props.dense && quasar.screen.width <= 500) ? weekdayNamesShort : weekdayNames;
-      if (headersValue === null) return adequateWeekdayNames.map((name) => ({ name }));
+      if (headersValue === null) {
+        return adequateWeekdayNames.map((name) => ({
+          name,
+          date: null,
+          substitutions: null,
+        }));
+      }
 
       return adequateWeekdayNames.map((name, index) => {
         const header = headersValue[index];
@@ -333,7 +347,7 @@ $timetable-gap: 4px;
     left: 0;
   }
 
-  .timetable-grid__hours {
+  .timetable-grid__time-slots {
     grid-column: 1;
     grid-row: 2;
     position: sticky;

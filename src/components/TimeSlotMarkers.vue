@@ -1,32 +1,32 @@
 <template>
   <ul
-    class="hour-markers bg-page"
+    class="time-slot-markers bg-page"
     aria-label="Godziny lekcji"
   >
     <li
-      v-for="(hour, i) in hours"
+      v-for="(timeSlot, i) in timeSlots"
       :key="i"
-      class="hour-marker"
+      class="time-slot-marker"
       :style="`grid-row: ${i*2+2}`"
-      :aria-label="`Lekcja numer ${hour.display}. Od godziny ${hour.begin} do ${hour.end}`"
+      :aria-label="`Lekcja numer ${timeSlot.display}. Od godziny ${timeSlot.begin} do ${timeSlot.end}`"
     >
       <div
-        class="hour-marker__number"
+        class="time-slot-marker__number"
         aria-hidden="true"
       >
-        {{ hour.display }}
+        {{ timeSlot.display }}
       </div>
       <div
-        class="hour-marker__start"
+        class="time-slot-marker__start"
         aria-hidden="true"
       >
-        {{ hour.begin }}
+        {{ timeSlot.begin }}
       </div>
       <div
-        class="hour-marker__end"
+        class="time-slot-marker__end"
         aria-hidden="true"
       >
-        {{ hour.end }}
+        {{ timeSlot.end }}
       </div>
     </li>
   </ul>
@@ -34,12 +34,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { TableHour } from 'src/api/common';
+import { TableTimeSlot } from 'src/api/common';
 
 export default defineComponent({
   props: {
-    hours: {
-      type: Array as PropType<TableHour[]>,
+    timeSlots: {
+      type: Array as PropType<TableTimeSlot[]>,
       required: true,
     },
     rows: {
@@ -51,7 +51,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.hour-markers {
+.time-slot-markers {
   grid-template-rows: v-bind(rows);
   display: grid;
   grid-template-columns: 1fr;
@@ -60,7 +60,7 @@ export default defineComponent({
   padding: 0;
   list-style: none;
 
-  .hour-marker {
+  .time-slot-marker {
     display: grid;
     grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr auto;
@@ -69,7 +69,7 @@ export default defineComponent({
           "number start"
           "number end";
 
-    .hour-marker__number {
+    .time-slot-marker__number {
       grid-area: number;
       align-self: center;
       justify-self: left;
@@ -81,18 +81,18 @@ export default defineComponent({
       text-align: center;
     }
 
-    .hour-marker__start, .hour-marker__end {
+    .time-slot-marker__start, .time-slot-marker__end {
       font-size: 0.8rem;
       line-height: 1;
       text-align: right;
     }
 
-    .hour-marker__start {
+    .time-slot-marker__start {
       grid-area: start;
       align-self: start;
     }
 
-    .hour-marker__end {
+    .time-slot-marker__end {
       grid-area: end;
       align-self: end;
     }
@@ -108,7 +108,7 @@ export default defineComponent({
         padding: 0 3px;
       }
 
-      .hour-marker__number {
+      .time-slot-marker__number {
         margin: 0;
         padding: 0;
         border: none;
@@ -118,7 +118,7 @@ export default defineComponent({
         justify-self: center;
       }
 
-      .hour-marker__start, .hour-marker__end {
+      .time-slot-marker__start, .time-slot-marker__end {
         font-size: 0.7em;
         text-align: center;
       }

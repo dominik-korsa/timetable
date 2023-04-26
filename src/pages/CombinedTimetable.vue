@@ -13,7 +13,7 @@
       <div class="combined-timetable__wrapper">
         <combined-timetable-grid
           :weekday="weekdays[offset.dayIndex]"
-          :hours="data.hours"
+          :time-slots="data.timeSlots"
           :is-current-week="offset.isCurrentWeek ?? true"
           unit-type="class"
         />

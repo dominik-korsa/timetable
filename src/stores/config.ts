@@ -105,9 +105,9 @@ export const useConfigStore = defineStore('config', {
         content = {
           version: 1,
           favouriteLessons: _.mapKeys(content.favouriteLessons, (value, key) => {
-            const [baseUrl, classValue, day, hour] = key.split('|').map((e) => decodeURIComponent(e));
+            const [baseUrl, classValue, day, timeSlot] = key.split('|').map((e) => decodeURIComponent(e));
             const k = baseUrl === 'v-lo' ? 'v-lo' : `o,${baseUrl}`;
-            return `${encodeURIComponent(k)}|class|${encodeURIComponent(classValue)}|${day}|${hour}|#`;
+            return `${encodeURIComponent(k)}|class|${encodeURIComponent(classValue)}|${day}|${timeSlot}|#`;
           }),
           optivumHistory: [],
           dark: content.dark,

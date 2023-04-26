@@ -8,15 +8,15 @@ import {
 import { CacheMode, fetchWithCache } from 'src/api/requests';
 import {
   AllClassesLessons,
-  TableDataWithHours,
-  TableHour, TableLessonClass,
+  TableDataWithTimeSlots,
+  TableTimeSlot, TableLessonClass,
   TableLessonMoment,
   toProxied,
   toUmid,
   UnitType,
 } from 'src/api/common';
 import {
-  bangEncode, createArray, parseHour, randomColor,
+  bangEncode, createArray, parseTimestamp, randomColor,
 } from 'src/utils';
 import { BaseClient, UnitListItem, UnitLists } from 'src/api/client';
 
@@ -172,7 +172,7 @@ export class OptivumClient implements BaseClient {
     };
   }
 
-  async getLessons(fromCache: boolean, unitType: UnitType, unit: string): Promise<TableDataWithHours> {
+  async getLessons(fromCache: boolean, unitType: UnitType, unit: string): Promise<TableDataWithTimeSlots> {
     const tableUrl = new URL(OptivumClient.getTableUrl(unitType, unit), this.baseUrl);
     const proxied = toProxied(tableUrl);
     const response = await fetchWithCache(
@@ -188,7 +188,7 @@ export class OptivumClient implements BaseClient {
       unitName,
       unitType,
       unit,
-      hours: Object.values(table.getHours()).map(({ number, timeFrom, timeTo }) => ({
+      timeSlots: Object.values(table.getHours()).map(({ number, timeFrom, timeTo }) => ({
         display: number.toString(),
         begin: timeFrom,
         end: timeTo,
@@ -226,32 +226,34 @@ export class OptivumClient implements BaseClient {
     const tables = await Promise.all(
       classes.map(async (item) => this.getLessons(fromCache, 'class', item.unit)),
     );
-    const getHourId = (hour: TableHour) => `${hour.begin}-${hour.end}`;
-    const hoursMap: Record<string, TableHour> = {};
+    const getTimeSlotId = (timeSlot: TableTimeSlot) => `${timeSlot.begin}-${timeSlot.end}`;
+    const timeSlotMapp: Record<string, TableTimeSlot> = {};
     tables.forEach((table) => {
-      table.hours.forEach((hour) => {
-        hoursMap[getHourId(hour)] = hour;
+      table.timeSlots.forEach((timeSlot) => {
+        timeSlotMapp[getTimeSlotId(timeSlot)] = timeSlot;
       });
     });
-    const hours = Array.from(Object.values(hoursMap));
-    hours.sort((lhs, rhs) => parseHour(lhs.begin) - parseHour(rhs.begin));
-    const hourIndexes: Record<string, number> = {};
-    hours.forEach((hour, index) => {
-      hourIndexes[getHourId(hour)] = index;
+    const timeSlots = Array.from(Object.values(timeSlotMapp));
+    timeSlots.sort(
+      (lhs, rhs) => parseTimestamp(lhs.begin) - parseTimestamp(rhs.begin),
+    );
+    const timeSlotIndexes: Record<string, number> = {};
+    timeSlots.forEach((timeSlot, index) => {
+      timeSlotIndexes[getTimeSlotId(timeSlot)] = index;
     });
     return {
-      hours,
+      timeSlots,
       units: tables.map((unit) => ({
         ...unit,
         unitName: OptivumClient.simplifyClassName(unit.unitName),
         lessons: unit.lessons.map((day, weekday) => {
-          const result = createArray<TableLessonMoment>(hours.length, (momentIndex) => ({
+          const result = createArray<TableLessonMoment>(timeSlots.length, (timeSlotIndex) => ({
             lessons: [],
-            umid: toUmid(this.key, unit.unitType, unit.unit, weekday, momentIndex),
+            umid: toUmid(this.key, unit.unitType, unit.unit, weekday, timeSlotIndex),
             weekday,
           }));
           day.forEach((moment, index) => {
-            result[hourIndexes[getHourId(unit.hours[index])]].lessons.push(...moment.lessons);
+            result[timeSlotIndexes[getTimeSlotId(unit.timeSlots[index])]].lessons.push(...moment.lessons);
           });
           return result;
         }),

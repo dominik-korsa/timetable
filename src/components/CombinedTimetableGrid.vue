@@ -43,9 +43,9 @@
       v-if="markerPositionPx !== null"
       class="time-marker combined-timetable-grid__marker"
     />
-    <div class="combined-timetable-grid__hours">
-      <hour-markers
-        :hours="hours"
+    <div class="combined-timetable-grid__time-slots">
+      <time-slot-markers
+        :time-slots="timeSlots"
         :rows="rows"
       />
       <div
@@ -62,7 +62,7 @@
         :key="item.key"
         class="combined-timetable-grid__grid-item"
         :moment="item.moment"
-        :hour="item.hour"
+        :time-slot="item.timeSlot"
         :style="item.style"
         :unit-type="unitType"
         small
@@ -78,7 +78,7 @@ import {
   computed, defineComponent, onMounted, PropType, ref,
 } from 'vue';
 import {
-  calculateRows, calculateTimestamps, TableHour, TableLessonMoment, UnitType,
+  calculateRows, calculateTimestamps, TableTimeSlot, TableLessonMoment, UnitType,
 } from 'src/api/common';
 import TimetableItem from 'components/TimetableItem.vue';
 import SubstitutionsButton from 'components/SubstitutionsButton.vue';
@@ -86,18 +86,18 @@ import { useConfigStore } from 'stores/config';
 import { useClientRef } from 'src/api/client';
 import { useNow } from 'src/utils';
 import _ from 'lodash';
-import HourMarkers from 'components/HourMarkers.vue';
+import TimeSlotMarkers from 'components/TimeSlotMarkers.vue';
 
 export default defineComponent({
   name: 'CombinedTimetableGrid',
-  components: { HourMarkers, SubstitutionsButton, TimetableItem },
+  components: { TimeSlotMarkers, SubstitutionsButton, TimetableItem },
   props: {
     weekday: {
       type: Object as PropType<Weekday>,
       required: true,
     },
-    hours: {
-      type: Array as PropType<TableHour[]>,
+    timeSlots: {
+      type: Array as PropType<TableTimeSlot[]>,
       required: true,
     },
     isCurrentWeek: Boolean,
@@ -110,7 +110,7 @@ export default defineComponent({
     const config = useConfigStore();
     const clientRef = useClientRef();
 
-    const timestamps = computed(() => calculateTimestamps(props.hours, 10));
+    const timestamps = computed(() => calculateTimestamps(props.timeSlots, 10));
     const now = useNow(5000);
 
     const hourPixels = 50;
@@ -129,7 +129,7 @@ export default defineComponent({
           key: string;
           style: string;
           moment: TableLessonMoment;
-          hour: TableHour;
+          timeSlot: TableTimeSlot;
         }[] = [];
         moments.forEach((moment, momentIndex) => {
           if (moment.lessons.length === 0) return;
@@ -139,7 +139,7 @@ export default defineComponent({
             style: `grid-column: ${gridColumn}; grid-row: ${gridRow}`,
             key: `${gridColumn}/${gridRow}`,
             moment,
-            hour: props.hours[momentIndex],
+            timeSlot: props.timeSlots[momentIndex],
           }));
         });
         return items;
@@ -176,7 +176,7 @@ $column-gap: 4px;
   grid-template-rows: auto 1fr;
   grid-template-columns: auto 1fr;
 
-  .combined-timetable-grid__hours {
+  .combined-timetable-grid__time-slots {
     grid-row: 2;
     grid-column: 1;
     position: sticky;

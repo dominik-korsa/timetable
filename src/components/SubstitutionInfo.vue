@@ -76,8 +76,8 @@
     <div
       v-else-if="info.type === 'substitution'"
     >
-      <template v-if="info.subject_before !== null">
-        <span class="text-strike">{{ info.subject_before }}</span>
+      <template v-if="info.subjectBefore !== null">
+        <span class="text-strike">{{ info.subjectBefore }}</span>
         <q-icon
           name="arrow_right_alt"
           class="q-mx-xs"
@@ -86,7 +86,7 @@
       </template>
       <span
         :class="{
-          'substitution-info__change': info.subject_before !== null,
+          'substitution-info__change': info.subjectBefore !== null,
         }"
       >{{ info.subject }}</span>
       <span
@@ -94,8 +94,8 @@
         class="substitution-info__group"
       > ({{ info.group }})</span>
       <br>
-      <template v-if="info.teacher_before !== null">
-        <span class="text-strike">{{ info.teacher_before }}</span>
+      <template v-if="info.teacherBefore !== null">
+        <span class="text-strike">{{ info.teacherBefore }}</span>
         <q-icon
           name="arrow_right_alt"
           class="q-mx-xs"
@@ -104,7 +104,7 @@
       </template>
       <span
         :class="{
-          'substitution-info__change': info.teacher_before !== null,
+          'substitution-info__change': info.teacherBefore !== null,
         }"
       >{{ info.teacher }}</span>
     </div>

@@ -101,9 +101,9 @@
     <div class="q-px-md q-pt-sm row items-baseline justify-between full-width text-caption">
       <div
         class="q-mr-sm"
-        :aria-label="`Lekcja numer ${hour.display}. Od godziny ${hour.begin} do ${hour.end}`"
+        :aria-label="`Lekcja numer ${timeSlot.display}. Od godziny ${timeSlot.begin} do ${timeSlot.end}`"
       >
-        Lekcja {{ hour.display }}, {{ hour.begin }} - {{ hour.end }}
+        Lekcja {{ timeSlot.display }}, {{ timeSlot.begin }} - {{ timeSlot.end }}
       </div>
       <div>
         {{ dateString }}
@@ -133,7 +133,7 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from 'vue';
 import { FavouriteLesson, useConfigStore } from 'stores/config';
-import { TableHour, TableLesson, TableLessonMoment } from 'src/api/common';
+import { TableTimeSlot, TableLesson, TableLessonMoment } from 'src/api/common';
 import { weekdayNames } from 'src/shared';
 import TimetableDialogClasses from 'components/TimetableDialogClasses.vue';
 import { RouteLocationRaw, useRoute } from 'vue-router';
@@ -154,8 +154,8 @@ export default defineComponent({
       type: Object as PropType<TableLessonMoment>,
       required: true,
     },
-    hour: {
-      type: Object as PropType<TableHour>,
+    timeSlot: {
+      type: Object as PropType<TableTimeSlot>,
       required: true,
     },
     favourite: {

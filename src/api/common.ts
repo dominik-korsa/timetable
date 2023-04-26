@@ -1,8 +1,8 @@
 import { Temporal } from '@js-temporal/polyfill';
 import _ from 'lodash';
-import { adjacentDifference, parseHour } from 'src/utils';
+import { adjacentDifference, parseTimestamp } from 'src/utils';
 
-export interface TableHour {
+export interface TableTimeSlot {
   begin: string;
   end: string;
   display: string;
@@ -61,9 +61,9 @@ export interface SubstitutionCancellation {
 export interface SubstitutionSubstitution {
   type: 'substitution';
   group: string | null;
-  subject_before: string | null;
+  subjectBefore: string | null;
   subject: string;
-  teacher_before: string | null;
+  teacherBefore: string | null;
   teacher: string;
   comment: string | null;
 }
@@ -103,13 +103,13 @@ export interface TableData {
   }[] | null;
 }
 
-export interface TableDataWithHours extends TableData {
-  hours: TableHour[];
+export interface TableDataWithTimeSlots extends TableData {
+  timeSlots: TableTimeSlot[];
 }
 
 export interface AllClassesLessons {
   units: TableData[];
-  hours: TableHour[];
+  timeSlots: TableTimeSlot[];
 }
 
 export const unitFullId = (
@@ -124,8 +124,8 @@ export const toUmid = (
   unitType: UnitType,
   unit: string,
   weekday: number,
-  hour: number,
-) => `${unitFullId(key, unitType, unit)}|${weekday}|${hour}`;
+  timeSlot: number,
+) => `${unitFullId(key, unitType, unit)}|${weekday}|${timeSlot}`;
 
 export interface ProxiedRequest {
   url: URL,
@@ -144,12 +144,12 @@ export function toProxied(url: URL | string): ProxiedRequest {
   };
 }
 
-export const calculateTimestamps = (hours: TableHour[], marginMinutes: number) => {
+export const calculateTimestamps = (timeSlots: TableTimeSlot[], marginMinutes: number) => {
   const realTimestamps = _.flatMap(
-    hours,
+    timeSlots,
     ({ begin, end }) => [begin, end],
   )
-    .map(parseHour);
+    .map(parseTimestamp);
   return [
     realTimestamps[0] - marginMinutes,
     ...realTimestamps,
