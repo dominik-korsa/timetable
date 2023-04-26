@@ -112,7 +112,7 @@ import BuildInfo from 'components/BuildInfo.vue';
 import PwaBanner from 'components/PwaBanner.vue';
 import { getClient } from 'src/api/client';
 import OptivumTimetablePicker from 'components/OptivumTimetablePicker.vue';
-import { paramNames } from 'src/router/route-constants';
+import { paramNames, routeNames } from 'src/router/route-constants';
 
 interface UnitItem {
   key: string;
@@ -160,7 +160,7 @@ export default defineComponent({
                     teacher: 'nauczyciela',
                   }[unitType]} ${unitName}`,
                   to: {
-                    name: 'UnitTimetable',
+                    name: routeNames.unitTimetable,
                     params: {
                       [paramNames.tri]: tri,
                       [paramNames.unitType]: unitType,
@@ -176,7 +176,7 @@ export default defineComponent({
 
     return {
       vLoTo: {
-        name: 'SelectClass',
+        name: routeNames.selectClass,
         params: { [paramNames.tri]: 'v-lo' },
       },
       favouriteUnits,

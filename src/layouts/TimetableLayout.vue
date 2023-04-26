@@ -174,6 +174,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { QBtn } from 'quasar';
 import { useConfigStore } from 'stores/config';
 import ThemePicker from 'components/ThemePicker.vue';
+import { routeNames } from 'src/router/route-constants';
 
 export type ChangeOffsetFn = (change: -1|1) => boolean;
 
@@ -221,7 +222,7 @@ export default defineComponent({
 
     return {
       goBack: () => goBack(router, {
-        name: 'SelectClass',
+        name: routeNames.selectClass,
         params: route.params,
       }),
       offsetDownButton,

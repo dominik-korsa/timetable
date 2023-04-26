@@ -1,7 +1,7 @@
 <template>
   <div class="build-info text-caption text-center">
     <p v-if="config.superSecretSettingsEnabled">
-      <router-link to="/super-secret-settings">
+      <router-link :to="superSecretSettingsTo">
         Super Secret Settings
       </router-link>
     </p>
@@ -57,6 +57,7 @@ import { typed } from 'src/utils';
 import { useConfigStore } from 'stores/config';
 import { useQuasar } from 'quasar';
 import { Temporal } from '@js-temporal/polyfill';
+import { routeNames } from 'src/router/route-constants';
 
 interface NetlifyBuildInfo {
   deployId: string,
@@ -103,6 +104,7 @@ export default defineComponent({
       onSourceCodeLinkClick: (event: MouseEvent) => {
         if (justUnlocked.value)event.preventDefault();
       },
+      superSecretSettingsTo: { name: routeNames.superSecretSettings },
     };
   },
 });

@@ -12,7 +12,7 @@ import { useConfigStore } from 'stores/config';
 import OldDomainLayout from 'layouts/OldDomainLayout.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Client, clientSymbol, getClient } from 'src/api/client';
-import { paramNames } from 'src/router/route-constants';
+import { paramNames, routeNames } from 'src/router/route-constants';
 
 export default defineComponent({
   name: 'App',
@@ -36,7 +36,7 @@ export default defineComponent({
           type: 'negative',
           message: 'Niepoprawny identyfikator planu lekcji',
         });
-        router.push({ name: 'Home' });
+        router.push({ name: routeNames.home });
         client.value = undefined;
       }
     }, { immediate: true });

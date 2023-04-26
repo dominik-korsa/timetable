@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { useConfigStore } from 'stores/config';
-import { paramNames } from './route-constants';
+import { paramNames, routeNames } from './route-constants';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -18,12 +18,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
-        name: 'Home',
+        name: routeNames.home,
         path: '',
         component: () => import('pages/IndexPage.vue'),
       },
       {
-        name: 'SelectClass',
+        name: routeNames.selectClass,
         path: `:${paramNames.tri}`,
         component: () => import('pages/SelectClass.vue'),
         meta: {
@@ -31,7 +31,7 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        name: 'SelectRoom',
+        name: routeNames.selectRoom,
         path: `:${paramNames.tri}(v-lo)/room`,
         component: () => import('pages/SelectRoom.vue'),
         meta: {
@@ -39,7 +39,7 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        name: 'SuperSecretSettings',
+        name: routeNames.superSecretSettings,
         path: 'super-secret-settings',
         component: () => import('pages/SuperSecretSettings.vue'),
         meta: {
@@ -49,17 +49,17 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    name: 'UnitTimetable',
+    name: routeNames.unitTimetable,
     path: `/:${paramNames.tri}/:${paramNames.unitType}(class|teacher|room)/:${paramNames.unit}/`,
     component: () => import('pages/UnitTimetable.vue'),
   },
   {
-    name: 'CombinedTimetable',
+    name: routeNames.combinedTimetable,
     path: `/:${paramNames.tri}/combined/`,
     component: () => import('pages/CombinedTimetable.vue'),
   },
   {
-    name: 'Campaign',
+    name: routeNames.campaign,
     path: '/13c',
     alias: '/13C',
     component: () => import('pages/CampaignPage.vue'),
@@ -69,15 +69,15 @@ const routes: RouteRecordRaw[] = [
     redirect: () => {
       const config = useConfigStore();
 
-      if (config.startupUnit === null) return { name: 'Home' };
+      if (config.startupUnit === null) return { name: routeNames.home };
       if (config.startupUnit.unitType === 'combined') {
         return {
-          name: 'CombinedTimetable',
+          name: routeNames.combinedTimetable,
           params: { [paramNames.tri]: config.startupUnit.tri },
         };
       }
       return {
-        name: 'UnitTimetable',
+        name: routeNames.unitTimetable,
         params: config.startupUnit,
       };
     },

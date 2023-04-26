@@ -138,7 +138,7 @@ import { useRouter } from 'vue-router';
 import isUrl from 'is-url-superb';
 import { toProxied } from 'src/api/common';
 import OptivumHelp from 'components/OptivumHelp.vue';
-import { paramNames } from 'src/router/route-constants';
+import { paramNames, routeNames } from 'src/router/route-constants';
 
 export default defineComponent({
   components: { OptivumHelp },
@@ -164,7 +164,7 @@ export default defineComponent({
         const timetableInfo = await OptivumClient.attemptLoad(CacheMode.NetworkFirst, url.value);
         config.addHistoryEntry(timetableInfo, null);
         await router.push({
-          name: 'SelectClass',
+          name: routeNames.selectClass,
           params: {
             [paramNames.tri]: OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath),
           },
@@ -211,7 +211,7 @@ export default defineComponent({
         .map((item) => ({
           ...item,
           to: {
-            name: 'SelectClass',
+            name: routeNames.selectClass,
             params: { [paramNames.tri]: OptivumClient.createTri(item.baseUrl, item.listPath) },
           },
           absoluteImageSrc: item.logoSrc

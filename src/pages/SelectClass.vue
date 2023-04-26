@@ -99,7 +99,7 @@ import { useIsFavourite } from 'src/shared';
 import { OptivumUnitLists } from 'src/api/optivum';
 import UnitList from 'components/UnitList.vue';
 import PushBanner from 'components/PushBanner.vue';
-import { paramNames } from 'src/router/route-constants';
+import { paramNames, routeNames } from 'src/router/route-constants';
 
 interface ClassItem {
   unit: string;
@@ -137,7 +137,7 @@ export default defineComponent({
         const classItems = unitLists.classes.map((item) => ({
           ...item,
           to: {
-            name: 'UnitTimetable',
+            name: routeNames.unitTimetable,
             params: {
               [paramNames.tri]: client.tri,
               [paramNames.unitType]: 'class',
@@ -192,11 +192,11 @@ export default defineComponent({
         ] : groupArray;
       }),
       combinedRoute: computed(() => ({
-        name: 'CombinedTimetable',
+        name: routeNames.combinedTimetable,
         params: route.params,
       })),
       selectRoomRoute: computed(() => ({
-        name: 'SelectRoom',
+        name: routeNames.selectRoom,
         params: route.params,
       })),
       teacherDialogVisible: ref(false),

@@ -21,7 +21,7 @@ import { computed, defineComponent } from 'vue';
 import { PropType } from 'vue/dist/vue';
 import { TableLessonClass } from 'src/api/common';
 import { useRoute } from 'vue-router';
-import { paramNames } from 'src/router/route-constants';
+import { paramNames, routeNames } from 'src/router/route-constants';
 
 export default defineComponent({
   props: {
@@ -39,7 +39,7 @@ export default defineComponent({
       }) => ({
         name,
         to: id === undefined ? undefined : {
-          name: 'UnitTimetable',
+          name: routeNames.unitTimetable,
           params: {
             ...route.params,
             [paramNames.unitType]: 'class',
