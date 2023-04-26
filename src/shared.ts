@@ -8,7 +8,7 @@ import { Temporal } from '@js-temporal/polyfill';
 import { useClientRef } from 'src/api/client';
 import { useConfigStore } from 'stores/config';
 import { UnitType } from 'src/api/common';
-import { mondayOf, normalizeDate } from 'src/date-utils';
+import { mondayOf, normalizeDate, tryParseDate } from 'src/date-utils';
 import { useNow } from 'src/utils';
 import { queryNames } from 'src/router/route-constants';
 
@@ -123,22 +123,20 @@ export const useSyncedOffset = (isConst: () => boolean) => {
   const router = useRouter();
   const route = useRoute();
 
-  const queryDate = computed<Temporal.PlainDate | null>(() => {
-    const value = route.query[queryNames.date];
-    if (!value || typeof value !== 'string') return null;
-    try {
-      return Temporal.PlainDate.from(value);
-    } catch (error) {
-      console.error(`Failed to parse date ${value}`, error);
-      return null;
-    }
-  });
+  const storageKey = 'last-date';
+  const disposed = ref(false);
+
+  const queryDate = computed(
+    () => tryParseDate(route.query[queryNames.date]) ?? tryParseDate(sessionStorage.getItem(storageKey)),
+  );
 
   const offset = useOffset(isConst, queryDate);
 
   watch(() => (offset.value.const ? null : offset.value.date), (value) => {
-    if (!value || !queryDate.value) return;
-    if (value.equals(queryDate.value)) return;
+    if (disposed.value || !value) return;
+    sessionStorage.setItem(storageKey, value.toString());
+
+    if (!queryDate.value || value.equals(queryDate.value)) return;
     router.replace({
       query: {
         ...route.query,
@@ -147,7 +145,14 @@ export const useSyncedOffset = (isConst: () => boolean) => {
     });
   }, { immediate: true });
 
-  return offset;
+  return {
+    offset,
+    disposeOffset: () => {
+      disposed.value = true;
+      sessionStorage.removeItem(storageKey);
+    },
+    offsetDisposed: readonly(disposed),
+  };
 };
 
 export const weekdayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];

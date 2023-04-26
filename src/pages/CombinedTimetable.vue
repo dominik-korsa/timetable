@@ -84,6 +84,7 @@ import { useQuasar } from 'quasar';
 import CombinedTimetableGrid from 'components/CombinedTimetableGrid.vue';
 import { Temporal } from '@js-temporal/polyfill';
 import { useConfigStore } from 'stores/config';
+import { onBeforeRouteLeave } from 'vue-router';
 import TimetableLayout from '../layouts/TimetableLayout.vue';
 
 export interface Weekday {
@@ -113,12 +114,16 @@ export default defineComponent({
 
     let refreshId = 0;
 
-    const offset = useSyncedOffset(
+    const { offset, disposeOffset, offsetDisposed } = useSyncedOffset(
       () => clientRef.value === undefined || !clientRef.value.supportsOffsets,
     );
+    onBeforeRouteLeave(() => {
+      disposeOffset();
+    });
 
     const dataRef = computed(() => {
       if (clientRef.value === undefined) return null;
+      if (offsetDisposed.value) return null;
       return ({
         client: clientRef.value,
         monday: offset.value.monday,

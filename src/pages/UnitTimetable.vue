@@ -58,7 +58,7 @@ import { TableDataWithTimeSlots, UnitType } from 'src/api/common';
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
-import { useRoute } from 'vue-router';
+import { onBeforeRouteLeave, useRoute } from 'vue-router';
 import { NotInCacheError } from 'src/api/requests';
 import TimetableGrid from 'components/TimetableGrid.vue';
 import { useQuasar } from 'quasar';
@@ -91,9 +91,12 @@ export default defineComponent({
 
     let refreshId = 0;
 
-    const offset = useSyncedOffset(
+    const { offset, disposeOffset, offsetDisposed } = useSyncedOffset(
       () => clientRef.value === undefined || !clientRef.value.supportsOffsets,
     );
+    onBeforeRouteLeave(() => {
+      disposeOffset();
+    });
 
     const tableRef = computed<TableRef | null>(() => {
       if (
@@ -101,6 +104,7 @@ export default defineComponent({
         || route.params[paramNames.unitType] === undefined
         || route.params[paramNames.unit] === undefined
       ) return null;
+      if (offsetDisposed.value) return null;
       return ({
         client: clientRef.value,
         monday: offset.value.monday,
