@@ -25,7 +25,7 @@ cleanupOutdatedCaches();
 if (process.env.MODE !== 'ssr' || process.env.PROD) {
   registerRoute(
     new NavigationRoute(
-      createHandlerBoundToURL(process.env.PWA_FALLBACK_HTML!),
+      createHandlerBoundToURL('/index.html'),
       { denylist: [/sw\.js$/, /workbox-(.)*\.js$/] },
     ),
   );
