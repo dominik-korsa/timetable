@@ -61,7 +61,7 @@
       </q-expansion-item>
     </q-card>
     <div
-      v-else-if="info.type === 'cancellation' || info.type === 'change'"
+      v-else-if="info.type === 'cancellation'"
       :class="{
         'text-strike': info.type === 'cancellation'
       }"
@@ -72,6 +72,14 @@
         class="substitution-info__group"
       > ({{ info.group }})</span>
       <span v-if="info.teacher !== null"> - {{ info.teacher }}</span>
+    </div>
+    <div v-else-if="info.type === 'change'">
+      {{ info.groups[0].subject }}
+      <span
+        v-if="info.groups[0].group !== null"
+        class="substitution-info__group"
+      > ({{ info.groups[0].group }})</span>
+      <span v-if="info.groups[0].teacher !== null"> - {{ info.groups[0].teacher }}</span>
     </div>
     <div
       v-else-if="info.type === 'substitution'"
