@@ -4,11 +4,11 @@
     aria-label="Godziny lekcji"
   >
     <li
-      v-for="(timeSlot, i) in timeSlots"
+      v-for="(timeSlot, i) in items"
       :key="i"
       class="time-slot-marker"
       :style="`grid-row: ${i*2+2}`"
-      :aria-label="`Lekcja numer ${timeSlot.display}. Od godziny ${timeSlot.begin} do ${timeSlot.end}`"
+      :aria-label="timeSlot.label"
     >
       <div
         class="time-slot-marker__number"
@@ -35,6 +35,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { TableTimeSlot } from 'src/api/common';
+import { useFormatter } from 'src/composables/formatter';
 
 export default defineComponent({
   props: {
@@ -46,6 +47,15 @@ export default defineComponent({
       type: String,
       required: true,
     },
+  },
+  setup: (props) => {
+    const formatter = useFormatter();
+    return {
+      items: props.timeSlots.map((timeSlot) => ({
+        ...timeSlot,
+        label: formatter.formatTimeSlotLabel(timeSlot),
+      })),
+    };
   },
 });
 </script>

@@ -101,12 +101,12 @@
     <div class="q-px-md q-pt-sm row items-baseline justify-between full-width text-caption">
       <div
         class="q-mr-sm"
-        :aria-label="`Lekcja numer ${timeSlot.display}. Od godziny ${timeSlot.begin} do ${timeSlot.end}`"
+        :aria-label="timeSlotLabel"
       >
         Lekcja {{ timeSlot.display }}, {{ timeSlot.begin }} - {{ timeSlot.end }}
       </div>
-      <div>
-        {{ dateString }}
+      <div :aria-label="date.display">
+        {{ date.display }}
       </div>
     </div>
     <q-item class="q-px-sm q-pt-xs">
@@ -138,6 +138,7 @@ import { weekdayNames } from 'src/shared';
 import TimetableDialogClasses from 'components/TimetableDialogClasses.vue';
 import { RouteLocationRaw, useRoute } from 'vue-router';
 import { paramNames, routeNames } from 'src/router/route-constants';
+import { useFormatter } from 'src/composables/formatter';
 
 interface LessonItem extends TableLesson {
   isFavourite: boolean | null | undefined;
@@ -169,6 +170,7 @@ export default defineComponent({
   emits: ['close'],
   setup: (props, { emit }) => {
     const config = useConfigStore();
+    const formatter = useFormatter();
     const route = useRoute();
 
     const setFavourite = (value: FavouriteLesson | null | undefined) => {
@@ -225,13 +227,19 @@ export default defineComponent({
         });
         return groups;
       }),
-      dateString: computed(() => {
+      timeSlotLabel: computed(() => formatter.formatTimeSlotLabel(props.timeSlot)),
+      date: computed(() => {
         const weekdayName = weekdayNames[props.moment.weekday];
-        if (!props.moment.date) return weekdayName;
-        return `${weekdayName}, ${config.iso8601
-          ? props.moment.date.toString()
-          : props.moment.date.toLocaleString()
-        }`;
+        if (!props.moment.date) {
+          return {
+            display: weekdayName,
+            label: weekdayName,
+          };
+        }
+        return {
+          display: `${weekdayName}, ${formatter.formatDisplay(props.moment.date)}`,
+          label: `${weekdayName}, ${formatter.formatLabel(props.moment.date)}`,
+        };
       }),
     });
   },

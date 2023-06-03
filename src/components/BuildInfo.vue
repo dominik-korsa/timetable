@@ -33,7 +33,7 @@
       role="button"
       @click.prevent="buildTimeClick"
     >
-      Zbudowano: <b>{{ buildTimeString }}</b>
+      Zbudowano: <b :aria-label="buildTimeLabel">{{ buildTimeDisplay }}</b>
     </p>
 
     <template v-if="buildInfo !== null">
@@ -58,6 +58,7 @@ import { useConfigStore } from 'stores/config';
 import { useQuasar } from 'quasar';
 import { Temporal } from '@js-temporal/polyfill';
 import { routeNames } from 'src/router/route-constants';
+import { useFormatter } from 'src/composables/formatter';
 
 interface NetlifyBuildInfo {
   deployId: string,
@@ -71,6 +72,7 @@ export default defineComponent({
   name: 'BuildInfo',
   setup: () => {
     const config = useConfigStore();
+    const formatter = useFormatter();
     const quasar = useQuasar();
 
     const buildTime = Temporal.Instant.from(process.env.BUILD_TIME as string);
@@ -80,7 +82,8 @@ export default defineComponent({
 
     return {
       config,
-      buildTimeString: computed(() => buildTime.toLocaleString()),
+      buildTimeDisplay: computed(() => formatter.formatDateTimeDisplay(buildTime)),
+      buildTimeLabel: computed(() => formatter.formatDateTimeLabel(buildTime)),
       buildInfo: process.env.DEPLOY_ID === undefined ? null : typed<NetlifyBuildInfo>({
         deployId: process.env.DEPLOY_ID,
         commitRef: process.env.COMMIT_REF as string,

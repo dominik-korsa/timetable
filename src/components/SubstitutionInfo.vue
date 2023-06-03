@@ -131,7 +131,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { SubstitutionInfo } from 'src/api/common.js';
+import { SubstitutionInfo } from 'src/api/common';
 import { groupPlural, pluralRules } from 'src/plural';
 
 export default defineComponent({

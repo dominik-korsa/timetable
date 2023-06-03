@@ -50,7 +50,7 @@
 import {
   computed, defineComponent, PropType, ref,
 } from 'vue';
-import { LessonRange, Substitution, UnitType } from 'src/api/common.js';
+import { LessonRange, Substitution, UnitType } from 'src/api/common';
 import SubstitutionInfo from 'components/SubstitutionInfo.vue';
 import { changesPlural, pluralRules } from 'src/plural';
 

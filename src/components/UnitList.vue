@@ -17,10 +17,10 @@
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
-import { UnitListItem } from 'src/api/client.js';
+import { UnitListItem } from 'src/api/client';
 import { PropType } from 'vue/dist/vue';
 import { useRoute } from 'vue-router';
-import { UnitType } from 'src/api/common.js';
+import { UnitType } from 'src/api/common';
 import { paramNames, routeNames } from 'src/router/route-constants';
 
 export default defineComponent({

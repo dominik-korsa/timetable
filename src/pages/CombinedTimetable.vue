@@ -85,6 +85,7 @@ import CombinedTimetableGrid from 'components/CombinedTimetableGrid.vue';
 import { Temporal } from '@js-temporal/polyfill';
 import { useConfigStore } from 'stores/config';
 import { onBeforeRouteLeave } from 'vue-router';
+import { useFormatter } from 'src/composables/formatter';
 import TimetableLayout from '../layouts/TimetableLayout.vue';
 
 export interface Weekday {
@@ -106,6 +107,7 @@ export default defineComponent({
     const clientRef = useClientRef();
     const quasar = useQuasar();
     const config = useConfigStore();
+    const formatter = useFormatter();
     const isFavourite = useIsFavourite();
 
     const data = ref<AllClassesLessons | null>(null);
@@ -259,8 +261,8 @@ export default defineComponent({
             const date = monday.add({ days: weekdayIndex });
             return ({
               name,
-              label: `${weekdayNames[weekdayIndex]} ${date.toLocaleString()}`,
-              date: config.iso8601 ? date.toString() : date.toLocaleString(),
+              date: formatter.formatDisplay(date),
+              label: `${weekdayNames[weekdayIndex]}, ${formatter.formatDisplay(date)}`,
             });
           }),
         }));

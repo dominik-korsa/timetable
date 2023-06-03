@@ -24,7 +24,7 @@
           <div
             class="timetable-grid__header-content col-grow"
             tabindex="-1"
-            :aria-label="header.date === null ? header.name : `${header.name} ${header.date}`"
+            :aria-label="header.label"
           >
             <div
               class="timetable-grid__header-name"
@@ -125,6 +125,7 @@ import { ChangeOffsetFn } from 'layouts/TimetableLayout.vue';
 import { weekdayNames, weekdayNamesShort } from 'src/shared';
 import { useQuasar } from 'quasar';
 import TimeSlotMarkers from 'components/TimeSlotMarkers.vue';
+import { useFormatter } from 'src/composables/formatter';
 
 interface TableItem {
   moment: TableLessonMoment;
@@ -135,6 +136,7 @@ interface TableItem {
 interface Header {
   name: string;
   date: string | null;
+  label: string;
   substitutions: Substitution[] | null;
 }
 
@@ -157,6 +159,7 @@ export default defineComponent({
   },
   setup: (props) => {
     const config = useConfigStore();
+    const formatter = useFormatter();
     const quasar = useQuasar();
 
     const timestamps = computed(() => calculateTimestamps(props.data.timeSlots, 30));
@@ -206,6 +209,7 @@ export default defineComponent({
         return adequateWeekdayNames.map((name) => ({
           name,
           date: null,
+          label: name,
           substitutions: null,
         }));
       }
@@ -214,9 +218,8 @@ export default defineComponent({
         const header = headersValue[index];
         return ({
           name,
-          date: config.iso8601
-            ? header.date.toString()
-            : header.date.toLocaleString(),
+          date: formatter.formatDisplay(header.date),
+          label: `${name}, ${formatter.formatDisplay(header.date)}`,
           substitutions: header.substitutions,
         });
       });
