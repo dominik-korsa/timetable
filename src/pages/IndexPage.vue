@@ -14,6 +14,7 @@
     <router-link
       :to="vLoTo"
       class="index-page__v-lo-link q-mb-md"
+      aria-label="Plan Piątego Liceum imienia Augusta Witkowskiego w Krakowie"
     >
       <q-card
         v-ripple
@@ -21,6 +22,7 @@
         outlined
         dark
         flat
+        aria-hidden="true"
       >
         <q-card-section horizontal>
           <img

@@ -11,9 +11,15 @@
         name="favorite"
         class="q-mr-xs"
         color="red"
+        aria-hidden="false"
+        aria-label="Ikona czerwonego serca. Ta aplikacja wykorzystuje"
       />
-      <a href="https://github.com/cloud11665/vlott">API planu V LO</a>
-      by <a href="https://github.com/cloud11665">cloud11665</a>
+      <a
+        href="https://github.com/cloud11665/vlott"
+        aria-label="API planu lekcji piątego liceum w Krakowie"
+      >API planu V LO</a>
+      <span aria-label="stworzone przez"> by </span>
+      <a href="https://github.com/cloud11665">cloud11665</a>
     </p>
 
     <p>
