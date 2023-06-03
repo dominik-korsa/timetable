@@ -14,8 +14,9 @@ export const useFormatter = () => {
   return {
     formatDisplay,
     formatLabel: (date: Temporal.PlainDate) => date.toLocaleString(locale, {
-      dateStyle: 'full',
-      weekday: undefined,
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
     }),
     formatDateTimeDisplay: (date: Temporal.PlainDateTime | Temporal.Instant) => {
       if (date instanceof Temporal.Instant) {

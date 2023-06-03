@@ -262,7 +262,7 @@ export default defineComponent({
             return ({
               name,
               date: formatter.formatDisplay(date),
-              label: `${weekdayNames[weekdayIndex]}, ${formatter.formatDisplay(date)}`,
+              label: `${weekdayNames[weekdayIndex]}, ${formatter.formatLabel(date)}`,
             });
           }),
         }));

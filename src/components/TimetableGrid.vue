@@ -219,7 +219,7 @@ export default defineComponent({
         return ({
           name,
           date: formatter.formatDisplay(header.date),
-          label: `${name}, ${formatter.formatDisplay(header.date)}`,
+          label: `${name}, ${formatter.formatLabel(header.date)}`,
           substitutions: header.substitutions,
         });
       });
