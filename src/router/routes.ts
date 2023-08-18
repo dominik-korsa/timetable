@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { useConfigStore } from 'stores/config';
-import { paramNames, routeNames } from './route-constants';
+import { paramNames, routeNames, triParam } from './route-constants';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -24,7 +24,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: routeNames.selectClass,
-        path: `:${paramNames.tri}`,
+        path: `${triParam}`,
         component: () => import('pages/SelectClass.vue'),
         meta: {
           title: 'Wybierz klasę',
@@ -50,12 +50,12 @@ const routes: RouteRecordRaw[] = [
   },
   {
     name: routeNames.unitTimetable,
-    path: `/:${paramNames.tri}/:${paramNames.unitType}(class|teacher|room)/:${paramNames.unit}/`,
+    path: `/${triParam}/:${paramNames.unitType}(class|teacher|room)/:${paramNames.unit}/`,
     component: () => import('pages/UnitTimetable.vue'),
   },
   {
     name: routeNames.combinedTimetable,
-    path: `/:${paramNames.tri}/combined/`,
+    path: `/${triParam}/combined/`,
     component: () => import('pages/CombinedTimetable.vue'),
   },
   {
