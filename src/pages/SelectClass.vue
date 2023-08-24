@@ -4,7 +4,7 @@
     class="column content-center justify-center"
   >
     <q-spinner
-      v-if="classGroups === null"
+      v-if="data === null"
       color="primary"
       size="64px"
     />
@@ -12,13 +12,9 @@
       v-else
       class="select-class__items-wrapper"
     >
-      <q-resize-observer @resize="containerWidth = $event.width" />
       <div class="select-class__items">
-        <select-class-group
-          v-for="(items, i) in classGroups"
-          :key="i"
-          :items="items"
-          :container-width="containerWidth"
+        <class-list
+          :items="data.classes"
         />
         <q-btn
           no-caps
@@ -87,46 +83,31 @@
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
-import { RouteLocationRaw, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { CacheMode } from 'src/api/requests';
-import { DefaultsMap } from 'src/utils';
-import _ from 'lodash';
 import { useConfigStore } from 'stores/config';
-import SelectClassGroup from 'components/SelectClassGroup.vue';
 import { UnitListItem, useClientRef } from 'src/api/client';
-import { useIsFavourite } from 'src/shared';
 import { OptivumUnitLists } from 'src/api/optivum';
 import UnitList from 'components/UnitList.vue';
 import PushBanner from 'components/PushBanner.vue';
-import { paramNames, routeNames } from 'src/router/route-constants';
-
-interface ClassItem {
-  unit: string;
-  name: string;
-  to: RouteLocationRaw;
-}
+import { routeNames } from 'src/router/route-constants';
+import ClassList from 'components/lists/ClassList.vue';
 
 interface Data {
-  classItems: ClassItem[];
+  classes: UnitListItem[];
   teachers?: UnitListItem[];
-
   rooms?: UnitListItem[];
 }
 
-const classDigitRegex = /^\d+/;
-
 export default defineComponent({
   name: 'SelectClass',
-  components: { PushBanner, UnitList, SelectClassGroup },
+  components: { ClassList, PushBanner, UnitList },
   setup: () => {
     const quasar = useQuasar();
     const config = useConfigStore();
     const clientRef = useClientRef();
     const route = useRoute();
-    const isFavourite = useIsFavourite();
-
-    const containerWidth = ref(100);
 
     const data = ref<Data | null>(null);
     watch(() => clientRef.value, async (client) => {
@@ -134,19 +115,8 @@ export default defineComponent({
       if (client === undefined) return;
       try {
         const unitLists = await client.getUnitLists(CacheMode.LazyUpdate);
-        const classItems = unitLists.classes.map((item) => ({
-          ...item,
-          to: {
-            name: routeNames.unitTimetable,
-            params: {
-              [paramNames.tri]: client.tri,
-              [paramNames.unitType]: 'class',
-              [paramNames.unit]: item.unit,
-            },
-          },
-        }));
         data.value = {
-          classItems,
+          classes: unitLists.classes,
           teachers: unitLists.teachers,
           rooms: unitLists.rooms,
         };
@@ -169,28 +139,8 @@ export default defineComponent({
     });
 
     return {
-      containerWidth,
       data,
       isVlo: computed(() => clientRef.value?.type === 'v-lo'),
-      classGroups: computed(() => {
-        if (data.value === null) return null;
-        const classItemsCopy = data.value.classItems.map((item) => ({
-          ...item,
-          isFavourite: isFavourite.value('class', item.unit),
-        }));
-        const groups = new DefaultsMap<number, ClassItem[]>(() => []);
-        const remaining: ClassItem[] = [];
-        classItemsCopy.forEach((item) => {
-          const result = classDigitRegex.exec(item.name);
-          if (result === null) remaining.push(item);
-          else groups.get(parseInt(result[0], 10)).push(item);
-        });
-        const groupArray = _.sortBy(Array.from(groups.entries()), 0).map(([, v]) => v);
-        return remaining.length > 0 ? [
-          ...groupArray,
-          remaining,
-        ] : groupArray;
-      }),
       combinedRoute: computed(() => ({
         name: routeNames.combinedTimetable,
         params: route.params,
