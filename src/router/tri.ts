@@ -12,7 +12,7 @@ const part = (prefix: string) => `${prefix}\\.[^\\/\\.,]+`;
 const voivodeship = part('w') + slash;
 const county = part('p') + slash;
 const city = part('m');
-const municipality = part('gm');
+const commune = part('gm');
 const school = `${slash}[^\\/\\.,]+`;
 
 export const triRegex = anyOf(
@@ -21,7 +21,7 @@ export const triRegex = anyOf(
   rspo,
   optional(voivodeship) + anyOf(
     optional(county) + city,
-    county + municipality,
+    county + commune,
   ) + school,
 );
 console.log('Tri regex:', triRegex);
