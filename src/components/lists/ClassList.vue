@@ -17,7 +17,7 @@
         favourite-aria-label="Ulubiona"
       />
     </q-card>
-    <q-space v-if="!isMobile" />
+    <q-space v-if="!mobile" />
     <q-btn
       no-caps
       :outline="!$q.dark.isActive"
@@ -47,7 +47,7 @@ import PushBanner from 'components/PushBanner.vue';
 
 const props = defineProps<{
   items: UnitListItem[];
-  isMobile?: boolean;
+  mobile?: boolean;
   showPushBanner?: boolean;
 }>();
 

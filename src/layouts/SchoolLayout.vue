@@ -23,6 +23,8 @@
         v-else
         v-model="tab"
         class="school-layout__mobile"
+        swipeable
+        animated
       >
         <q-tab-panel
           name="classes"
@@ -34,8 +36,44 @@
           >
             <class-list
               :items="data?.classes ?? []"
-              is-mobile
+              mobile
               :show-push-banner="isVLo"
+            />
+          </q-page>
+        </q-tab-panel>
+        <q-tab-panel
+          name="teachers"
+          class="q-pa-none"
+        >
+          <q-page
+            padding
+            class="column q-mx-auto justify-center"
+          >
+            <unit-list
+              class="row-fill"
+              unit-type="teacher"
+              :units="data?.teachers ?? []"
+            />
+          </q-page>
+        </q-tab-panel>
+        <q-tab-panel
+          name="rooms"
+          class="q-pa-none"
+        >
+          <q-page
+            padding
+            class="column q-mx-auto justify-center"
+          >
+            <v-lo-map-view
+              v-if="isVLo"
+              class="row-fill"
+              mobile
+            />
+            <unit-list
+              v-else
+              class="row-fill"
+              unit-type="room"
+              :units="data?.rooms ?? []"
             />
           </q-page>
         </q-tab-panel>
@@ -52,12 +90,12 @@
         active-color="primary"
         dense
       >
-        <q-tab
-          label="Szkoła"
-          no-caps
-          icon="domain"
-          name="school"
-        />
+        <!--        <q-tab-->
+        <!--          label="Szkoła"-->
+        <!--          no-caps-->
+        <!--          icon="domain"-->
+        <!--          name="school"-->
+        <!--        />-->
         <q-tab
           label="Klasy"
           no-caps
@@ -94,6 +132,8 @@ import { useConfigStore } from 'stores/config';
 import { CacheMode } from 'src/api/requests';
 import { OptivumUnitLists } from 'src/api/optivum';
 import ClassList from 'components/lists/ClassList.vue';
+import UnitList from 'components/lists/UnitList.vue';
+import VLoMapView from 'components/lists/VLoMapView.vue';
 
 const quasar = useQuasar();
 const config = useConfigStore();

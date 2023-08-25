@@ -108,6 +108,7 @@
     />
   </div>
 </template>
+
 <script setup lang="ts">
 import VLoMap from 'components/lists/VLoMap.vue';
 import { computed, ref, watch } from 'vue';
@@ -116,6 +117,10 @@ import {
 } from 'src/api/v-lo-rooms';
 import { useRoute, useRouter } from 'vue-router';
 import ButtonGrid, { Button } from 'components/ButtonGrid.vue';
+
+defineProps<{
+  mobile?: boolean,
+}>();
 
 type FloorSelection = FloorType | 'other';
 
