@@ -93,7 +93,7 @@ import { routeNames } from 'src/router/route-constants';
 import PushBanner from 'components/PushBanner.vue';
 import VLoMapView from 'components/lists/VLoMapView.vue';
 import ClassList from 'components/lists/ClassList.vue';
-import UnitList from 'components/UnitList.vue';
+import UnitList from 'components/lists/UnitList.vue';
 
 interface Data {
   teachers?: UnitListItem[];
