@@ -15,13 +15,13 @@
     class="school-home__content q-mx-auto column no-wrap"
     :style-fn="styleFn"
   >
-    <q-card
-      bordered
-      flat
-      class="q-mb-md"
-    >
-      <div style="height: 96px" />
-    </q-card>
+    <!--    <q-card-->
+    <!--      bordered-->
+    <!--      flat-->
+    <!--      class="q-mb-md"-->
+    <!--    >-->
+    <!--      <div style="height: 96px" />-->
+    <!--    </q-card>-->
     <div class="row school-home__row row-fill">
       <div class="col-fill full-height column no-wrap">
         <h2 class="text-h5 text-center q-mt-none q-mb-md">
@@ -53,7 +53,7 @@
         <unit-list
           class="row-fill"
           unit-type="teacher"
-          :units="data.teachers ?? []"
+          :units="data?.teachers ?? []"
         />
       </div>
       <div class="col-fill full-height column no-wrap">
@@ -72,7 +72,7 @@
           v-else
           class="row-fill"
           unit-type="room"
-          :units="data.rooms ?? []"
+          :units="data?.rooms ?? []"
         />
       </div>
     </div>

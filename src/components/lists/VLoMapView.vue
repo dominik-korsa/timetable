@@ -1,17 +1,17 @@
 <template>
   <div class="v-lo-map-view column no-wrap">
     <div v-if="floor === 'other'">
-      <div class="text-subtitle1 text-center">
+      <div class="text-subtitle1 text-center q-py-sm">
         Instytut austriacki
       </div>
       <button-grid
         class="border-t border-b"
-        :max-items="6"
+        :max-items="4"
         :buttons="instituteButtons"
       />
-      <div class="row border-t border-b q-mt-sm">
+      <div class="row border-t border-b q-mt-md">
         <div class="col-fill">
-          <div class="text-subtitle1 text-center">
+          <div class="text-subtitle1 text-center q-py-sm">
             Dom Harcerza
           </div>
           <button-grid
@@ -21,7 +21,7 @@
           />
         </div>
         <div class="col-fill border-l">
-          <div class="text-subtitle1 text-center">
+          <div class="text-subtitle1 text-center q-py-sm">
             Kampus UJ
           </div>
           <button-grid
