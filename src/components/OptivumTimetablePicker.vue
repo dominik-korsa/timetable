@@ -164,7 +164,7 @@ export default defineComponent({
         const timetableInfo = await OptivumClient.attemptLoad(CacheMode.NetworkFirst, url.value);
         config.addHistoryEntry(timetableInfo, null);
         await router.push({
-          name: routeNames.selectClass,
+          name: routeNames.schoolHome,
           params: {
             [paramNames.tri]: OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath),
           },
@@ -211,7 +211,7 @@ export default defineComponent({
         .map((item) => ({
           ...item,
           to: {
-            name: routeNames.selectClass,
+            name: routeNames.schoolHome,
             params: { [paramNames.tri]: OptivumClient.createTri(item.baseUrl, item.listPath) },
           },
           absoluteImageSrc: item.logoSrc

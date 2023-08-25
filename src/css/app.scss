@@ -56,8 +56,26 @@ a:not(.q-btn):not(.q-item) {
   }
 }
 
-.no-basis {
+.col-fill {
+  flex-grow: 1;
   flex-basis: 0;
+  height: 0;
+}
+
+.border-l {
+  border-left: var(--separator-color) 1px solid;
+}
+
+.border-r {
+  border-right: var(--separator-color) 1px solid;
+}
+
+.border-t {
+  border-top: var(--separator-color) 1px solid;
+}
+
+.border-b {
+  border-bottom: var(--separator-color) 1px solid;
 }
 
 @import "time-marker";

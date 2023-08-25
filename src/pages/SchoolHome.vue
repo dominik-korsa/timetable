@@ -1,82 +1,82 @@
 <template>
   <q-page
+    v-if="data === null"
     padding
     class="column content-center justify-center"
   >
     <q-spinner
-      v-if="data === null"
       color="primary"
       size="64px"
     />
-    <div
-      v-else
-      class="select-class__items-wrapper"
+  </q-page>
+  <q-page
+    v-else
+    padding
+    class="school-home__content q-mx-auto column no-wrap"
+    :style-fn="styleFn"
+  >
+    <q-card
+      bordered
+      flat
+      class="q-mb-md"
     >
-      <div class="select-class__items">
-        <class-list
-          :items="data.classes"
-        />
+      <div style="height: 96px" />
+    </q-card>
+    <div class="row school-home__row col-fill">
+      <div class="col-fill full-height column no-wrap">
+        <h2 class="text-h5 text-center q-mt-none q-mb-md">
+          Klasy
+        </h2>
+        <div class="col-shrink overflow-auto">
+          <class-list
+            :items="data.classes ?? []"
+          />
+        </div>
         <q-btn
           no-caps
           :outline="!$q.dark.isActive"
           :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
-          class="full-width"
+          class="full-width q-mt-md"
           :to="combinedRoute"
         >
           Zestawienie klas
         </q-btn>
-        <q-btn
-          v-if="data?.teachers"
-          no-caps
-          :outline="!$q.dark.isActive"
-          :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
-          class="full-width"
-          @click="teacherDialogVisible = true"
-        >
-          Nauczyciele
-        </q-btn>
-        <q-btn
-          v-if="data?.rooms"
-          no-caps
-          :outline="!$q.dark.isActive"
-          :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
-          class="full-width"
-          @click="roomDialogVisible = true"
-        >
-          Sale
-        </q-btn>
-        <q-btn
+        <push-banner
           v-if="isVlo"
-          no-caps
-          :outline="!$q.dark.isActive"
-          :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
-          class="full-width"
-          :to="selectRoomRoute"
+          class="q-mt-md"
+        />
+      </div>
+      <div class="col-fill full-height column no-wrap">
+        <h2 class="text-h5 text-center q-mt-none q-mb-md">
+          Nauczyciele
+        </h2>
+        <unit-list
+          class="col-fill"
+          unit-type="teacher"
+          :units="data.teachers ?? []"
+        />
+      </div>
+      <div class="col-fill full-height column no-wrap">
+        <h2 class="text-h5 text-center q-mt-none q-mb-md">
+          Sale
+        </h2>
+        <q-card
+          v-if="isVlo"
+          flat
+          bordered
+          class="col-fill"
         >
-          Mapa pomieszczeń
-        </q-btn>
-        <push-banner v-if="isVlo" />
+          <v-lo-map-view class="full-height" />
+        </q-card>
+        <unit-list
+          v-else
+          class="col-fill"
+          unit-type="room"
+          :units="data.rooms ?? []"
+        />
       </div>
     </div>
   </q-page>
-  <q-dialog
-    v-if="data?.teachers"
-    v-model="teacherDialogVisible"
-  >
-    <unit-list
-      unit-type="teacher"
-      :units="data.teachers"
-    />
-  </q-dialog>
-  <q-dialog
-    v-if="data?.rooms"
-    v-model="roomDialogVisible"
-  >
-    <unit-list
-      unit-type="room"
-      :units="data.rooms"
-    />
-  </q-dialog>
 </template>
 
 <script lang="ts">
@@ -89,25 +89,33 @@ import { CacheMode } from 'src/api/requests';
 import { useConfigStore } from 'stores/config';
 import { UnitListItem, useClientRef } from 'src/api/client';
 import { OptivumUnitLists } from 'src/api/optivum';
-import UnitList from 'components/UnitList.vue';
-import PushBanner from 'components/PushBanner.vue';
 import { routeNames } from 'src/router/route-constants';
+import PushBanner from 'components/PushBanner.vue';
+import VLoMapView from 'components/lists/VLoMapView.vue';
 import ClassList from 'components/lists/ClassList.vue';
+import UnitList from 'components/UnitList.vue';
 
 interface Data {
-  classes: UnitListItem[];
   teachers?: UnitListItem[];
+  classes?: UnitListItem[];
   rooms?: UnitListItem[];
 }
 
 export default defineComponent({
   name: 'SelectClass',
-  components: { ClassList, PushBanner, UnitList },
+  components: {
+    UnitList,
+    ClassList,
+    VLoMapView,
+    PushBanner,
+  },
   setup: () => {
     const quasar = useQuasar();
     const config = useConfigStore();
     const clientRef = useClientRef();
     const route = useRoute();
+
+    const containerWidth = ref(100);
 
     const data = ref<Data | null>(null);
     watch(() => clientRef.value, async (client) => {
@@ -139,6 +147,7 @@ export default defineComponent({
     });
 
     return {
+      containerWidth,
       data,
       isVlo: computed(() => clientRef.value?.type === 'v-lo'),
       combinedRoute: computed(() => ({
@@ -149,25 +158,19 @@ export default defineComponent({
         name: routeNames.selectRoom,
         params: route.params,
       })),
-      teacherDialogVisible: ref(false),
-      roomDialogVisible: ref(false),
+      styleFn: (topMargin: number, height: number) => ({ height: `${height - topMargin}px` }),
     };
   },
 });
 </script>
 
 <style lang="scss">
-.select-class__items-wrapper {
+.school-home__content {
   width: 100%;
-  max-width: 600px;
+  max-width: 1100px;
+}
 
-  .select-class__items {
-    margin: 0 auto;
-    width: fit-content;
-
-    > .q-btn:not(:last-child) {
-      margin-bottom: 8px;
-    }
-  }
+.school-home__row {
+  gap: 16px;
 }
 </style>

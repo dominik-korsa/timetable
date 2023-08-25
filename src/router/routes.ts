@@ -23,11 +23,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/IndexPage.vue'),
       },
       {
-        name: routeNames.selectClass,
+        name: routeNames.schoolHome,
         path: `:${paramNames.tri}`,
-        component: () => import('pages/SelectClass.vue'),
+        component: () => import('pages/SchoolHome.vue'),
         meta: {
-          title: 'Wybierz klasę',
+          title: 'Szkoła',
         },
       },
       {

@@ -70,9 +70,9 @@ export default defineComponent({
       showBack: computed(() => _.last(route.matched)?.name !== routeNames.home),
       title: computed(() => _.last(route.matched)?.meta?.title),
       goBack: () => {
-        const backTo = (route.name === routeNames.selectClass || route.name === routeNames.superSecretSettings)
+        const backTo = (route.name === routeNames.schoolHome || route.name === routeNames.superSecretSettings)
           ? { name: routeNames.home }
-          : { name: routeNames.selectClass, params: route.params };
+          : { name: routeNames.schoolHome, params: route.params };
         const resolved = router.resolve(backTo);
         if (resolved.href === window.history.state.back) router.back();
         else router.push(backTo);

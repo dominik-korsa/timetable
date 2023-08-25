@@ -1,5 +1,9 @@
 <template>
-  <q-card class="unit-list">
+  <q-card
+    flat
+    bordered
+    class="overflow-auto"
+  >
     <q-list
       dense
       separator
@@ -52,9 +56,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-.unit-list {
-  min-width: min(300px, 100%);
-}
-</style>

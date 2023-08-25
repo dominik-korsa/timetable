@@ -178,7 +178,7 @@ export default defineComponent({
 
     return {
       vLoTo: {
-        name: routeNames.selectClass,
+        name: routeNames.schoolHome,
         params: { [paramNames.tri]: 'v-lo' },
       },
       favouriteUnits,

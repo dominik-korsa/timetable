@@ -21,7 +21,7 @@
           stretch
           flat
           size="md"
-          class="class-list__button col-grow no-basis"
+          class="class-list__button col-fill"
           :to="item.to"
           no-caps
           :aria-label="`Klasa ${item.name}`"
@@ -84,8 +84,8 @@ const groups = computed(() => {
 
 <style lang="scss">
 .class-list {
-  .class-list__group/* :not(:last-child) */ { // TODO: Restore
-    margin-bottom: 12px;
+  .class-list__group:not(:last-child) {
+    margin-bottom: 16px;
   }
 
   .class-list__row {
