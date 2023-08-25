@@ -42,6 +42,10 @@ body {
 .bg-dh { background: $v-lo-dh; }
 .text-dh { color: $v-lo-dh; }
 
+.text-reduced {
+  opacity: 0.5;
+}
+
 a:not(.q-btn):not(.q-item) {
   color: $primary;
 

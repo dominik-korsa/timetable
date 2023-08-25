@@ -1,5 +1,16 @@
 <template>
   <q-card
+    v-if="items.length === 0"
+    flat
+    bordered
+    class="column items-center justify-center text-center"
+  >
+    <div class="q-pa-md text-reduced">
+      {{ emptyMessage }}
+    </div>
+  </q-card>
+  <q-card
+    v-else
     flat
     bordered
     class="overflow-auto"
@@ -19,40 +30,31 @@
   </q-card>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import { UnitListItem } from 'src/api/client';
-import { PropType } from 'vue/dist/vue';
 import { useRoute } from 'vue-router';
-import { UnitType } from 'src/api/common';
 import { paramNames, routeNames } from 'src/router/route-constants';
 
-export default defineComponent({
-  props: {
-    units: {
-      type: Array as PropType<UnitListItem[]>,
-      required: true,
-    },
-    unitType: {
-      type: String as PropType<UnitType>,
-      required: true,
+const props = defineProps<{
+  units: UnitListItem[];
+  unitType: 'teacher' | 'room';
+}>();
+
+const emptyMessage = computed(
+  () => `Ta szkoła nie udostępnia planów ${props.unitType === 'teacher' ? 'naczycieli' : 'sal'}`,
+);
+
+const route = useRoute();
+const items = computed(() => props.units.map((unit) => ({
+  ...unit,
+  to: {
+    name: routeNames.unitTimetable,
+    params: {
+      ...route.params,
+      [paramNames.unitType]: props.unitType,
+      [paramNames.unit]: unit.unit,
     },
   },
-  setup: (props) => {
-    const route = useRoute();
-    return ({
-      items: computed(() => props.units.map((unit) => ({
-        ...unit,
-        to: {
-          name: routeNames.unitTimetable,
-          params: {
-            ...route.params,
-            [paramNames.unitType]: props.unitType,
-            [paramNames.unit]: unit.unit,
-          },
-        },
-      }))),
-    });
-  },
-});
+})));
 </script>
