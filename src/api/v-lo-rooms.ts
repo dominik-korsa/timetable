@@ -14,7 +14,8 @@ interface Entrance {
   rotation: number;
 }
 
-export type FloorType = 'dungeons' | 'groundFloor' | 'firstFloor' | 'secondFloor';
+export const floors = ['dungeons', 'groundFloor', 'firstFloor', 'secondFloor'] as const;
+export type FloorType = typeof floors[number];
 export type OtherLocation = 'institute' | 'dh' | 'uj';
 export type RoomLocation = FloorType | OtherLocation;
 

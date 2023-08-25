@@ -1,5 +1,8 @@
 <template>
-  <div class="v-lo-map-view column no-wrap">
+  <div
+    v-touch-swipe.vertical="onSwipe"
+    class="v-lo-map-view column no-wrap"
+  >
     <div v-if="floor === 'other'">
       <div class="text-subtitle1 text-center q-py-sm">
         Instytut austriacki
@@ -36,13 +39,18 @@
       v-else
       class="col-shrink q-ma-sm"
     >
-      <v-lo-map
-        class="full-height"
-        :floor="floor"
-        :selected-id="selectedRoom?.id"
-        viewbox="centered"
-        @room-click="selectRoom"
-      />
+      <transition
+        :name="`slide-${floorTransition}`"
+        mode="out-in"
+      >
+        <v-lo-map
+          :key="floor"
+          :floor="floor"
+          :selected-id="selectedRoom?.id"
+          viewbox="centered"
+          @room-click="selectRoom"
+        />
+      </transition>
     </div>
     <div class="v-lo-map-view__info-wrapper col-grow column justify-end">
       <q-card
@@ -94,15 +102,22 @@
 import VLoMap from 'components/lists/VLoMap.vue';
 import { computed, ref, watch } from 'vue';
 import {
-  FloorType, isFloor, locationDescription, vLoRooms, otherRooms,
+  FloorType, isFloor, locationDescription, vLoRooms, otherRooms, floors,
 } from 'src/api/v-lo-rooms';
 import { useRoute, useRouter } from 'vue-router';
 import ButtonGrid, { Button } from 'components/ButtonGrid.vue';
 
+type FloorSelection = FloorType | 'other';
+
 const router = useRouter();
 const route = useRoute();
 
-const floor = ref<FloorType | 'other'>('groundFloor');
+const floor = ref<FloorSelection>('groundFloor');
+const floorTransition = ref<'up' | 'down'>('up');
+watch(floor, (value, oldValue) => {
+  if (value === oldValue || value === 'other' || oldValue === 'other') return;
+  floorTransition.value = floors.indexOf(value) > floors.indexOf(oldValue) ? 'up' : 'down';
+});
 const selectedRoom = computed(() => {
   const room = vLoRooms.find((e) => e.id === route.query.selected);
   if (!room) return undefined;
@@ -127,11 +142,12 @@ const selectRoom = (id: string | undefined) => {
   });
 };
 
-const selectFloor = (value: FloorType) => {
+const selectFloor = (value: FloorSelection) => {
   floor.value = value;
-  if (selectedRoom.value
-    && isFloor(selectedRoom.value.location)
-    && selectedRoom.value.location !== value
+  if (selectedRoom.value === undefined) return;
+  if (isFloor(selectedRoom.value.location)
+    ? selectedRoom.value.location !== value
+    : value !== 'other'
   ) selectRoom(undefined);
 };
 
@@ -156,10 +172,29 @@ const ujButtons = otherRooms.uj.map((room): Button => ({
   color: 'uj',
   onClick: () => selectRoom(room.id),
 }));
+
+const onSwipe = (event: { direction: 'down' | 'up' }) => {
+  const floorMap: Record<FloorSelection, FloorSelection> = event.direction === 'down' ? {
+    dungeons: 'groundFloor',
+    groundFloor: 'firstFloor',
+    firstFloor: 'secondFloor',
+    secondFloor: 'secondFloor',
+    other: 'other',
+  } : {
+    dungeons: 'dungeons',
+    groundFloor: 'dungeons',
+    firstFloor: 'groundFloor',
+    secondFloor: 'firstFloor',
+    other: 'other',
+  };
+  selectFloor(floorMap[floor.value]);
+};
 </script>
 
 <style lang="scss">
 .v-lo-map-view {
+  touch-action: none;
+
   .v-lo-map-view__floor-picker {
     border: 1px solid var(--separator-color);
   }
