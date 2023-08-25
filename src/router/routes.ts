@@ -23,14 +23,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/IndexPage.vue'),
       },
       {
-        name: routeNames.schoolHome,
-        path: `:${paramNames.tri}`,
-        component: () => import('pages/SchoolHome.vue'),
-        meta: {
-          title: 'Szkoła',
-        },
-      },
-      {
         name: routeNames.selectRoom,
         path: `:${paramNames.tri}(v-lo)/room`,
         component: () => import('pages/SelectRoom.vue'),
@@ -47,6 +39,11 @@ const routes: RouteRecordRaw[] = [
         },
       },
     ],
+  },
+  {
+    name: routeNames.schoolHome,
+    path: `/:${paramNames.tri}`,
+    component: () => import('layouts/SchoolLayout.vue'),
   },
   {
     name: routeNames.unitTimetable,

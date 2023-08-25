@@ -25,20 +25,7 @@
         </q-toolbar-title>
         <q-space v-else />
 
-        <q-btn
-          flat
-          round
-          aria-label="Wybierz motyw"
-          :icon="$q.dark.isActive ? 'dark_mode' : 'light_mode'"
-        >
-          <q-menu>
-            <q-card>
-              <q-card-section>
-                <theme-picker />
-              </q-card-section>
-            </q-card>
-          </q-menu>
-        </q-btn>
+        <theme-picker-button />
       </q-toolbar>
     </q-header>
 
@@ -52,12 +39,12 @@
 import { computed, defineComponent, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import _ from 'lodash';
-import ThemePicker from 'components/ThemePicker.vue';
 import { routeNames } from 'src/router/route-constants';
+import ThemePickerButton from 'components/ThemePickerButton.vue';
 
 export default defineComponent({
   name: 'MainLayout',
-  components: { ThemePicker },
+  components: { ThemePickerButton },
   setup: () => {
     const route = useRoute();
     const router = useRouter();

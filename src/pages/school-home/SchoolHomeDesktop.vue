@@ -43,7 +43,7 @@
           Zestawienie klas
         </q-btn>
         <push-banner
-          v-if="isVlo"
+          v-if="isVLo"
           class="q-mt-md"
         />
       </div>
@@ -62,7 +62,7 @@
           Sale
         </h2>
         <div
-          v-if="isVlo"
+          v-if="isVLo"
           class="row-fill"
         >
           <v-lo-map-view class="full-height" />
@@ -78,89 +78,32 @@
   </q-page>
 </template>
 
-<script lang="ts">
-import {
-  computed, defineComponent, ref, watch,
-} from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { useQuasar } from 'quasar';
-import { CacheMode } from 'src/api/requests';
-import { useConfigStore } from 'stores/config';
-import { UnitListItem, useClientRef } from 'src/api/client';
-import { OptivumUnitLists } from 'src/api/optivum';
 import { routeNames } from 'src/router/route-constants';
 import PushBanner from 'components/PushBanner.vue';
 import VLoMapView from 'components/lists/VLoMapView.vue';
 import ClassList from 'components/lists/ClassList.vue';
 import UnitList from 'components/lists/UnitList.vue';
+import type { Data } from 'layouts/SchoolLayout.vue';
 
-interface Data {
-  teachers?: UnitListItem[];
-  classes?: UnitListItem[];
-  rooms?: UnitListItem[];
-}
+const route = useRoute();
 
-export default defineComponent({
-  name: 'SelectClass',
-  components: {
-    UnitList,
-    ClassList,
-    VLoMapView,
-    PushBanner,
-  },
-  setup: () => {
-    const quasar = useQuasar();
-    const config = useConfigStore();
-    const clientRef = useClientRef();
-    const route = useRoute();
+defineProps<{
+  data: Data | null;
+  isVLo: boolean;
+}>();
 
-    const containerWidth = ref(100);
-
-    const data = ref<Data | null>(null);
-    watch(() => clientRef.value, async (client) => {
-      data.value = null;
-      if (client === undefined) return;
-      try {
-        const unitLists = await client.getUnitLists(CacheMode.LazyUpdate);
-        data.value = {
-          classes: unitLists.classes,
-          teachers: unitLists.teachers,
-          rooms: unitLists.rooms,
-        };
-        if (client.type === 'optivum') {
-          config.addHistoryEntry({
-            title: await client.getTitle(CacheMode.CacheFirst),
-            baseUrl: client.baseUrl,
-            listPath: client.listPath,
-          }, (unitLists as OptivumUnitLists).logoSrc);
-        }
-      } catch (error) {
-        console.error(error);
-        quasar.notify({
-          type: 'negative',
-          message: 'Nie udało się wczytać listy klas',
-        });
-      }
-    }, {
-      immediate: true,
-    });
-
-    return {
-      containerWidth,
-      data,
-      isVlo: computed(() => clientRef.value?.type === 'v-lo'),
-      combinedRoute: computed(() => ({
-        name: routeNames.combinedTimetable,
-        params: route.params,
-      })),
-      selectRoomRoute: computed(() => ({
-        name: routeNames.selectRoom,
-        params: route.params,
-      })),
-      styleFn: (topMargin: number, height: number) => ({ height: `${height - topMargin}px` }),
-    };
-  },
-});
+const combinedRoute = computed(() => ({
+  name: routeNames.combinedTimetable,
+  params: route.params,
+}));
+const selectRoomRoute = computed(() => ({
+  name: routeNames.selectRoom,
+  params: route.params,
+}));
+const styleFn = (topMargin: number, height: number) => ({ height: `${height - topMargin}px` });
 </script>
 
 <style lang="scss">
