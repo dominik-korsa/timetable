@@ -32,6 +32,7 @@
             :items="data.classes ?? []"
           />
         </div>
+        <q-space />
         <q-btn
           no-caps
           :outline="!$q.dark.isActive"
@@ -60,14 +61,12 @@
         <h2 class="text-h5 text-center q-mt-none q-mb-md">
           Sale
         </h2>
-        <q-card
+        <div
           v-if="isVlo"
-          flat
-          bordered
           class="row-fill"
         >
           <v-lo-map-view class="full-height" />
-        </q-card>
+        </div>
         <unit-list
           v-else
           class="row-fill"
@@ -171,6 +170,6 @@ export default defineComponent({
 }
 
 .school-home__row {
-  gap: 16px;
+  gap: 24px;
 }
 </style>

@@ -1,6 +1,7 @@
 .slide-up-enter-active, .slide-up-leave-active,
 .slide-down-enter-active, .slide-down-leave-active {
-  transition: transform 200ms, opacity 200ms;
+  transition: transform, opacity;
+  transition-duration: 200ms;
 }
 
 .slide-up-enter-from, .slide-up-leave-to,
@@ -8,8 +9,8 @@
   opacity: 0;
 }
 .slide-up-enter-from, .slide-down-leave-to {
-  transform: translateY(-12px);
+  transform: translateY(-14px) scale(108%);
 }
 .slide-up-leave-to, .slide-down-enter-from {
-  transform: translateY(12px);
+  transform: translateY(14px) scale(95%);
 }

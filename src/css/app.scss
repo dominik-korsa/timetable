@@ -84,7 +84,7 @@ $sides: top, bottom, left, right;
   $letter: string.slice($side, 0, 1);
 
   .border-#{$letter}, .border-#{$letter}-no-last:not(:last-child) {
-    border-#{$side}: var(--separator-color) 1px solid;
+    border-#{$side}: var(--separator-color) 1px solid !important;
   }
 }
 

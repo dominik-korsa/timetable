@@ -4,15 +4,24 @@
     class="v-lo-map-view column no-wrap"
   >
     <div v-if="floor === 'other'">
-      <div class="text-subtitle1 text-center q-py-sm">
-        Instytut austriacki
-      </div>
-      <button-grid
-        class="border-t border-b"
-        :max-items="4"
-        :buttons="instituteButtons"
-      />
-      <div class="row border-t border-b q-mt-md">
+      <q-card
+        bordered
+        flat
+      >
+        <div class="text-subtitle1 text-center q-py-sm">
+          Instytut austriacki
+        </div>
+        <button-grid
+          class="border-t"
+          :max-items="4"
+          :buttons="instituteButtons"
+        />
+      </q-card>
+      <q-card
+        flat
+        bordered
+        class="row q-mt-md"
+      >
         <div class="col-fill">
           <div class="text-subtitle1 text-center q-py-sm">
             Dom Harcerza
@@ -33,11 +42,13 @@
             :buttons="ujButtons"
           />
         </div>
-      </div>
+      </q-card>
     </div>
-    <div
+    <q-card
       v-else
-      class="col-shrink q-ma-sm"
+      flat
+      bordered
+      class="col-shrink q-pa-sm"
     >
       <transition
         :name="`slide-${floorTransition}`"
@@ -51,11 +62,11 @@
           @room-click="selectRoom"
         />
       </transition>
-    </div>
+    </q-card>
     <div class="v-lo-map-view__info-wrapper col-grow column justify-end">
       <q-card
         v-if="selectedRoom"
-        class="v-lo-map-view__info q-mx-sm"
+        class="v-lo-map-view__info q-my-sm"
         bordered
         flat
       >
@@ -80,12 +91,11 @@
     </div>
     <q-btn-toggle
       :model-value="floor"
-      class="v-lo-map-view__floor-picker q-ma-sm"
+      class="v-lo-map-view__floor-picker"
       toggle-color="primary"
       spread
       no-caps
       unelevated
-      rounded
       no-wrap
       :options="[
         {label: '-1', value: 'dungeons', 'aria-label': 'piwnice'},
