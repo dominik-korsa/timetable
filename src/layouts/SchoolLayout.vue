@@ -45,6 +45,7 @@
         class="school-layout__mobile"
         swipeable
         animated
+        keep-alive
       >
         <q-tab-panel
           name="classes"
