@@ -3,6 +3,7 @@
     v-touch-swipe.vertical="onSwipe"
     class="v-lo-map-view column no-wrap"
   >
+    <q-space v-if="mobile" />
     <div v-if="floor === 'other'">
       <q-card
         bordered
@@ -47,7 +48,7 @@
     <q-card
       v-else
       flat
-      bordered
+      :bordered="!mobile"
       class="col-shrink q-pa-sm"
     >
       <transition
@@ -63,7 +64,8 @@
         />
       </transition>
     </q-card>
-    <div class="v-lo-map-view__info-wrapper col-grow column justify-end">
+    <q-space />
+    <div class="v-lo-map-view__info-wrapper column justify-end">
       <q-card
         v-if="selectedRoom"
         class="v-lo-map-view__info q-my-sm"

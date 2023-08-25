@@ -3,15 +3,35 @@
     view="hHh lpR fFf"
     class="school-layout"
   >
-    <q-btn
-      class="fixed z-top school-layout__back"
-      flat
-      round
-      icon="arrow_back"
-      aria-label="Wróć do ekranu głównego"
-      @click="goBackClick"
-    />
-    <theme-picker-button class="fixed z-top school-layout__theme" />
+    <q-header
+      v-if="mobile"
+      class="bg-page text-page"
+    >
+      <q-toolbar>
+        <q-btn
+          flat
+          round
+          icon="arrow_back"
+          aria-label="Wróć do ekranu głównego"
+          @click="goBackClick"
+        />
+
+        <q-space />
+
+        <theme-picker-button />
+      </q-toolbar>
+    </q-header>
+    <template v-else>
+      <q-btn
+        class="fixed z-top school-layout__back"
+        flat
+        round
+        icon="arrow_back"
+        aria-label="Wróć do ekranu głównego"
+        @click="goBackClick"
+      />
+      <theme-picker-button class="fixed z-top school-layout__theme" />
+    </template>
 
     <q-page-container>
       <school-home-desktop
