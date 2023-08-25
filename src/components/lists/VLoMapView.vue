@@ -140,18 +140,21 @@ const instituteButtons = otherRooms.institute.map((room): Button => ({
   name: room.short,
   ariaLabel: `Sala ${room.full} w Instytucie Austriackim`,
   color: 'institute',
+  onClick: () => selectRoom(room.id),
 }));
 const dhButtons = otherRooms.dh.map((room): Button => ({
   key: room.id,
   name: room.short,
   ariaLabel: `Sala ${room.full}`,
   color: 'dh',
+  onClick: () => selectRoom(room.id),
 }));
 const ujButtons = otherRooms.uj.map((room): Button => ({
   key: room.id,
   name: room.short,
   ariaLabel: `Sala ${room.full}`,
   color: 'uj',
+  onClick: () => selectRoom(room.id),
 }));
 </script>
 

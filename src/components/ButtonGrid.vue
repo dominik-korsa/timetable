@@ -19,6 +19,7 @@
         no-caps
         :aria-label="`Klasa ${item.name}`"
         :color="item.color"
+        @click="item.onClick"
       >
         {{ item.name }}
         <div
@@ -44,6 +45,7 @@ export interface Button {
   to?: RouteLocationRaw;
   isFavourite?: boolean;
   color?: string;
+  onClick?: (event: MouseEvent) => void;
 }
 
 const props = defineProps<{
