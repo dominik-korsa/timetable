@@ -1,12 +1,12 @@
 <template>
   <div
     v-memo="groups"
-    class="q-gutter-md"
+    class="column"
   >
     <q-card
       v-for="[key, group] in groups"
       :key="key"
-      class="overflow-hidden"
+      class="overflow-hidden q-mb-md"
       bordered
       flat
     >
@@ -17,6 +17,20 @@
         favourite-aria-label="Ulubiona"
       />
     </q-card>
+    <q-space v-if="!isMobile" />
+    <q-btn
+      no-caps
+      :outline="!$q.dark.isActive"
+      :color="$q.dark.isActive ? 'indigo-9' : 'primary'"
+      class="full-width"
+      :to="combinedRoute"
+    >
+      Zestawienie klas
+    </q-btn>
+    <push-banner
+      v-if="showPushBanner"
+      class="q-mt-md"
+    />
   </div>
 </template>
 
@@ -28,14 +42,19 @@ import _ from 'lodash';
 import { useIsFavourite } from 'src/shared';
 import { routeNames } from 'src/router/route-constants';
 import ButtonGrid, { Button } from 'components/ButtonGrid.vue';
+import { useRoute } from 'vue-router';
+import PushBanner from 'components/PushBanner.vue';
 
 const props = defineProps<{
   items: UnitListItem[];
+  isMobile?: boolean;
+  showPushBanner?: boolean;
 }>();
 
 const classDigitRegex = /^\d+/;
 
 const isFavourite = useIsFavourite();
+const route = useRoute();
 
 const groups = computed(() => {
   const classItems = props.items.map((item): Button => ({
@@ -66,4 +85,9 @@ const groups = computed(() => {
   //   rows: chunkBalanced(items, 5),
   // }));
 });
+
+const combinedRoute = computed(() => ({
+  name: routeNames.combinedTimetable,
+  params: route.params,
+}));
 </script>

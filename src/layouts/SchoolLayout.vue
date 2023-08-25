@@ -28,10 +28,16 @@
           name="classes"
           class="q-pa-none"
         >
-          <school-classes
-            :data="data"
-            :is-v-lo="isVLo"
-          />
+          <q-page
+            padding
+            class="column q-mx-auto justify-center"
+          >
+            <class-list
+              :items="data?.classes ?? []"
+              is-mobile
+              :show-push-banner="isVLo"
+            />
+          </q-page>
         </q-tab-panel>
       </q-tab-panels>
     </q-page-container>
@@ -87,7 +93,7 @@ import { UnitListItem, useClientRef } from 'src/api/client';
 import { useConfigStore } from 'stores/config';
 import { CacheMode } from 'src/api/requests';
 import { OptivumUnitLists } from 'src/api/optivum';
-import SchoolClasses from 'pages/school-home/SchoolClasses.vue';
+import ClassList from 'components/lists/ClassList.vue';
 
 const quasar = useQuasar();
 const config = useConfigStore();
