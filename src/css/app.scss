@@ -1,3 +1,5 @@
+@use "sass:string";
+
 // app global css in SCSS form
 .standalone {
   @media (display-mode: browser), (display-mode: fullscreen) {
@@ -31,9 +33,14 @@ body {
   }
 }
 
-.bg-institute {
-  background: $v-lo-institute;
-}
+.bg-uj { background: $v-lo-uj; }
+.text-uj { color: $v-lo-uj; }
+
+.bg-institute { background: $v-lo-institute; }
+.text-institute { color: $v-lo-institute }
+
+.bg-dh { background: $v-lo-dh; }
+.text-dh { color: $v-lo-dh; }
 
 a:not(.q-btn):not(.q-item) {
   color: $primary;
@@ -56,26 +63,25 @@ a:not(.q-btn):not(.q-item) {
   }
 }
 
-.col-fill {
+.col-fill, .row-fill {
   flex-grow: 1;
   flex-basis: 0;
+}
+.col-fill {
+  width: 0;
+}
+.row-fill {
   height: 0;
 }
 
-.border-l {
-  border-left: var(--separator-color) 1px solid;
-}
+$sides: top, bottom, left, right;
 
-.border-r {
-  border-right: var(--separator-color) 1px solid;
-}
+@each $side in $sides {
+  $letter: string.slice($side, 0, 1);
 
-.border-t {
-  border-top: var(--separator-color) 1px solid;
-}
-
-.border-b {
-  border-bottom: var(--separator-color) 1px solid;
+  .border-#{$letter}, .border-#{$letter}-no-last:not(:last-child) {
+    border-#{$side}: var(--separator-color) 1px solid;
+  }
 }
 
 @import "time-marker";

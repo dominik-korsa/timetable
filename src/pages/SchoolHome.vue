@@ -22,7 +22,7 @@
     >
       <div style="height: 96px" />
     </q-card>
-    <div class="row school-home__row col-fill">
+    <div class="row school-home__row row-fill">
       <div class="col-fill full-height column no-wrap">
         <h2 class="text-h5 text-center q-mt-none q-mb-md">
           Klasy
@@ -51,7 +51,7 @@
           Nauczyciele
         </h2>
         <unit-list
-          class="col-fill"
+          class="row-fill"
           unit-type="teacher"
           :units="data.teachers ?? []"
         />
@@ -64,13 +64,13 @@
           v-if="isVlo"
           flat
           bordered
-          class="col-fill"
+          class="row-fill"
         >
           <v-lo-map-view class="full-height" />
         </q-card>
         <unit-list
           v-else
-          class="col-fill"
+          class="row-fill"
           unit-type="room"
           :units="data.rooms ?? []"
         />

@@ -1,6 +1,41 @@
 <template>
   <div class="v-lo-map-view column no-wrap">
-    <div class="col-shrink q-ma-sm">
+    <div v-if="floor === 'other'">
+      <div class="text-subtitle1 text-center">
+        Instytut austriacki
+      </div>
+      <button-grid
+        class="border-t border-b"
+        :max-items="6"
+        :buttons="instituteButtons"
+      />
+      <div class="row border-t border-b q-mt-sm">
+        <div class="col-fill">
+          <div class="text-subtitle1 text-center">
+            Dom Harcerza
+          </div>
+          <button-grid
+            class="border-t"
+            :max-items="2"
+            :buttons="dhButtons"
+          />
+        </div>
+        <div class="col-fill border-l">
+          <div class="text-subtitle1 text-center">
+            Kampus UJ
+          </div>
+          <button-grid
+            class="border-t"
+            :max-items="2"
+            :buttons="ujButtons"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      v-else
+      class="col-shrink q-ma-sm"
+    >
       <v-lo-map
         class="full-height"
         :floor="floor"
@@ -59,14 +94,15 @@
 import VLoMap from 'components/lists/VLoMap.vue';
 import { computed, ref, watch } from 'vue';
 import {
-  FloorType, isFloor, locationDescription, vLoRooms,
+  FloorType, isFloor, locationDescription, vLoRooms, otherRooms,
 } from 'src/api/v-lo-rooms';
 import { useRoute, useRouter } from 'vue-router';
+import ButtonGrid, { Button } from 'components/ButtonGrid.vue';
 
 const router = useRouter();
 const route = useRoute();
 
-const floor = ref<FloorType>('groundFloor');
+const floor = ref<FloorType | 'other'>('groundFloor');
 const selectedRoom = computed(() => {
   const room = vLoRooms.find((e) => e.id === route.query.selected);
   if (!room) return undefined;
@@ -79,6 +115,7 @@ const selectedRoom = computed(() => {
 watch(() => selectedRoom.value, (value) => {
   if (!value) return;
   if (isFloor(value.location)) floor.value = value.location;
+  else floor.value = 'other';
 }, { immediate: true });
 
 const selectRoom = (id: string | undefined) => {
@@ -97,6 +134,25 @@ const selectFloor = (value: FloorType) => {
     && selectedRoom.value.location !== value
   ) selectRoom(undefined);
 };
+
+const instituteButtons = otherRooms.institute.map((room): Button => ({
+  key: room.id,
+  name: room.short,
+  ariaLabel: `Sala ${room.full} w Instytucie Austriackim`,
+  color: 'institute',
+}));
+const dhButtons = otherRooms.dh.map((room): Button => ({
+  key: room.id,
+  name: room.short,
+  ariaLabel: `Sala ${room.full}`,
+  color: 'dh',
+}));
+const ujButtons = otherRooms.uj.map((room): Button => ({
+  key: room.id,
+  name: room.short,
+  ariaLabel: `Sala ${room.full}`,
+  color: 'uj',
+}));
 </script>
 
 <style lang="scss">
