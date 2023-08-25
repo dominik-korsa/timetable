@@ -101,17 +101,17 @@ const useDynamicOffset = (dateSource: ComputedRef<Temporal.PlainDate | null>): O
 
 const unixMonday = mondayOf(Temporal.PlainDate.from('1970-01-01'));
 
-const useConstOffset = (): Offset => readonly(reactive({
+const useConstOffset = (): Offset => reactive({
   monday: unixMonday,
   date: unixMonday,
   decreaseDisabled: true,
   increaseDisabled: true,
-  dayIndex: Temporal.Now.plainDateISO().dayOfWeek,
+  dayIndex: normalizeDate(Temporal.Now.plainDateISO()).dayOfWeek - 1,
   change: () => false,
   isCurrentWeek: true,
   reset: () => { /* Does nothing */ },
   const: true,
-}));
+});
 
 export const useOffset = (isConst: () => boolean, dateSource: ComputedRef<Temporal.PlainDate | null>) => {
   const dynamicOffset = useDynamicOffset(dateSource);
