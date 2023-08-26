@@ -100,6 +100,7 @@
       no-caps
       unelevated
       no-wrap
+      :dense="$q.screen.width < 300"
       :options="[
         {label: '-1', value: 'dungeons', 'aria-label': 'piwnice'},
         {label: '0', value: 'groundFloor', 'aria-label': 'parter'},
