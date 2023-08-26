@@ -8,7 +8,7 @@
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <q-tab-panel
-      name="classes"
+      name="class"
       class="q-pa-none"
     >
       <q-page
@@ -23,7 +23,7 @@
       </q-page>
     </q-tab-panel>
     <q-tab-panel
-      name="teachers"
+      name="teacher"
       class="q-pa-none"
     >
       <q-page
@@ -38,7 +38,7 @@
       </q-page>
     </q-tab-panel>
     <q-tab-panel
-      name="rooms"
+      name="room"
       class="q-pa-none"
     >
       <q-page

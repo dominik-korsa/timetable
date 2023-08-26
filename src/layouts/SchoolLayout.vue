@@ -79,23 +79,13 @@
         <!--          icon="domain"-->
         <!--          name="school"-->
         <!--        />-->
-        <q-tab
-          label="Klasy"
+        <q-route-tab
+          v-for="(tabProps, i) in tabs"
+          :key="i"
+          v-bind="tabProps"
           no-caps
-          icon="school"
-          name="classes"
-        />
-        <q-tab
-          label="Nauczyciele"
-          no-caps
-          icon="person"
-          name="teachers"
-        />
-        <q-tab
-          label="Sale"
-          no-caps
-          icon="meeting_room"
-          name="rooms"
+          exact
+          replace
         />
       </q-tabs>
     </q-footer>
@@ -105,10 +95,10 @@
 <script lang="ts" setup>
 import SchoolHomeDesktop from 'pages/school-home/SchoolHomeDesktop.vue';
 import { goBack } from 'src/shared';
-import { useRouter } from 'vue-router';
-import { routeNames } from 'src/router/route-constants';
+import { useRoute, useRouter } from 'vue-router';
+import { paramNames, routeNames } from 'src/router/route-constants';
 import ThemePickerButton from 'components/ThemePickerButton.vue';
-import { useQuasar } from 'quasar';
+import { QRouteTabProps, useQuasar } from 'quasar';
 import { computed, ref, watch } from 'vue';
 import { UnitListItem, useClientRef } from 'src/api/client';
 import { useConfigStore } from 'stores/config';
@@ -119,10 +109,50 @@ import SchoolHomeMobile from 'pages/school-home/SchoolHomeMobile.vue';
 const quasar = useQuasar();
 const config = useConfigStore();
 const clientRef = useClientRef();
+const route = useRoute();
 const router = useRouter();
 
 const mobile = computed(() => quasar.screen.width < 900);
-const tab = ref('classes');
+const tab = ref(route.params[paramNames.unitType]);
+
+const tabs: QRouteTabProps[] = [
+  {
+    name: 'class',
+    label: 'Klasy',
+    icon: 'o_school',
+    to: {
+      name: routeNames.schoolUnitList,
+      params: {
+        ...route.params,
+        [paramNames.unitType]: 'class',
+      },
+    },
+  },
+  {
+    name: 'teacher',
+    label: 'Nauczyciele',
+    icon: 'o_person',
+    to: {
+      name: routeNames.schoolUnitList,
+      params: {
+        ...route.params,
+        [paramNames.unitType]: 'teacher',
+      },
+    },
+  },
+  {
+    name: 'room',
+    label: 'Sale',
+    icon: 'o_meeting_room',
+    to: {
+      name: routeNames.schoolUnitList,
+      params: {
+        ...route.params,
+        [paramNames.unitType]: 'room',
+      },
+    },
+  },
+];
 
 export interface Data {
   classes: UnitListItem[];

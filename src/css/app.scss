@@ -46,7 +46,7 @@ body {
   opacity: 0.5;
 }
 
-a:not(.q-btn):not(.q-item) {
+a:not(.q-btn):not(.q-item):not(.q-tab) {
   color: $primary;
 
   &:not(:hover):not(:active) {
