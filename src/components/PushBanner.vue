@@ -4,7 +4,7 @@
     bordered
     flat
   >
-    <div class="col-grow q-ml-sm q-mr-md no-basis">
+    <div class="col-fill q-ml-sm q-mr-md">
       Powiadamiaj o nowych zastępstwach
     </div>
     <q-btn

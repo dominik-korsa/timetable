@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import VLoMap from 'components/VLoMap.vue';
+import VLoMap from 'components/lists/VLoMap.vue';
 
 export default defineComponent({
   name: 'CampaignPage',

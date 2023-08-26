@@ -14,7 +14,8 @@ interface Entrance {
   rotation: number;
 }
 
-export type FloorType = 'dungeons' | 'groundFloor' | 'firstFloor' | 'secondFloor';
+export const floors = ['dungeons', 'groundFloor', 'firstFloor', 'secondFloor'] as const;
+export type FloorType = typeof floors[number];
 export type OtherLocation = 'institute' | 'dh' | 'uj';
 export type RoomLocation = FloorType | OtherLocation;
 
@@ -34,22 +35,23 @@ type FloorRoom = (FloorRectRoom | FloorPathRoom) & {
   entrances?: Entrance[];
 };
 
-type FullFloorRoom = (FloorRoom & { location: FloorType; entrances: Entrance[]; });
-
 interface OtherRoom extends BaseRoom {
-  location: OtherLocation;
   short: string;
 }
 
-type Room = FullFloorRoom | OtherRoom;
+type FullFloorRoom = (FloorRoom & { location: FloorType; entrances: Entrance[]; });
+type FullOtherRoom = (OtherRoom & { location: OtherLocation });
 
-export const floorRooms: Record<FloorType, FloorRoom[]> = vLoRoomsRaw.floors as Record<FloorType, FloorRoom[]>;
-export const otherRooms: OtherRoom[] = vLoRoomsRaw.other as OtherRoom[];
+type Room = FullFloorRoom | FullOtherRoom;
+
+export const floorRooms = vLoRoomsRaw.floors as Record<FloorType, FloorRoom[]>;
+export const otherRooms = vLoRoomsRaw.other as Record<OtherLocation, OtherRoom[]>;
 
 export const isFloor = (x: RoomLocation): x is FloorType => x in floorRooms;
 
 export const roomRawToIdMap: Record<string, string> = {};
 export const vLoRooms: Room[] = [];
+export const otherRoomList: FullOtherRoom[] = [];
 
 Object.entries(floorRooms).forEach(([floor, rooms]) => rooms.forEach((room) => {
   roomRawToIdMap[room.raw] = room.id;
@@ -59,10 +61,15 @@ Object.entries(floorRooms).forEach(([floor, rooms]) => rooms.forEach((room) => {
     location: floor as FloorType,
   });
 }));
-otherRooms.forEach((room) => {
+Object.entries(otherRooms).forEach(([location, rooms]) => rooms.forEach((room) => {
   roomRawToIdMap[room.raw] = room.id;
-  vLoRooms.push(room);
-});
+  const full = {
+    ...room,
+    location: location as OtherLocation,
+  };
+  vLoRooms.push(full);
+  otherRoomList.push(full);
+}));
 
 export const floorNames: Record<FloorType, string> = {
   dungeons: 'piwnice',

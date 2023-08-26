@@ -10,8 +10,9 @@ export const paramNames = {
 
 export const routeNames = {
   home: Symbol('Home route'),
-  selectClass: Symbol('Select class route'),
-  selectRoom: Symbol('Select room route'),
+  schoolHome: Symbol('School home route'),
+  schoolUnitList: Symbol('School unit list route'),
+  vLoMap: Symbol('V LO map route'),
   unitTimetable: Symbol('Unit timetable route'),
   combinedTimetable: Symbol('Combined timetable route'),
   campaign: Symbol('Campaign route'),

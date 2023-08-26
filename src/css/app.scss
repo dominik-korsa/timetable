@@ -1,3 +1,5 @@
+@use "sass:string";
+
 // app global css in SCSS form
 .standalone {
   @media (display-mode: browser), (display-mode: fullscreen) {
@@ -10,6 +12,7 @@ body {
   --card-color: white;
   --distinct-bg-color: #eee;
   --separator-color: #{$separator-color};
+  overscroll-behavior-x: none;
 
   .text-page {
     color: initial;
@@ -31,11 +34,20 @@ body {
   }
 }
 
-.bg-institute {
-  background: $v-lo-institute;
+.bg-uj { background: $v-lo-uj; }
+.text-uj { color: $v-lo-uj; }
+
+.bg-institute { background: $v-lo-institute; }
+.text-institute { color: $v-lo-institute }
+
+.bg-dh { background: $v-lo-dh; }
+.text-dh { color: $v-lo-dh; }
+
+.text-reduced {
+  opacity: 0.5;
 }
 
-a:not(.q-btn):not(.q-item) {
+a:not(.q-btn):not(.q-item):not(.q-tab) {
   color: $primary;
 
   &:not(:hover):not(:active) {
@@ -56,8 +68,26 @@ a:not(.q-btn):not(.q-item) {
   }
 }
 
-.no-basis {
+.col-fill, .row-fill {
+  flex-grow: 1;
   flex-basis: 0;
+}
+.col-fill {
+  width: 0;
+}
+.row-fill {
+  height: 0;
+}
+
+$sides: top, bottom, left, right;
+
+@each $side in $sides {
+  $letter: string.slice($side, 0, 1);
+
+  .border-#{$letter}, .border-#{$letter}-no-last:not(:last-child) {
+    border-#{$side}: var(--separator-color) 1px solid !important;
+  }
 }
 
 @import "time-marker";
+@import "transitions";

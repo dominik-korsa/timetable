@@ -1353,126 +1353,117 @@
       }
     ]
   },
-  "other": [
-    {
-      "type": "classroom",
-      "id": "a1",
-      "raw": "A1",
-      "short": "A1",
-      "full": "Sala A1",
-      "location": "institute"
-    },
-    {
-      "type": "classroom",
-      "id": "a2",
-      "raw": "A2",
-      "short": "A2",
-      "full": "Sala A2 - \"Linz\"",
-      "location": "institute"
-    },
-    {
-      "type": "classroom",
-      "id": "a3",
-      "raw": "A3",
-      "short": "A3",
-      "full": "Sala A3 - \"Villach\"",
-      "location": "institute"
-    },
-    {
-      "type": "classroom",
-      "id": "a4",
-      "raw": "A4",
-      "short": "A4",
-      "full": "Sala A4 - \"St. Pölten\"",
-      "location": "institute"
-    },
-    {
-      "type": "classroom",
-      "id": "a5",
-      "raw": "A5",
-      "short": "A5",
-      "full": "Sala A5 - \"Klagenfurt\" i/lub \"Leoben\"",
-      "location": "institute"
-    },
-    {
-      "type": "classroom",
-      "id": "a6",
-      "raw": "A6",
-      "short": "A6",
-      "full": "Sala A6 - \"Eisenstadt\"",
-      "location": "institute"
-    },
-    {
-      "type": "classroom",
-      "id": "a7",
-      "raw": "A7",
-      "short": "A7",
-      "full": "Sala A7 - \"Salzburg\"",
-      "location": "institute"
-    },
-    {
-      "type": "classroom",
-      "id": "a8",
-      "raw": "A8",
-      "short": "A8",
-      "full": "Sala A8 - \"Graz\"",
-      "location": "institute"
-    },
-    {
-      "type": "classroom",
-      "id": "a9",
-      "raw": "A9",
-      "short": "A9",
-      "full": "Sala A9 - \"Bregenz\"",
-      "location": "institute"
-    },
-    {
-      "type": "classroom",
-      "id": "a10",
-      "raw": "A10",
-      "short": "A10",
-      "full": "Sala A10 - \"Innsbruck\"",
-      "location": "institute"
-    },
-    {
-      "type": "classroom",
-      "id": "a11",
-      "raw": "A11",
-      "short": "A11",
-      "full": "Sala A11 - \"Wien\"",
-      "location": "institute"
-    },
-    {
-      "type": "classroom",
-      "id": "dh1",
-      "raw": "DH1",
-      "short": "DH1",
-      "full": "Dom Harcerza 1",
-      "location": "dh"
-    },
-    {
-      "type": "classroom",
-      "id": "dh2",
-      "raw": "DH2",
-      "short": "DH2",
-      "full": "Dom Harcerza 2",
-      "location": "dh"
-    },
-    {
-      "type": "classroom",
-      "id": "uj1",
-      "raw": "UJ1",
-      "short": "UJ1",
-      "full": "Uniwersytet Jagielloński 1",
-      "location": "uj"
-    },
-    {
-      "type": "classroom",
-      "id": "uj2",
-      "raw": "UJ2",
-      "short": "UJ2",
-      "full": "Uniwersytet Jagielloński 2",
-      "location": "uj"
-    }
-  ]
+  "other": {
+    "institute": [
+      {
+        "type": "classroom",
+        "id": "a1",
+        "raw": "A1",
+        "short": "A1",
+        "full": "Sala A1"
+      },
+      {
+        "type": "classroom",
+        "id": "a2",
+        "raw": "A2",
+        "short": "A2",
+        "full": "Sala A2 - \"Linz\""
+      },
+      {
+        "type": "classroom",
+        "id": "a3",
+        "raw": "A3",
+        "short": "A3",
+        "full": "Sala A3 - \"Villach\""
+      },
+      {
+        "type": "classroom",
+        "id": "a4",
+        "raw": "A4",
+        "short": "A4",
+        "full": "Sala A4 - \"St. Pölten\""
+      },
+      {
+        "type": "classroom",
+        "id": "a5",
+        "raw": "A5",
+        "short": "A5",
+        "full": "Sala A5 - \"Klagenfurt\" i/lub \"Leoben\""
+      },
+      {
+        "type": "classroom",
+        "id": "a6",
+        "raw": "A6",
+        "short": "A6",
+        "full": "Sala A6 - \"Eisenstadt\""
+      },
+      {
+        "type": "classroom",
+        "id": "a7",
+        "raw": "A7",
+        "short": "A7",
+        "full": "Sala A7 - \"Salzburg\""
+      },
+      {
+        "type": "classroom",
+        "id": "a8",
+        "raw": "A8",
+        "short": "A8",
+        "full": "Sala A8 - \"Graz\""
+      },
+      {
+        "type": "classroom",
+        "id": "a9",
+        "raw": "A9",
+        "short": "A9",
+        "full": "Sala A9 - \"Bregenz\""
+      },
+      {
+        "type": "classroom",
+        "id": "a10",
+        "raw": "A10",
+        "short": "A10",
+        "full": "Sala A10 - \"Innsbruck\""
+      },
+      {
+        "type": "classroom",
+        "id": "a11",
+        "raw": "A11",
+        "short": "A11",
+        "full": "Sala A11 - \"Wien\""
+      }
+    ],
+    "dh": [
+      {
+        "type": "classroom",
+        "id": "dh1",
+        "raw": "DH1",
+        "short": "DH1",
+        "full": "Dom Harcerza 1"
+      },
+      {
+        "type": "classroom",
+        "id": "dh2",
+        "raw": "DH2",
+        "short": "DH2",
+        "full": "Dom Harcerza 2"
+      }
+    ],
+    "uj": [
+      {
+        "type": "classroom",
+        "id": "uj1",
+        "raw": "UJ1",
+        "short": "UJ1",
+        "full": "Uniwersytet Jagielloński 1"
+      },
+      {
+        "type": "classroom",
+        "id": "uj2",
+        "raw": "UJ2",
+        "short": "UJ2",
+        "full": "Uniwersytet Jagielloński 2"
+      }
+    ]
+  }
 }

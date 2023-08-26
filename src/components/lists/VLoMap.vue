@@ -202,16 +202,6 @@
         </div>
       </foreignObject>
     </g>
-
-    <g
-      v-if="campaignDrzwi && floor === 'groundFloor'"
-      transform="translate(196, 212)"
-      class="v-lo-map__crown"
-    >
-      <path
-        d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z"
-      />
-    </g>
   </svg>
 </template>
 
@@ -233,7 +223,6 @@ export default defineComponent({
       default: 'default',
     },
     campaign13c: Boolean,
-    campaignDrzwi: Boolean,
     selectedId: {
       type: String,
       required: false,
@@ -439,17 +428,6 @@ export default defineComponent({
       margin-top: 8px;
       white-space: nowrap;
       font-size: 1.3em;
-    }
-  }
-
-  .v-lo-map__crown {
-    user-select: none;
-    pointer-events: none;
-
-    path {
-      fill: $amber;
-      stroke: black;
-      stroke-width: 1px;
     }
   }
 }

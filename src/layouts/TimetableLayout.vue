@@ -222,7 +222,7 @@ export default defineComponent({
 
     return {
       goBack: () => goBack(router, {
-        name: routeNames.selectClass,
+        name: routeNames.schoolUnitList,
         params: route.params,
       }),
       offsetDownButton,

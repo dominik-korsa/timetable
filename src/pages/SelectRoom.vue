@@ -9,7 +9,6 @@
         <v-lo-map
           :floor="floor"
           :selected-id="selectedRoom?.id"
-          :campaign-drzwi="campaignDrzwi"
           viewbox="centered"
           @room-click="selectRoom"
         />
@@ -42,7 +41,6 @@
           floor="groundFloor"
           class="select-room__floor select-room__floor--ground"
           :selected-id="selectedRoom?.id"
-          :campaign-drzwi="campaignDrzwi"
           @room-click="selectRoom"
         />
         <v-lo-map
@@ -113,9 +111,9 @@
 import {
   computed, defineComponent, ref, watch,
 } from 'vue';
-import VLoMap from 'components/VLoMap.vue';
+import VLoMap from 'components/lists/VLoMap.vue';
 import {
-  FloorType, otherRooms, locationDescription, vLoRooms, isFloor,
+  FloorType, locationDescription, vLoRooms, isFloor, otherRoomList,
 } from 'src/api/v-lo-rooms';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -149,7 +147,7 @@ export default defineComponent({
       });
     };
     return ({
-      otherRooms,
+      otherRooms: otherRoomList,
       floor,
       selectedRoom,
       selectRoom,
@@ -161,7 +159,6 @@ export default defineComponent({
         ) selectRoom(undefined);
       },
       styleFn: (topMargin: number, height: number) => ({ height: `${height - topMargin}px` }),
-      campaignDrzwi: computed(() => route.query.campaign === 'drzwi'),
     });
   },
 });
