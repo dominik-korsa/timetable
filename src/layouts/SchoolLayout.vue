@@ -73,13 +73,7 @@
         active-color="primary"
         dense
       >
-        <!--        <q-tab-->
-        <!--          label="Szkoła"-->
-        <!--          no-caps-->
-        <!--          icon="domain"-->
-        <!--          name="school"-->
-        <!--        />-->
-        <q-route-tab
+        <q-tab
           v-for="(tabProps, i) in tabs"
           :key="i"
           v-bind="tabProps"
@@ -113,44 +107,39 @@ const route = useRoute();
 const router = useRouter();
 
 const mobile = computed(() => quasar.screen.width < 900);
-const tab = ref(route.params[paramNames.unitType]);
+const tab = computed<string>({
+  get: () => route.params[paramNames.unitType] as string,
+  set: (value) => {
+    if (value === route.params[paramNames.unitType]) return;
+    router.replace({
+      params: {
+        ...route.params,
+        [paramNames.unitType]: value,
+      },
+    });
+  },
+});
 
 const tabs: QRouteTabProps[] = [
+  // {
+  //   name: 'school',
+  //   label: 'Szkoła',
+  //   icon: 'domain',
+  // },
   {
     name: 'class',
     label: 'Klasy',
     icon: 'o_school',
-    to: {
-      name: routeNames.schoolUnitList,
-      params: {
-        ...route.params,
-        [paramNames.unitType]: 'class',
-      },
-    },
   },
   {
     name: 'teacher',
     label: 'Nauczyciele',
     icon: 'o_person',
-    to: {
-      name: routeNames.schoolUnitList,
-      params: {
-        ...route.params,
-        [paramNames.unitType]: 'teacher',
-      },
-    },
   },
   {
     name: 'room',
     label: 'Sale',
     icon: 'o_meeting_room',
-    to: {
-      name: routeNames.schoolUnitList,
-      params: {
-        ...route.params,
-        [paramNames.unitType]: 'room',
-      },
-    },
   },
 ];
 
