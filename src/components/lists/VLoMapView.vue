@@ -10,6 +10,7 @@
     />
     <component
       :is="mobile ? 'div' : 'q-card'"
+      v-else
       flat
       bordered
       class="col-shrink q-pa-sm row justify-center"
