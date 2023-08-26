@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-memo="groups"
-    class="column"
-  >
+  <div class="column">
     <q-card
       v-for="[key, group] in groups"
       :key="key"
