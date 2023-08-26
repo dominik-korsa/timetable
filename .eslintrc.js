@@ -113,7 +113,9 @@ module.exports = {
     'consistent-return': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     'no-underscore-dangle': 'off',
-    'max-len': ['error', { code: 120 }]
+    'max-len': ['error', { code: 120 }],
+    'no-spaced-func': ['off'],
+    'func-call-spacing': ['off']
   },
 
   overrides: [

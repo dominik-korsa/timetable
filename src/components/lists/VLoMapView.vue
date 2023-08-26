@@ -4,47 +4,10 @@
     class="v-lo-map-view column no-wrap"
   >
     <q-space v-if="mobile" />
-    <div v-if="floor === 'other'">
-      <q-card
-        bordered
-        flat
-      >
-        <div class="text-subtitle1 text-center q-py-sm">
-          Instytut austriacki
-        </div>
-        <button-grid
-          class="border-t"
-          :max-items="4"
-          :buttons="instituteButtons"
-        />
-      </q-card>
-      <q-card
-        flat
-        bordered
-        class="row q-mt-md"
-      >
-        <div class="col-fill">
-          <div class="text-subtitle1 text-center q-py-sm">
-            Dom Harcerza
-          </div>
-          <button-grid
-            class="border-t"
-            :max-items="2"
-            :buttons="dhButtons"
-          />
-        </div>
-        <div class="col-fill border-l">
-          <div class="text-subtitle1 text-center q-py-sm">
-            Kampus UJ
-          </div>
-          <button-grid
-            class="border-t"
-            :max-items="2"
-            :buttons="ujButtons"
-          />
-        </div>
-      </q-card>
-    </div>
+    <v-lo-other-rooms
+      v-if="floor === 'other'"
+      @room-click="selectRoom"
+    />
     <q-card
       v-else
       flat
@@ -117,10 +80,10 @@
 import VLoMap from 'components/lists/VLoMap.vue';
 import { computed, ref, watch } from 'vue';
 import {
-  FloorType, isFloor, locationDescription, vLoRooms, otherRooms, floors,
+  FloorType, isFloor, locationDescription, vLoRooms, floors,
 } from 'src/api/v-lo-rooms';
 import { useRoute, useRouter } from 'vue-router';
-import ButtonGrid, { Button } from 'components/ButtonGrid.vue';
+import VLoOtherRooms from 'components/lists/VLoOtherRooms.vue';
 
 defineProps<{
   mobile?: boolean,
@@ -169,28 +132,6 @@ const selectFloor = (value: FloorSelection) => {
     : value !== 'other'
   ) selectRoom(undefined);
 };
-
-const instituteButtons = otherRooms.institute.map((room): Button => ({
-  key: room.id,
-  name: room.short,
-  ariaLabel: `Sala ${room.full} w Instytucie Austriackim`,
-  color: 'institute',
-  onClick: () => selectRoom(room.id),
-}));
-const dhButtons = otherRooms.dh.map((room): Button => ({
-  key: room.id,
-  name: room.short,
-  ariaLabel: `Sala ${room.full}`,
-  color: 'dh',
-  onClick: () => selectRoom(room.id),
-}));
-const ujButtons = otherRooms.uj.map((room): Button => ({
-  key: room.id,
-  name: room.short,
-  ariaLabel: `Sala ${room.full}`,
-  color: 'uj',
-  onClick: () => selectRoom(room.id),
-}));
 
 const onSwipe = (event: { direction: 'down' | 'up' }) => {
   const floorMap: Record<FloorSelection, FloorSelection> = event.direction === 'down' ? {
