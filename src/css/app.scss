@@ -12,6 +12,7 @@ body {
   --card-color: white;
   --distinct-bg-color: #eee;
   --separator-color: #{$separator-color};
+  overscroll-behavior-x: none;
 
   .text-page {
     color: initial;

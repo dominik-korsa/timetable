@@ -67,6 +67,7 @@ const rows = computed(() => _.chunk(props.buttons, itemsPerRow));
 
     &:before {
       z-index: 1;
+      pointer-events: none;
     }
 
     .button-grid__favourite {
