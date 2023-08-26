@@ -3,7 +3,6 @@
     v-touch-swipe.vertical="onSwipe"
     class="v-lo-map-view column no-wrap"
   >
-    <q-space v-if="mobile" />
     <v-lo-other-rooms
       v-if="floor === 'other'"
       @room-click="selectRoom"
@@ -13,23 +12,16 @@
       v-else
       flat
       bordered
-      class="col-shrink q-pa-sm row justify-center"
+      class="q-pa-sm row justify-center overflow-hidden"
+      :class="mobile ? 'row-fill items-center' : 'col-shrink'"
     >
-      <transition
-        :name="`slide-${floorTransition}`"
-        mode="out-in"
-      >
-        <v-lo-map
-          :key="floor"
-          :floor="floor"
-          :selected-id="selectedRoom?.id"
-          viewbox="centered"
-          class="v-lo-map-view__map"
-          @room-click="selectRoom"
-        />
-      </transition>
+      <v-lo-map-three-d
+        :floor="floor"
+        class="v-lo-map-view__map"
+        @room-click="selectRoom"
+      />
     </component>
-    <q-space />
+    <q-space v-if="!mobile" />
     <div class="v-lo-map-view__info-wrapper column justify-end">
       <q-card
         v-if="selectedRoom"
@@ -78,7 +70,6 @@
 </template>
 
 <script setup lang="ts">
-import VLoMap from 'components/lists/VLoMap.vue';
 import { computed, ref, watch } from 'vue';
 import {
   FloorType, isFloor, locationDescription, vLoRooms, floors,
@@ -86,6 +77,7 @@ import {
 import { useRoute, useRouter } from 'vue-router';
 import VLoOtherRooms from 'components/lists/VLoOtherRooms.vue';
 import { useQuasar } from 'quasar';
+import VLoMapThreeD from 'components/lists/VLoMap3d.vue';
 
 defineProps<{
   mobile?: boolean,
