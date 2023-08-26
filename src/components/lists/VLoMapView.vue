@@ -3,6 +3,7 @@
     v-touch-swipe.vertical="onSwipe"
     class="v-lo-map-view column no-wrap"
   >
+    <q-space v-if="floor === 'other' && mobile" />
     <v-lo-other-rooms
       v-if="floor === 'other'"
       @room-click="selectRoom"
@@ -21,7 +22,7 @@
         @room-click="selectRoom"
       />
     </component>
-    <q-space v-if="!mobile" />
+    <q-space v-if="floor === 'other' || !mobile" />
     <div class="v-lo-map-view__info-wrapper column justify-end">
       <q-card
         v-if="selectedRoom"
