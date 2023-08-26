@@ -20,7 +20,7 @@ export const useFormatter = () => {
     }),
     formatDateTimeDisplay: (date: Temporal.PlainDateTime | Temporal.Instant) => {
       if (date instanceof Temporal.Instant) {
-        date = date.toZonedDateTimeISO(Temporal.Now.timeZone()).toPlainDateTime();
+        date = date.toZonedDateTimeISO(Temporal.Now.timeZoneId()).toPlainDateTime();
       }
       return `${formatDisplay(date.toPlainDate())} ${date.toLocaleString(locale, {
         dateStyle: undefined,

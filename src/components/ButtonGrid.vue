@@ -52,10 +52,10 @@ const props = defineProps<{
   buttons: Button[];
   favouriteAriaLabel?: string;
   maxItems: number;
-  balance?: boolean;
+  balanceRows?: boolean;
 }>();
 
-const itemsPerRow = props.balance ? balance(props.buttons.length, props.maxItems) : props.maxItems;
+const itemsPerRow = props.balanceRows ? balance(props.buttons.length, props.maxItems) : props.maxItems;
 const rows = computed(() => _.chunk(props.buttons, itemsPerRow));
 </script>
 

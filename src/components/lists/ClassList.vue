@@ -13,7 +13,7 @@
       <button-grid
         :max-items="5"
         :buttons="group"
-        balance
+        balance-rows
         favourite-aria-label="Ulubiona"
       />
     </q-card>
