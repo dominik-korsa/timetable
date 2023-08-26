@@ -23,7 +23,7 @@ export default defineComponent({
 
     const router = useRouter();
     const route = useRoute();
-    const client = ref<Client|undefined>();
+    const client = ref<Client | undefined>();
     provide(clientSymbol, client);
     watch(() => route.params[paramNames.tri], (tri: string | string[] | undefined, oldTri) => {
       if (tri === oldTri || tri === undefined) return;
