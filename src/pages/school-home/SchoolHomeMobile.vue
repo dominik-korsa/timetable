@@ -1,7 +1,7 @@
 <template>
   <q-tab-panels
     :model-value="modelValue"
-    class="school-layout__mobile"
+    class="school-layout__mobile bg-transparent"
     swipeable
     animated
     keep-alive

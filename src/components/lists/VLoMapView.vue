@@ -8,10 +8,10 @@
       v-if="floor === 'other'"
       @room-click="selectRoom"
     />
-    <q-card
-      v-else
+    <component
+      :is="mobile ? 'div' : 'q-card'"
       flat
-      :bordered="!mobile"
+      bordered
       class="col-shrink q-pa-sm row justify-center"
     >
       <transition
@@ -27,7 +27,7 @@
           @room-click="selectRoom"
         />
       </transition>
-    </q-card>
+    </component>
     <q-space />
     <div class="v-lo-map-view__info-wrapper column justify-end">
       <q-card
