@@ -222,7 +222,9 @@ export default defineComponent({
 
     return {
       goBack: () => goBack(router, {
-        name: routeNames.schoolUnitList,
+        name: route.name === routeNames.combinedTimetable
+          ? routeNames.schoolHome
+          : routeNames.schoolUnitList,
         params: route.params,
       }),
       offsetDownButton,

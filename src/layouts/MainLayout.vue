@@ -41,6 +41,7 @@ import { useRoute, useRouter } from 'vue-router';
 import _ from 'lodash';
 import { routeNames } from 'src/router/route-constants';
 import ThemePickerButton from 'components/ThemePickerButton.vue';
+import { goBack } from 'src/shared';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -60,9 +61,7 @@ export default defineComponent({
         const backTo = (route.name === routeNames.schoolHome || route.name === routeNames.superSecretSettings)
           ? { name: routeNames.home }
           : { name: routeNames.schoolHome, params: route.params };
-        const resolved = router.resolve(backTo);
-        if (resolved.href === window.history.state.back) router.back();
-        else router.push(backTo);
+        goBack(router, backTo);
       },
       elevateHeader,
     };
