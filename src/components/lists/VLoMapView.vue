@@ -64,7 +64,7 @@
       no-caps
       unelevated
       no-wrap
-      :dense="$q.screen.width < 300"
+      :dense="denseButtons"
       :options="[
         {label: '-1', value: 'dungeons', 'aria-label': 'piwnice'},
         {label: '0', value: 'groundFloor', 'aria-label': 'parter'},
@@ -85,6 +85,7 @@ import {
 } from 'src/api/v-lo-rooms';
 import { useRoute, useRouter } from 'vue-router';
 import VLoOtherRooms from 'components/lists/VLoOtherRooms.vue';
+import { useQuasar } from 'quasar';
 
 defineProps<{
   mobile?: boolean,
@@ -94,6 +95,7 @@ type FloorSelection = FloorType | 'other';
 
 const router = useRouter();
 const route = useRoute();
+const quasar = useQuasar();
 
 const floor = ref<FloorSelection>('groundFloor');
 const floorTransition = ref<'up' | 'down'>('up');
@@ -150,6 +152,8 @@ const onSwipe = (event: { direction: 'down' | 'up' }) => {
   };
   selectFloor(floorMap[floor.value]);
 };
+
+const denseButtons = computed(() => quasar.screen.width < 300);
 </script>
 
 <style lang="scss">
