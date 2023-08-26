@@ -46,12 +46,14 @@
                 v-else-if="lesson.teacherTo"
                 class="timetable-dialog__item-teacher"
                 :to="lesson.teacherTo"
+                :aria-label="`Nauczyciel ${lesson.teacher}`"
               >
                 {{ lesson.teacher }}
               </router-link>
               <div
                 v-else
                 class="timetable-dialog__item-teacher"
+                :aria-label="`Nauczyciel ${lesson.teacher}`"
               >
                 {{ lesson.teacher }}
               </div>

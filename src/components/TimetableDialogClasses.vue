@@ -8,6 +8,7 @@
       <router-link
         v-if="to !== undefined"
         :to="to"
+        :aria-label="`Klasa ${name}`"
       >
         {{ name }}
       </router-link>
