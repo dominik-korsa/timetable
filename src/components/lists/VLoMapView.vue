@@ -49,7 +49,7 @@
       v-else
       flat
       :bordered="!mobile"
-      class="col-shrink q-pa-sm"
+      class="col-shrink q-pa-sm row justify-center"
     >
       <transition
         :name="`slide-${floorTransition}`"
@@ -60,6 +60,7 @@
           :floor="floor"
           :selected-id="selectedRoom?.id"
           viewbox="centered"
+          class="v-lo-map-view__map"
           @room-click="selectRoom"
         />
       </transition>
@@ -211,6 +212,10 @@ const onSwipe = (event: { direction: 'down' | 'up' }) => {
 <style lang="scss">
 .v-lo-map-view {
   touch-action: none;
+
+  .v-lo-map-view__map {
+    max-width: 350px;
+  }
 
   .v-lo-map-view__floor-picker {
     border: 1px solid var(--separator-color);
