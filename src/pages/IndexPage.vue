@@ -99,7 +99,9 @@
       </q-list>
     </q-card>
 
-    <pwa-banner class="q-mb-md" />
+    <!-- TODO: Restore -->
+    <!-- Removed to avoid new installs on old domain -->
+    <!-- <pwa-banner class="q-mb-md" />-->
 
     <build-info />
   </q-page>
@@ -111,7 +113,6 @@ import { RouteLocationRaw } from 'vue-router';
 import { useConfigStore } from 'stores/config';
 import { CacheMode } from 'src/api/requests';
 import BuildInfo from 'components/BuildInfo.vue';
-import PwaBanner from 'components/PwaBanner.vue';
 import { getClient } from 'src/api/client';
 import OptivumTimetablePicker from 'components/OptivumTimetablePicker.vue';
 import { paramNames, routeNames } from 'src/router/route-constants';
@@ -132,7 +133,7 @@ interface FavouriteUnitItem {
 
 export default defineComponent({
   name: 'IndexPage',
-  components: { OptivumTimetablePicker, BuildInfo, PwaBanner },
+  components: { OptivumTimetablePicker, BuildInfo },
   setup() {
     const configStore = useConfigStore();
 
