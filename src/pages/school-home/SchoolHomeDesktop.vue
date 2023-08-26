@@ -1,16 +1,5 @@
 <template>
   <q-page
-    v-if="data === null"
-    padding
-    class="column content-center justify-center"
-  >
-    <q-spinner
-      color="primary"
-      size="64px"
-    />
-  </q-page>
-  <q-page
-    v-else
     padding
     class="school-home__content q-mx-auto column no-wrap"
     :style-fn="styleFn"
@@ -71,7 +60,7 @@ import UnitList from 'components/lists/UnitList.vue';
 import type { Data } from 'layouts/SchoolLayout.vue';
 
 defineProps<{
-  data: Data | null;
+  data: Data;
   isVLo: boolean;
 }>();
 

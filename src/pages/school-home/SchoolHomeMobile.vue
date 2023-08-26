@@ -16,7 +16,7 @@
         class="column q-mx-auto justify-center"
       >
         <class-list
-          :items="data?.classes ?? []"
+          :items="data.classes"
           mobile
           :show-push-banner="isVLo"
         />
@@ -33,7 +33,7 @@
         <unit-list
           class="row-fill"
           unit-type="teacher"
-          :units="data?.teachers ?? []"
+          :units="data.teachers ?? []"
         />
       </q-page>
     </q-tab-panel>
@@ -54,7 +54,7 @@
           v-else
           class="row-fill"
           unit-type="room"
-          :units="data?.rooms ?? []"
+          :units="data.rooms ?? []"
         />
       </q-page>
     </q-tab-panel>
@@ -68,7 +68,7 @@ import UnitList from 'components/lists/UnitList.vue';
 import type { Data } from 'layouts/SchoolLayout.vue';
 
 defineProps<{
-  data: Data | null;
+  data: Data;
   isVLo: boolean;
   modelValue: string;
 }>();

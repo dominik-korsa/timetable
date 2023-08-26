@@ -34,8 +34,24 @@
     </template>
 
     <q-page-container>
+      <q-page
+        v-if="data === null"
+        padding
+        class="column content-center justify-center"
+      >
+        <template v-if="errorMessage !== null">
+          <div class="text-center">
+            {{ errorMessage }}
+          </div>
+        </template>
+        <q-spinner
+          v-else
+          color="primary"
+          size="64px"
+        />
+      </q-page>
       <school-home-desktop
-        v-if="!mobile"
+        v-else-if="!mobile"
         :data="data"
         :is-v-lo="isVLo"
       />
@@ -109,16 +125,20 @@ const mobile = computed(() => quasar.screen.width < 900);
 const tab = ref('classes');
 
 export interface Data {
+  classes: UnitListItem[];
   teachers?: UnitListItem[];
-  classes?: UnitListItem[];
   rooms?: UnitListItem[];
 }
 
+const errorMessage = ref<string | null>(null);
 const data = ref<Data | null>(null);
 watch(() => clientRef.value, async (client) => {
   data.value = null;
   if (client === undefined) return;
+  errorMessage.value = null;
   try {
+    // TODO: When new API is implemented, the failure to load a timetable version
+    // should still allow to display school info
     const unitLists = await client.getUnitLists(CacheMode.LazyUpdate);
     data.value = {
       classes: unitLists.classes,
@@ -134,10 +154,7 @@ watch(() => clientRef.value, async (client) => {
     }
   } catch (error) {
     console.error(error);
-    quasar.notify({
-      type: 'negative',
-      message: 'Nie udało się wczytać listy klas',
-    });
+    errorMessage.value = 'Nie udało się wczytać listy klas';
   }
 }, {
   immediate: true,
