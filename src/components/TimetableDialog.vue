@@ -144,7 +144,6 @@ interface LessonItem extends TableLesson {
   isFavourite: boolean | null | undefined;
   favouriteClick: () => void;
   roomTo: RouteLocationRaw | undefined;
-
   teacherTo: RouteLocationRaw | undefined;
 }
 
@@ -204,8 +203,11 @@ export default defineComponent({
             },
             roomTo: lesson.roomId === undefined ? undefined
               : route.params[paramNames.tri] === 'v-lo' ? {
-                name: routeNames.selectRoom,
-                params: route.params,
+                name: routeNames.schoolUnitList,
+                params: {
+                  ...route.params,
+                  [paramNames.unitType]: 'room',
+                },
                 query: { selected: lesson.roomId },
               } : {
                 name: routeNames.unitTimetable,

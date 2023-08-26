@@ -2,6 +2,8 @@ import { RouteRecordRaw } from 'vue-router';
 import { useConfigStore } from 'stores/config';
 import { paramNames, routeNames } from './route-constants';
 
+const getSchoolLayout = () => import('layouts/SchoolLayout.vue');
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/timetable/:catchAll(.*)*',
@@ -23,8 +25,8 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/IndexPage.vue'),
       },
       {
-        name: routeNames.selectRoom,
-        path: `:${paramNames.tri}(v-lo)/room`,
+        name: routeNames.vLoMap,
+        path: `:${paramNames.tri}(v-lo)/map`,
         component: () => import('pages/SelectRoom.vue'),
         meta: {
           title: 'Mapa pomieszczeń',
@@ -43,7 +45,18 @@ const routes: RouteRecordRaw[] = [
   {
     name: routeNames.schoolHome,
     path: `/:${paramNames.tri}`,
-    component: () => import('layouts/SchoolLayout.vue'),
+    redirect: (location) => ({
+      name: routeNames.schoolUnitList,
+      params: {
+        [paramNames.tri]: location.params[paramNames.tri],
+        [paramNames.unitType]: 'class',
+      },
+    }),
+  },
+  {
+    name: routeNames.schoolUnitList,
+    path: `/:${paramNames.tri}/:${paramNames.unitType}(class|teacher|room)`,
+    component: getSchoolLayout,
   },
   {
     name: routeNames.unitTimetable,
