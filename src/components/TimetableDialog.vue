@@ -139,7 +139,7 @@ import { TableTimeSlot, TableLesson, TableLessonMoment } from 'src/api/common';
 import { weekdayNames } from 'src/shared';
 import TimetableDialogClasses from 'components/TimetableDialogClasses.vue';
 import { RouteLocationRaw, useRoute } from 'vue-router';
-import { paramNames, routeNames } from 'src/router/route-constants';
+import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
 import { useFormatter } from 'src/composables/formatter';
 
 interface LessonItem extends TableLesson {
@@ -207,14 +207,14 @@ export default defineComponent({
               : route.params[paramNames.tri] === 'v-lo' ? {
                 name: routeNames.schoolUnitList,
                 params: {
-                  ...route.params,
+                  ...pickParams(route, 'tri'),
                   [paramNames.unitType]: 'room',
                 },
                 query: { selected: lesson.roomId },
               } : {
                 name: routeNames.unitTimetable,
                 params: {
-                  ...route.params,
+                  ...pickParams(route, 'tri'),
                   [paramNames.unitType]: 'room',
                   [paramNames.unit]: lesson.roomId,
                 },
@@ -222,7 +222,7 @@ export default defineComponent({
             teacherTo: lesson.teacherId === undefined ? undefined : {
               name: routeNames.unitTimetable,
               params: {
-                ...route.params,
+                ...pickParams(route, 'tri'),
                 [paramNames.unitType]: 'teacher',
                 [paramNames.unit]: lesson.teacherId,
               },

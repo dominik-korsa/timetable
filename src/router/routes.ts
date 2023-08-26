@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { useConfigStore } from 'stores/config';
-import { paramNames, routeNames } from './route-constants';
+import { paramNames, pickParams, routeNames } from './route-constants';
 
 const getSchoolLayout = () => import('layouts/SchoolLayout.vue');
 
@@ -48,7 +48,7 @@ const routes: RouteRecordRaw[] = [
     redirect: (location) => ({
       name: routeNames.schoolUnitList,
       params: {
-        [paramNames.tri]: location.params[paramNames.tri],
+        ...pickParams(location, 'tri'),
         [paramNames.unitType]: 'class',
       },
     }),

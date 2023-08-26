@@ -37,7 +37,7 @@ import { computed } from 'vue';
 import { DefaultsMap } from 'src/utils';
 import _ from 'lodash';
 import { useIsFavourite } from 'src/shared';
-import { routeNames } from 'src/router/route-constants';
+import { pickParams, routeNames } from 'src/router/route-constants';
 import ButtonGrid, { Button } from 'components/ButtonGrid.vue';
 import { useRoute } from 'vue-router';
 import PushBanner from 'components/PushBanner.vue';
@@ -88,6 +88,6 @@ const groups = computed(() => {
 
 const combinedRoute = computed(() => ({
   name: routeNames.combinedTimetable,
-  params: route.params,
+  params: pickParams(route, 'tri'),
 }));
 </script>

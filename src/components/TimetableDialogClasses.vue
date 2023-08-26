@@ -22,7 +22,7 @@ import { computed, defineComponent } from 'vue';
 import { PropType } from 'vue/dist/vue';
 import { TableLessonClass } from 'src/api/common';
 import { useRoute } from 'vue-router';
-import { paramNames, routeNames } from 'src/router/route-constants';
+import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
 
 export default defineComponent({
   props: {
@@ -42,7 +42,7 @@ export default defineComponent({
         to: id === undefined ? undefined : {
           name: routeNames.unitTimetable,
           params: {
-            ...route.params,
+            ...pickParams(route, 'tri'),
             [paramNames.unitType]: 'class',
             [paramNames.unit]: id,
           },

@@ -1,3 +1,5 @@
+import { RouteLocation, RouteParams } from 'vue-router';
+
 export const queryNames = {
   date: 'date',
 } as const;
@@ -7,6 +9,16 @@ export const paramNames = {
   unitType: 'unitType',
   unit: 'unit',
 } as const;
+
+export const pickParams = (route: RouteLocation, ...params: (keyof typeof paramNames)[]) => {
+  const result: Partial<RouteParams> = {};
+  params.forEach((param) => {
+    const paramName = paramNames[param];
+    result[paramName] = route.params[paramName];
+    if (result[paramName] === undefined) console.warn(`No value for param ${paramName} in route ${route.fullPath}`);
+  });
+  return result;
+};
 
 export const routeNames = {
   home: Symbol('Home route'),

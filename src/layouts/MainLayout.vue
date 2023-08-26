@@ -39,7 +39,7 @@
 import { computed, defineComponent, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import _ from 'lodash';
-import { routeNames } from 'src/router/route-constants';
+import { pickParams, routeNames } from 'src/router/route-constants';
 import ThemePickerButton from 'components/ThemePickerButton.vue';
 import { goBack } from 'src/shared';
 
@@ -60,7 +60,10 @@ export default defineComponent({
       goBack: () => {
         const backTo = (route.name === routeNames.schoolHome || route.name === routeNames.superSecretSettings)
           ? { name: routeNames.home }
-          : { name: routeNames.schoolHome, params: route.params };
+          : {
+            name: routeNames.schoolHome,
+            params: pickParams(route, 'tri'),
+          };
         goBack(router, backTo);
       },
       elevateHeader,

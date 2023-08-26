@@ -58,7 +58,7 @@
 import { computed, ref } from 'vue';
 import { UnitListItem } from 'src/api/client';
 import { useRoute } from 'vue-router';
-import { paramNames, routeNames } from 'src/router/route-constants';
+import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
 import _ from 'lodash';
 
 const props = defineProps<{
@@ -81,7 +81,7 @@ const items = computed(() => props.units.map((unit) => ({
   to: {
     name: routeNames.unitTimetable,
     params: {
-      ...route.params,
+      ...pickParams(route, 'tri'),
       [paramNames.unitType]: props.unitType,
       [paramNames.unit]: unit.unit,
     },

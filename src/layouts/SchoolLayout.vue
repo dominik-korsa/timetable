@@ -90,7 +90,7 @@
 import SchoolHomeDesktop from 'pages/school-home/SchoolHomeDesktop.vue';
 import { goBack } from 'src/shared';
 import { useRoute, useRouter } from 'vue-router';
-import { paramNames, routeNames } from 'src/router/route-constants';
+import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
 import ThemePickerButton from 'components/ThemePickerButton.vue';
 import { QRouteTabProps, useQuasar } from 'quasar';
 import { computed, ref, watch } from 'vue';
@@ -113,7 +113,7 @@ const tab = computed<string>({
     if (value === route.params[paramNames.unitType]) return;
     router.replace({
       params: {
-        ...route.params,
+        ...pickParams(route, 'tri'),
         [paramNames.unitType]: value,
       },
     });

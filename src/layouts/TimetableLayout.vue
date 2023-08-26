@@ -174,7 +174,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { QBtn } from 'quasar';
 import { useConfigStore } from 'stores/config';
 import ThemePicker from 'components/ThemePicker.vue';
-import { routeNames } from 'src/router/route-constants';
+import { pickParams, routeNames } from 'src/router/route-constants';
 
 export type ChangeOffsetFn = (change: -1|1) => boolean;
 
@@ -221,12 +221,16 @@ export default defineComponent({
     };
 
     return {
-      goBack: () => goBack(router, {
-        name: route.name === routeNames.combinedTimetable
-          ? routeNames.schoolHome
-          : routeNames.schoolUnitList,
-        params: route.params,
-      }),
+      goBack: () => {
+        const backTo = route.name === routeNames.combinedTimetable ? {
+          name: routeNames.schoolHome,
+          params: pickParams(route, 'tri'),
+        } : {
+          name: routeNames.schoolUnitList,
+          params: pickParams(route, 'tri', 'unitType'),
+        };
+        goBack(router, backTo);
+      },
       offsetDownButton,
       offsetUpButton,
       changeOffset,
