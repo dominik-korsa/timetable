@@ -69,10 +69,10 @@ const props = defineProps<{
 const searchValue = ref('');
 
 const emptyMessage = computed(
-  () => `Ta szkoła nie udostępnia planów ${props.unitType === 'teacher' ? 'naczycieli' : 'sal'}`,
+  () => `Ta szkoła nie udostępnia planów ${props.unitType === 'teacher' ? 'nauczycieli' : 'sal'}`,
 );
 const searchMessage = computed(
-  () => `Wyszukaj ${props.unitType === 'teacher' ? 'naczyciela' : 'salę'}`,
+  () => `Wyszukaj ${props.unitType === 'teacher' ? 'nauczyciela' : 'salę'}`,
 );
 
 const route = useRoute();

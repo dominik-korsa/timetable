@@ -57,19 +57,22 @@ const isFavourite = useIsFavourite();
 const route = useRoute();
 
 const groups = computed(() => {
-  const classItems = props.items.map((item): Button => ({
-    key: item.unit,
-    name: item.name,
-    ariaLabel: `Klasa ${item.name}`,
-    isFavourite: isFavourite.value('class', item.unit),
-    to: {
-      name: routeNames.unitTimetable,
-      params: {
-        unitType: 'class',
-        unit: item.unit,
+  const classItems = props.items.map((item): Button => {
+    const classIsFavourite = isFavourite.value('class', item.unit);
+    return ({
+      key: item.unit,
+      name: item.name,
+      ariaLabel: classIsFavourite ? `Ulubiona klasa ${item.name}` : `Klasa ${item.name}`,
+      isFavourite: classIsFavourite,
+      to: {
+        name: routeNames.unitTimetable,
+        params: {
+          unitType: 'class',
+          unit: item.unit,
+        },
       },
-    },
-  }));
+    });
+  });
   const groupMap = new DefaultsMap<number, Button[]>(() => []);
   const remaining: Button[] = [];
   classItems.forEach((item) => {

@@ -17,7 +17,7 @@
         class="button-grid__button col-fill border-r-no-last"
         :to="item.to"
         no-caps
-        :aria-label="`Klasa ${item.name}`"
+        :aria-label="item.ariaLabel"
         :color="item.color"
         @click="item.onClick"
       >
