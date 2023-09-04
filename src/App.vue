@@ -4,6 +4,8 @@
 </template>
 
 <script lang="ts">
+// global: url, tri
+
 import {
   computed, defineComponent, provide, ref, watch,
 } from 'vue';
@@ -12,7 +14,7 @@ import { useConfigStore } from 'stores/config';
 import OldDomainLayout from 'layouts/OldDomainLayout.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Client, clientSymbol, getClient } from 'src/api/client';
-import { paramNames, routeNames } from 'src/router/route-constants';
+import { paramNames } from 'src/router/route-constants';
 
 export default defineComponent({
   name: 'App',
@@ -24,6 +26,31 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const client = ref<Client|undefined>();
+
+    // TODO: Remove
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    global.url = (url: string) => {
+      const encoded = encodeURI(url)
+        .replaceAll(
+          /['?#]/g,
+          (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+        );
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      global.tri(`'${encoded}'`);
+    };
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    global.tri = (tri: string) => {
+      const path = `/${tri}/`;
+      if (path === route.path) return;
+      router.push({
+        path,
+      });
+    };
+
     provide(clientSymbol, client);
     watch(() => route.params[paramNames.tri], (tri: string | string[] | undefined, oldTri) => {
       if (tri === oldTri || tri === undefined) return;
@@ -36,7 +63,8 @@ export default defineComponent({
           type: 'negative',
           message: 'Niepoprawny identyfikator planu lekcji',
         });
-        router.push({ name: routeNames.home });
+        // TODO: Restore
+        // router.push({ name: routeNames.home });
         client.value = undefined;
       }
     }, { immediate: true });

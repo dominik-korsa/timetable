@@ -22,4 +22,6 @@ export const routeNames = {
 
 export const triParam = `:${paramNames.tri}(${triRegex.replaceAll(')', '\\)')})`;
 
+console.log(triParam);
+
 export const getCombinedTimetableUrl = (tri: string, date: string) => `/${tri}/combined?date=${date}`;

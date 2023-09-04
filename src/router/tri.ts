@@ -23,7 +23,7 @@ const city = part('m');
 const commune = part('gm');
 const schoolOrRspo = slug;
 
-const url = '\'[^\']\'';
+const url = '\'[^\']+\'';
 
 const version = '\\+\\d+';
 

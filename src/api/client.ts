@@ -47,26 +47,25 @@ export const useClientRef = () => {
 };
 
 const clientCache = new DefaultsMap<string, Client>((tri: string) => {
-  const parts = tri.split(',');
-  switch (parts[0]) {
-    case 'v-lo': {
-      if (parts.length > 1) throw new Error(`Too many parts in TRI "${tri}"`);
-      return new VLoClient();
-    }
-    case 'o': {
-      if (parts.length !== 4) throw new Error(`Wrong number of parts in TRI "${tri}"`);
-      const [, variant, encodedBaseUrl, encodedListPath] = parts;
-      const baseUrl = bangDecode(encodedBaseUrl);
-      const listPath = bangDecode(encodedListPath);
-      switch (variant) {
-        case '0': return new OptivumClient(baseUrl, listPath);
-        case '1': return new OptivumClient(`http://${baseUrl}`, listPath);
-        case '2': return new OptivumClient(`https://${baseUrl}`, listPath);
-        default: throw new Error(`Unknown variant "${variant}" in TRI ${tri}`);
-      }
+  if (tri === 'v-lo') return new VLoClient();
+  if (tri.startsWith('o,')) {
+    const parts = tri.split(',');
+    if (parts.length !== 4) throw new Error(`Wrong number of parts in TRI "${tri}"`);
+    const [, variant, encodedBaseUrl, encodedListPath] = parts;
+    const baseUrl = bangDecode(encodedBaseUrl);
+    const listPath = bangDecode(encodedListPath);
+    switch (variant) {
+      case '0': return new OptivumClient(baseUrl, listPath);
+      case '1': return new OptivumClient(`http://${baseUrl}`, listPath);
+      case '2': return new OptivumClient(`https://${baseUrl}`, listPath);
+      default: throw new Error(`Unknown second part ${JSON.stringify(variant)} of TRI ${tri}`);
     }
   }
-  throw new Error(`Unknown variant "${parts[0]}" in TRI "${tri}"`);
+  if (tri.startsWith('\'') && tri.endsWith('\'')) {
+    console.log(tri.substring(1, tri.length - 1));
+    throw new Error('URL TRIs are not implemented yet');
+  }
+  throw new Error(`Unknown variant of TRI ${JSON.stringify(tri)}`);
 });
 
 export const getClient = (tri: string) => clientCache.get(tri);
