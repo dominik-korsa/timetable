@@ -5,7 +5,7 @@
     class="v-lo-map"
   >
     <text
-      v-if="!campaign13c"
+      v-if="!noText && !campaign13c"
       x="152"
       y="112"
       class="v-lo-map__floor-number"
@@ -121,7 +121,7 @@
         :d="room.d"
       />
       <foreignObject
-        v-if="room.short"
+        v-if="!noText && room.short"
         :width="room.width*8"
         :height="room.height*8"
         :x="room.x*8"
@@ -228,6 +228,7 @@ export default defineComponent({
       required: false,
       default: undefined,
     },
+    noText: Boolean,
   },
   emits: ['roomClick'],
   setup: (props, { emit }) => {
