@@ -118,13 +118,13 @@ import {
 } from 'src/api/common';
 import { useDocumentListener, useNow } from 'src/utils';
 import _ from 'lodash';
-import TimetableItem from 'components/TimetableItem.vue';
-import SubstitutionsButton from 'components/SubstitutionsButton.vue';
+import TimetableItem from 'components/timetable/TimetableItem.vue';
+import SubstitutionsButton from 'components/timetable/SubstitutionsButton.vue';
 import { useConfigStore } from 'stores/config';
 import { ChangeOffsetFn } from 'layouts/TimetableLayout.vue';
 import { weekdayNames, weekdayNamesShort } from 'src/shared';
 import { useQuasar } from 'quasar';
-import TimeSlotMarkers from 'components/TimeSlotMarkers.vue';
+import TimeSlotMarkers from 'components/timetable/TimeSlotMarkers.vue';
 import { useFormatter } from 'src/composables/formatter';
 
 interface TableItem {

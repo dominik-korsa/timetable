@@ -68,7 +68,7 @@ import { PropType } from 'vue/dist/vue';
 import { computed, defineComponent } from 'vue';
 import { useConfigStore } from 'stores/config';
 import { withOpacity } from 'src/utils';
-import { TableLesson, UnitType } from '../api/common';
+import { TableLesson, UnitType } from 'src/api/common';
 
 export default defineComponent({
   name: 'TimetableItemSingle',

@@ -51,7 +51,7 @@ import {
   computed, defineComponent, PropType, ref,
 } from 'vue';
 import { LessonRange, Substitution, UnitType } from 'src/api/common';
-import SubstitutionInfo from 'components/SubstitutionInfo.vue';
+import SubstitutionInfo from 'components/timetable/SubstitutionInfo.vue';
 import { changesPlural, pluralRules } from 'src/plural';
 
 function formatTimeSignature(range: LessonRange | null): string {

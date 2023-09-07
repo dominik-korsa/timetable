@@ -60,7 +60,7 @@ import {
   computed, defineComponent, PropType,
 } from 'vue';
 import { common } from 'src/utils';
-import TimetableItemSingle from 'components/TimetableItemSingle.vue';
+import TimetableItemSingle from 'components/timetable/TimetableItemSingle.vue';
 import { FavouriteLesson } from 'stores/config';
 import { groupPlural, otherLessonsPlural, pluralRules } from 'src/plural';
 

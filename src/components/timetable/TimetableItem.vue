@@ -46,11 +46,11 @@
 import {
   computed, defineComponent, PropType, ref,
 } from 'vue';
-import TimetableItemSingle from 'components/TimetableItemSingle.vue';
-import TimetableItemMultiple from 'components/TimetableItemMultiple.vue';
+import TimetableItemSingle from 'components/timetable/TimetableItemSingle.vue';
+import TimetableItemMultiple from 'components/timetable/TimetableItemMultiple.vue';
 import { TableTimeSlot, TableLessonMoment, UnitType } from 'src/api/common';
 import { useConfigStore } from 'stores/config';
-import TimetableDialog from 'components/TimetableDialog.vue';
+import TimetableDialog from 'components/timetable/TimetableDialog.vue';
 import { weekdayNames } from 'src/shared';
 
 export default defineComponent({

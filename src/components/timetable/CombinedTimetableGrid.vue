@@ -78,20 +78,20 @@
 </template>
 
 <script lang="ts">
-import { Weekday } from 'src/pages/CombinedTimetable.vue';
 import {
   computed, defineComponent, onMounted, PropType, ref,
 } from 'vue';
 import {
   calculateRows, calculateTimestamps, TableLessonMoment, TableTimeSlot, UnitType,
 } from 'src/api/common';
-import TimetableItem from 'components/TimetableItem.vue';
-import SubstitutionsButton from 'components/SubstitutionsButton.vue';
+import TimetableItem from 'components/timetable/TimetableItem.vue';
+import SubstitutionsButton from 'components/timetable/SubstitutionsButton.vue';
 import { useConfigStore } from 'stores/config';
 import { useClientRef } from 'src/api/client';
 import { useNow } from 'src/utils';
 import _ from 'lodash';
-import TimeSlotMarkers from 'components/TimeSlotMarkers.vue';
+import TimeSlotMarkers from 'components/timetable/TimeSlotMarkers.vue';
+import { Weekday } from 'src/pages/CombinedTimetable.vue';
 
 interface TableItem {
   moment: TableLessonMoment;

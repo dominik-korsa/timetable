@@ -81,7 +81,7 @@ import {
 } from 'src/api/common';
 import { NotInCacheError } from 'src/api/requests';
 import { useQuasar } from 'quasar';
-import CombinedTimetableGrid from 'components/CombinedTimetableGrid.vue';
+import CombinedTimetableGrid from 'components/timetable/CombinedTimetableGrid.vue';
 import { Temporal } from '@js-temporal/polyfill';
 import { useConfigStore } from 'stores/config';
 import { onBeforeRouteLeave } from 'vue-router';

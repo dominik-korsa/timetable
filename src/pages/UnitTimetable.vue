@@ -60,7 +60,7 @@ import {
 } from 'vue';
 import { onBeforeRouteLeave, useRoute } from 'vue-router';
 import { NotInCacheError } from 'src/api/requests';
-import TimetableGrid from 'components/TimetableGrid.vue';
+import TimetableGrid from 'src/components/timetable/TimetableGrid.vue';
 import { useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
 import { Client, useClientRef } from 'src/api/client';

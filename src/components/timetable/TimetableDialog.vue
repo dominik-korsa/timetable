@@ -137,7 +137,7 @@ import { computed, defineComponent, PropType } from 'vue';
 import { FavouriteLesson, useConfigStore } from 'stores/config';
 import { TableTimeSlot, TableLesson, TableLessonMoment } from 'src/api/common';
 import { weekdayNames } from 'src/shared';
-import TimetableDialogClasses from 'components/TimetableDialogClasses.vue';
+import TimetableDialogClasses from 'components/timetable/TimetableDialogClasses.vue';
 import { RouteLocationRaw, useRoute } from 'vue-router';
 import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
 import { useFormatter } from 'src/composables/formatter';
