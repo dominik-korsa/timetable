@@ -71,9 +71,7 @@ a:not(.q-btn):not(.q-item):not(.q-tab) {
 .col-fill, .row-fill {
   flex-grow: 1;
   flex-basis: 0;
-}
-.col-fill {
-  width: 0;
+  flex-shrink: 1;
 }
 .row-fill {
   height: 0;
