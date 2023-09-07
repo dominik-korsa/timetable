@@ -11,46 +11,7 @@
       <optivum-timetable-picker />
     </q-card>
 
-    <router-link
-      :to="vLoTo"
-      class="index-page__v-lo-link q-mb-md"
-      aria-label="Plan Piątego Liceum imienia Augusta Witkowskiego w Krakowie"
-    >
-      <q-card
-        v-ripple
-        class="index-page__v-lo"
-        outlined
-        dark
-        flat
-        aria-hidden="true"
-      >
-        <q-card-section horizontal>
-          <img
-            src="~assets/v-lo.png"
-            alt="Logo V LO"
-            class="index-page__v-lo-logo"
-          >
-          <q-separator
-            vertical
-            dark
-          />
-          <q-card-section class="column justify-center index-page__v-lo-section q-pr-sm">
-            <div class="text-h6 index-page__v-lo-name text-center">
-              V&nbsp;LO
-              <span class="index-page__v-lo-patron">im. Augusta Witkowskiego</span>
-              w&nbsp;Krakowie
-            </div>
-          </q-card-section>
-          <q-card-section class="column justify-center q-pl-none">
-            <q-icon
-              class="index-page__v-lo-arrow"
-              name="arrow_forward"
-              size="sm"
-            />
-          </q-card-section>
-        </q-card-section>
-      </q-card>
-    </router-link>
+    <home-school />
 
     <q-card
       v-if="favouriteUnits !== null && favouriteUnits.length > 0"
@@ -116,6 +77,7 @@ import BuildInfo from 'components/BuildInfo.vue';
 import { getClient } from 'src/api/client';
 import OptivumTimetablePicker from 'components/OptivumTimetablePicker.vue';
 import { paramNames, routeNames } from 'src/router/route-constants';
+import HomeSchool from 'components/HomeSchool.vue';
 
 interface UnitItem {
   key: string;
@@ -133,7 +95,7 @@ interface FavouriteUnitItem {
 
 export default defineComponent({
   name: 'IndexPage',
-  components: { OptivumTimetablePicker, BuildInfo },
+  components: { HomeSchool, OptivumTimetablePicker, BuildInfo },
   setup() {
     const configStore = useConfigStore();
 
@@ -178,10 +140,6 @@ export default defineComponent({
     });
 
     return {
-      vLoTo: {
-        name: routeNames.schoolHome,
-        params: { [paramNames.tri]: 'v-lo' },
-      },
       favouriteUnits,
     };
   },
@@ -204,38 +162,6 @@ export default defineComponent({
 
     .index-page__optivum-picker {
       width: 100%;
-    }
-
-    .index-page__v-lo-link {
-      text-decoration: none;
-      color: inherit;
-
-      .index-page__v-lo {
-        background-color: $v-lo;
-        border: var(--separator-color) solid 1px;
-
-        .index-page__v-lo-logo {
-          height: 110px;
-          max-height: 20vw;
-          aspect-ratio: 1;
-          align-self: center;
-        }
-
-        .index-page__v-lo-section {
-          flex: 1;
-        }
-
-        .index-page__v-lo-name {
-          line-height: 1.8rem;
-          font-size: 1rem;
-        }
-
-        @media (max-width: 375px) {
-          .index-page__v-lo-patron {
-            display: none;
-          }
-        }
-      }
     }
   }
 </style>
