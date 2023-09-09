@@ -45,14 +45,10 @@
         padding
         class="column q-mx-auto justify-center"
       >
-        <!--        <v-lo-map-view-->
-        <!--          v-if="isVLo"-->
-        <!--          class="row-fill"-->
-        <!--          mobile-->
-        <!--        />-->
-        <v-lo-map-disabled
+        <v-lo-map-view
           v-if="isVLo"
           class="row-fill"
+          mobile
         />
         <unit-list
           v-else
@@ -69,7 +65,7 @@
 import ClassList from 'components/lists/ClassList.vue';
 import UnitList from 'components/lists/UnitList.vue';
 import type { Data } from 'layouts/SchoolLayout.vue';
-import VLoMapDisabled from 'components/lists/VLoMapDisabled.vue';
+import VLoMapView from 'components/lists/VLoMapView.vue';
 
 defineProps<{
   data: Data;
