@@ -68,8 +68,8 @@
   </q-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import { useConfigStore } from 'stores/config';
 import { CacheMode } from 'src/api/requests';
@@ -93,56 +93,46 @@ interface FavouriteUnitItem {
   items: UnitItem[];
 }
 
-export default defineComponent({
-  name: 'IndexPage',
-  components: { HomeSchool, OptivumTimetablePicker, BuildInfo },
-  setup() {
-    const configStore = useConfigStore();
+const configStore = useConfigStore();
 
-    const favouriteUnits = ref<FavouriteUnitItem[] | null>(null);
+const favouriteUnits = ref<FavouriteUnitItem[] | null>(null);
 
-    onMounted(async () => {
-      favouriteUnits.value = await Promise.all(
-        Object.entries(configStore.favouriteUnits)
-          .map(async ([tri, units]) => {
-            const client = getClient(tri);
-            const [getUnitName, title] = await Promise.all([
-              client.getUnitNameMapper(CacheMode.CacheFirst),
-              client.getTitle(CacheMode.CacheFirst),
-            ]);
+onMounted(async () => {
+  favouriteUnits.value = await Promise.all(
+    Object.entries(configStore.favouriteUnits)
+      .map(async ([tri, units]) => {
+        const client = getClient(tri);
+        const [getUnitName, title] = await Promise.all([
+          client.getUnitNameMapper(CacheMode.CacheFirst),
+          client.getTitle(CacheMode.CacheFirst),
+        ]);
+        return ({
+          tri,
+          title,
+          subtitle: client.type === 'optivum' ? client.baseUrl : null,
+          items: units.map(({ unitType, unit }) => {
+            const unitName = getUnitName(unitType, unit);
             return ({
-              tri,
-              title,
-              subtitle: client.type === 'optivum' ? client.baseUrl : null,
-              items: units.map(({ unitType, unit }) => {
-                const unitName = getUnitName(unitType, unit);
-                return ({
-                  key: `${unitType}|${unit}`,
-                  name: unitName,
-                  label: `Plan lekcji ${{
-                    class: 'klasy',
-                    room: 'sali',
-                    teacher: 'nauczyciela',
-                  }[unitType]} ${unitName}`,
-                  to: {
-                    name: routeNames.unitTimetable,
-                    params: {
-                      [paramNames.tri]: tri,
-                      [paramNames.unitType]: unitType,
-                      [paramNames.unit]: unit,
-                    },
-                  },
-                });
-              }).sort((lhs, rhs) => lhs.name.localeCompare(rhs.name)),
+              key: `${unitType}|${unit}`,
+              name: unitName,
+              label: `Plan lekcji ${{
+                class: 'klasy',
+                room: 'sali',
+                teacher: 'nauczyciela',
+              }[unitType]} ${unitName}`,
+              to: {
+                name: routeNames.unitTimetable,
+                params: {
+                  [paramNames.tri]: tri,
+                  [paramNames.unitType]: unitType,
+                  [paramNames.unit]: unit,
+                },
+              },
             });
-          }),
-      );
-    });
-
-    return {
-      favouriteUnits,
-    };
-  },
+          }).sort((lhs, rhs) => lhs.name.localeCompare(rhs.name)),
+        });
+      }),
+  );
 });
 </script>
 

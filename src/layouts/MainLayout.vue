@@ -14,7 +14,7 @@
           round
           icon="arrow_back"
           aria-label="Wróć"
-          @click="goBack"
+          @click="goBackClick"
         />
 
         <q-toolbar-title
@@ -35,39 +35,30 @@
   </q-layout>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import _ from 'lodash';
 import { pickParams, routeNames } from 'src/router/route-constants';
 import ThemePickerButton from 'components/ThemePickerButton.vue';
 import { goBack } from 'src/shared';
 
-export default defineComponent({
-  name: 'MainLayout',
-  components: { ThemePickerButton },
-  setup: () => {
-    const route = useRoute();
-    const router = useRouter();
+const route = useRoute();
+const router = useRouter();
 
-    const elevateHeader = ref(false);
-    return {
-      onVScroll: (pos: number) => {
-        elevateHeader.value = pos > 0;
-      },
-      showBack: computed(() => _.last(route.matched)?.name !== routeNames.home),
-      title: computed(() => _.last(route.matched)?.meta?.title),
-      goBack: () => {
-        const backTo = (route.name === routeNames.schoolHome || route.name === routeNames.superSecretSettings)
-          ? { name: routeNames.home }
-          : {
-            name: routeNames.schoolHome,
-            params: pickParams(route, 'tri'),
-          };
-        goBack(router, backTo);
-      },
-      elevateHeader,
+const elevateHeader = ref(false);
+const onVScroll = (pos: number) => {
+  elevateHeader.value = pos > 0;
+};
+const showBack = computed(() => _.last(route.matched)?.name !== routeNames.home);
+const title = computed(() => _.last(route.matched)?.meta?.title);
+const goBackClick = () => {
+  const backTo = (route.name === routeNames.schoolHome || route.name === routeNames.superSecretSettings)
+    ? { name: routeNames.home }
+    : {
+      name: routeNames.schoolHome,
+      params: pickParams(route, 'tri'),
     };
-  },
-});
+  goBack(router, backTo);
+};
 </script>
