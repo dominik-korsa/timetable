@@ -1,6 +1,6 @@
 <template>
   <ul
-    class="time-slot-markers bg-page"
+    class="time-slot-markers bg-page border-r"
     aria-label="Godziny lekcji"
   >
     <li
@@ -11,7 +11,7 @@
       :aria-label="timeSlot.label"
     >
       <div
-        class="time-slot-marker__number"
+        class="time-slot-marker__number rounded-borders bordered"
         aria-hidden="true"
       >
         {{ timeSlot.display }}
@@ -54,7 +54,6 @@ const items = computed(() => props.timeSlots.map((timeSlot) => ({
   grid-template-rows: v-bind(rows);
   display: grid;
   grid-template-columns: 1fr;
-  border-right: solid var(--separator-color) 1px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -74,8 +73,6 @@ const items = computed(() => props.timeSlots.map((timeSlot) => ({
       justify-self: left;
       margin-right: 5px;
       font-size: 1.1rem;
-      border: 1px solid var(--separator-color);
-      border-radius: $generic-border-radius;
       padding: 0 2px;
       text-align: center;
     }

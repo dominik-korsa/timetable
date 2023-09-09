@@ -14,7 +14,7 @@
         />
         <q-btn-toggle
           :model-value="floor"
-          class="select-room__floor-picker"
+          class="select-room__floor-picker bordered"
           toggle-color="primary"
           spread
           no-caps
@@ -262,7 +262,6 @@ export default defineComponent({
   }
 
   .select-room__floor-picker {
-    border: 1px solid var(--separator-color);
     margin-top: 24px;
   }
 

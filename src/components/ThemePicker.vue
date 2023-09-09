@@ -9,7 +9,7 @@
     toggle-color="primary"
     unelevated
     spread
-    class="theme-picker"
+    class="bordered"
     :dense="$q.screen.lt.sm"
     @update:model-value="onSet"
   />
@@ -33,9 +33,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-.theme-picker {
-  border: 1px solid var(--separator-color);
-}
-</style>

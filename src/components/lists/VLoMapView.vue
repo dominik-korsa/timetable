@@ -51,7 +51,7 @@
     </div>
     <q-btn-toggle
       :model-value="floor"
-      class="v-lo-map-view__floor-picker"
+      class="v-lo-map-view__floor-picker bordered"
       toggle-color="primary"
       spread
       no-caps
@@ -155,10 +155,6 @@ const denseButtons = computed(() => quasar.screen.width < 300);
 
   .v-lo-map-view__map {
     max-width: 350px;
-  }
-
-  .v-lo-map-view__floor-picker {
-    border: 1px solid var(--separator-color);
   }
 
   .v-lo-map-view__info-wrapper {

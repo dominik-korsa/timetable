@@ -7,6 +7,7 @@
       <div
         v-for="(items, subject) in groups"
         :key="subject"
+        class="border-b-no-last"
       >
         <div
           class="timetable-dialog__list-header"
@@ -17,7 +18,7 @@
         <q-item
           v-for="(lesson, i) in items"
           :key="i"
-          class="q-px-sm q-py-none timetable-dialog__item"
+          class="q-px-sm q-py-none timetable-dialog__item border-b-no-last"
           role="listitem"
         >
           <q-item-section
@@ -277,18 +278,10 @@ export default defineComponent({
         top: 0;
         margin-top: -$inset;
       }
-
-      &:not(:last-of-type) {
-        border-bottom: var(--separator-color) 1px solid;
-      }
     }
   }
 
   .timetable-dialog__item {
-    &:not(:last-of-type) {
-      border-bottom: var(--separator-color) 1px solid;
-    }
-
     .timetable-dialog__item-top {
       display: flex;
       flex-direction: row;

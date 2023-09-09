@@ -9,7 +9,7 @@
       :debounce="500"
       @scroll="onScroll"
     />
-    <div class="combined-timetable-grid__header bg-page">
+    <div class="combined-timetable-grid__header bg-page border-b">
       <div class="combined-timetable-grid__header-classes">
         <div
           v-for="unit in weekday.units"
@@ -17,7 +17,7 @@
           class="combined-timetable-grid__unit"
         >
           <div
-            class="combined-timetable-grid__unit-name"
+            class="combined-timetable-grid__unit-name rounded-borders"
             :class="{
               'combined-timetable-grid__unit-name--favourite': unit.isFavourite,
             }"
@@ -73,7 +73,7 @@
         />
       </div>
     </div>
-    <div class="combined-timetable-grid__corner bg-page" />
+    <div class="combined-timetable-grid__corner bg-page border-b" />
   </div>
 </template>
 
@@ -201,7 +201,6 @@ $column-gap: 4px;
     align-items: baseline;
     justify-content: space-between;
     z-index: 2;
-    border-bottom: 1px solid var(--separator-color);
     grid-row: 1;
     grid-column: 3;
 
@@ -231,7 +230,6 @@ $column-gap: 4px;
         margin-left: auto;
         margin-right: auto;
         border: 1px solid transparent;
-        border-radius: $generic-border-radius;
         padding: 2px;
         line-height: 1;
 
@@ -279,7 +277,6 @@ $column-gap: 4px;
   .combined-timetable-grid__corner {
     grid-row: 1;
     grid-column: 1;
-    border-bottom: solid var(--separator-color) 1px;
     position: sticky;
     top: -1px;
     margin-top: -1px;

@@ -15,7 +15,7 @@
       <li
         v-for="(header, i) in headers"
         :key="i"
-        class="timetable-grid__header bg-page"
+        class="timetable-grid__header bg-page border-b"
         :class="{
           'timetable-grid__header--dense': gridHeaderDense
         }"
@@ -105,7 +105,7 @@
       </div>
     </div>
 
-    <div class="timetable-grid__corner bg-page" />
+    <div class="timetable-grid__corner bg-page border-b" />
   </div>
 </template>
 
@@ -374,7 +374,6 @@ $timetable-gap: 4px;
 
     .timetable-grid__header {
       grid-row: 1;
-      border-bottom: solid var(--separator-color) 1px;
       padding-right: $timetable-gap;
       font-size: 0.85rem;
       text-align: center;
@@ -466,7 +465,6 @@ $timetable-gap: 4px;
   .timetable-grid__corner {
     grid-row: 1;
     grid-column: 1;
-    border-bottom: solid var(--separator-color) 1px;
     position: sticky;
     top: -1px;
     margin-top: -1px;
