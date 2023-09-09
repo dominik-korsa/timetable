@@ -14,7 +14,7 @@
   "dependencies": {
     "@js-temporal/polyfill": "^0.4.4",
     "@quasar/extras": "^1.16.5",
-    "@wulkanowy/timetable-parser": "^1.5.0",
+    "@wulkanowy/timetable-parser": "^1.6.0",
     "core-js": "^3.32.1",
     "dotenv": "^16.3.1",
     "is-url-superb": "^6.1.0",
