@@ -42,9 +42,10 @@
         :lesson="favouriteLesson"
         :unit-type="unitType"
         show-color
+        class="border-r"
       />
       <div
-        class="timetable-item-multiple__more border-l"
+        class="timetable-item-multiple__more"
         :aria-label="otherGroupsLabel"
       >
         +{{ lessons.length-1 }}
