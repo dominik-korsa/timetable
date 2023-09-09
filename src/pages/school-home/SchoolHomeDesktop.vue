@@ -40,7 +40,7 @@
           v-if="isVLo"
           class="row-fill"
         >
-          <v-lo-map-disabled class="full-height" />
+          <v-lo-map-view class="full-height" />
         </div>
         <unit-list
           v-else
@@ -57,7 +57,7 @@
 import ClassList from 'components/lists/ClassList.vue';
 import UnitList from 'components/lists/UnitList.vue';
 import type { Data } from 'layouts/SchoolLayout.vue';
-import VLoMapDisabled from 'components/lists/VLoMapDisabled.vue';
+import VLoMapView from 'components/lists/VLoMapView.vue';
 
 defineProps<{
   data: Data;
