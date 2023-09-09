@@ -1,0 +1,46 @@
+<template>
+  <div class="timetable-dialog-classes">
+    <template
+      v-for="({ name, to }, i) in items"
+      :key="name"
+    >
+      <span v-if="i > 0">, </span>
+      <router-link
+        v-if="to !== undefined"
+        :to="to"
+        :aria-label="`Klasa ${name}`"
+      >
+        {{ name }}
+      </router-link>
+      <span v-else>{{ name }}</span>
+    </template>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { computed } from 'vue';
+import { TableLessonClass } from 'src/api/common';
+import { useRoute } from 'vue-router';
+import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
+
+const props = defineProps<{
+  classes: TableLessonClass[];
+}>();
+
+const route = useRoute();
+
+const items = computed(() => props.classes.map(({
+  name,
+  id,
+}) => ({
+  name,
+  to: id === undefined ? undefined : {
+    name: routeNames.unitTimetable,
+    params: {
+      ...pickParams(route, 'tri'),
+      [paramNames.unitType]: 'class',
+      [paramNames.unit]: id,
+    },
+  },
+})));
+</script>

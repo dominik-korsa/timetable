@@ -9,7 +9,7 @@
       :debounce="500"
       @scroll="onScroll"
     />
-    <div class="combined-timetable-grid__header bg-page">
+    <div class="combined-timetable-grid__header bg-page border-b">
       <div class="combined-timetable-grid__header-classes">
         <div
           v-for="unit in weekday.units"
@@ -17,7 +17,7 @@
           class="combined-timetable-grid__unit"
         >
           <div
-            class="combined-timetable-grid__unit-name"
+            class="combined-timetable-grid__unit-name rounded-borders"
             :class="{
               'combined-timetable-grid__unit-name--favourite': unit.isFavourite,
             }"
@@ -73,25 +73,23 @@
         />
       </div>
     </div>
-    <div class="combined-timetable-grid__corner bg-page" />
+    <div class="combined-timetable-grid__corner bg-page border-b" />
   </div>
 </template>
 
-<script lang="ts">
-import { Weekday } from 'src/pages/CombinedTimetable.vue';
-import {
-  computed, defineComponent, onMounted, PropType, ref,
-} from 'vue';
+<script lang="ts" setup>
+import { computed, onMounted, ref } from 'vue';
 import {
   calculateRows, calculateTimestamps, TableLessonMoment, TableTimeSlot, UnitType,
 } from 'src/api/common';
-import TimetableItem from 'components/TimetableItem.vue';
-import SubstitutionsButton from 'components/SubstitutionsButton.vue';
+import TimetableItem from 'components/timetable/TimetableItem.vue';
+import SubstitutionsButton from 'components/timetable/SubstitutionsButton.vue';
 import { useConfigStore } from 'stores/config';
 import { useClientRef } from 'src/api/client';
 import { useNow } from 'src/utils';
 import _ from 'lodash';
-import TimeSlotMarkers from 'components/TimeSlotMarkers.vue';
+import TimeSlotMarkers from 'components/timetable/TimeSlotMarkers.vue';
+import { Weekday } from 'src/pages/CombinedTimetable.vue';
 
 interface TableItem {
   moment: TableLessonMoment;
@@ -99,73 +97,57 @@ interface TableItem {
   gridRow: number;
 }
 
-export default defineComponent({
-  name: 'CombinedTimetableGrid',
-  components: { TimeSlotMarkers, SubstitutionsButton, TimetableItem },
-  props: {
-    weekday: {
-      type: Object as PropType<Weekday>,
-      required: true,
-    },
-    timeSlots: {
-      type: Array as PropType<TableTimeSlot[]>,
-      required: true,
-    },
-    isCurrentWeek: Boolean,
-    unitType: {
-      type: String as PropType<UnitType>,
-      required: true,
-    },
-  },
-  setup: (props) => {
-    const config = useConfigStore();
-    const clientRef = useClientRef();
+const props = defineProps<{
+  weekday: Weekday;
+  timeSlots: TableTimeSlot[];
+  isCurrentWeek?: boolean;
+  unitType: UnitType;
+}>();
 
-    const timestamps = computed(() => calculateTimestamps(props.timeSlots, 10));
-    const now = useNow(5000);
+const config = useConfigStore();
+const clientRef = useClientRef();
 
-    const hourPixels = 50;
+const timestamps = computed(() => calculateTimestamps(props.timeSlots, 10));
+const now = useNow(5000);
 
-    const grid = ref<HTMLDivElement>();
-    onMounted(() => {
-      if (!clientRef.value) return;
-      grid.value?.scrollTo({ left: config.getCombinedTimetableScroll(clientRef.value.key) });
-    });
+const hourPixels = 50;
 
-    return {
-      grid,
-      rows: computed(() => calculateRows(timestamps.value, hourPixels)),
-      items: computed(() => props.weekday.units.map(({ moments }) => {
-        const items: TableItem[] = [];
-        moments.forEach((moment, momentIndex) => {
-          if (moment.lessons.length === 0) return;
-          items.push(({
-            gridRow: momentIndex * 2 + 2,
-            moment,
-            timeSlot: props.timeSlots[momentIndex],
-          }));
-        });
-        return items;
-      })),
-      markerPositionPx: computed(() => {
-        if (!props.isCurrentWeek || props.weekday.index !== now.value.dayOfWeek - 1) return null;
-
-        const midnight = now.value.round({ smallestUnit: 'day', roundingMode: 'floor' });
-        const timePosition = (now.value.epochSeconds - midnight.epochSeconds) / 60;
-        if (
-          timePosition < timestamps.value[0]
-          || timePosition > _.last(timestamps.value)!
-        ) return null;
-        return `${((timePosition - timestamps.value[0]) * hourPixels) / 60}px`;
-      }),
-      columnCount: computed(() => props.weekday.units.length),
-      onScroll: (event: { position: { top: number, left: number } }) => {
-        if (!clientRef.value) return;
-        config.setCombinedTimetableScroll(clientRef.value.key, event.position.left);
-      },
-    };
-  },
+const grid = ref<HTMLDivElement>();
+onMounted(() => {
+  if (!clientRef.value) return;
+  grid.value?.scrollTo({ left: config.getCombinedTimetableScroll(clientRef.value.key) });
 });
+
+const rows = computed(() => calculateRows(timestamps.value, hourPixels));
+const items = computed(() => props.weekday.units.map(({ moments }) => {
+  const result: TableItem[] = [];
+  moments.forEach((moment, momentIndex) => {
+    if (moment.lessons.length === 0) return;
+    result.push(({
+      gridRow: momentIndex * 2 + 2,
+      moment,
+      timeSlot: props.timeSlots[momentIndex],
+    }));
+  });
+  return result;
+}));
+
+const markerPositionPx = computed(() => {
+  if (!props.isCurrentWeek || props.weekday.index !== now.value.dayOfWeek - 1) return null;
+
+  const midnight = now.value.round({ smallestUnit: 'day', roundingMode: 'floor' });
+  const timePosition = (now.value.epochSeconds - midnight.epochSeconds) / 60;
+  if (
+    timePosition < timestamps.value[0]
+      || timePosition > _.last(timestamps.value)!
+  ) return null;
+  return `${((timePosition - timestamps.value[0]) * hourPixels) / 60}px`;
+});
+
+const onScroll = (event: { position: { top: number, left: number } }) => {
+  if (!clientRef.value) return;
+  config.setCombinedTimetableScroll(clientRef.value.key, event.position.left);
+};
 </script>
 
 <style lang="scss">
@@ -201,7 +183,6 @@ $column-gap: 4px;
     align-items: baseline;
     justify-content: space-between;
     z-index: 2;
-    border-bottom: 1px solid var(--separator-color);
     grid-row: 1;
     grid-column: 3;
 
@@ -231,7 +212,6 @@ $column-gap: 4px;
         margin-left: auto;
         margin-right: auto;
         border: 1px solid transparent;
-        border-radius: $generic-border-radius;
         padding: 2px;
         line-height: 1;
 
@@ -279,7 +259,6 @@ $column-gap: 4px;
   .combined-timetable-grid__corner {
     grid-row: 1;
     grid-column: 1;
-    border-bottom: solid var(--separator-color) 1px;
     position: sticky;
     top: -1px;
     margin-top: -1px;

@@ -15,7 +15,7 @@
       <li
         v-for="(header, i) in headers"
         :key="i"
-        class="timetable-grid__header bg-page"
+        class="timetable-grid__header bg-page border-b"
         :class="{
           'timetable-grid__header--dense': gridHeaderDense
         }"
@@ -105,26 +105,24 @@
       </div>
     </div>
 
-    <div class="timetable-grid__corner bg-page" />
+    <div class="timetable-grid__corner bg-page border-b" />
   </div>
 </template>
 
-<script lang="ts">
-import {
-  computed, defineComponent, onMounted, PropType, ref,
-} from 'vue';
+<script lang="ts" setup>
+import { computed, onMounted, ref } from 'vue';
 import {
   calculateRows, calculateTimestamps, TableDataWithTimeSlots, TableTimeSlot, TableLessonMoment, Substitution,
 } from 'src/api/common';
 import { useDocumentListener, useNow } from 'src/utils';
 import _ from 'lodash';
-import TimetableItem from 'components/TimetableItem.vue';
-import SubstitutionsButton from 'components/SubstitutionsButton.vue';
+import TimetableItem from 'components/timetable/TimetableItem.vue';
+import SubstitutionsButton from 'components/timetable/SubstitutionsButton.vue';
 import { useConfigStore } from 'stores/config';
 import { ChangeOffsetFn } from 'layouts/TimetableLayout.vue';
 import { weekdayNames, weekdayNamesShort } from 'src/shared';
 import { useQuasar } from 'quasar';
-import TimeSlotMarkers from 'components/TimeSlotMarkers.vue';
+import TimeSlotMarkers from 'components/timetable/TimeSlotMarkers.vue';
 import { useFormatter } from 'src/composables/formatter';
 
 interface TableItem {
@@ -140,185 +138,162 @@ interface Header {
   substitutions: Substitution[] | null;
 }
 
-export default defineComponent({
-  name: 'TimetableGrid',
-  components: {
-    TimeSlotMarkers, SubstitutionsButton, TimetableItem,
-  },
-  props: {
-    data: {
-      type: Object as PropType<TableDataWithTimeSlots>,
-      required: true,
-    },
-    isCurrentWeek: Boolean,
-    changeOffset: {
-      type: Function as PropType<ChangeOffsetFn>,
-      required: true,
-    },
-    dense: Boolean,
-  },
-  setup: (props) => {
-    const config = useConfigStore();
-    const formatter = useFormatter();
-    const quasar = useQuasar();
+const props = defineProps<{
+  data: TableDataWithTimeSlots;
+  isCurrentWeek?: boolean;
+  changeOffset: ChangeOffsetFn,
+  dense?: boolean;
+}>();
 
-    const timestamps = computed(() => calculateTimestamps(props.data.timeSlots, 30));
-    const now = useNow(5000);
+const config = useConfigStore();
+const formatter = useFormatter();
+const quasar = useQuasar();
 
-    const hourPixels = computed(() => (props.dense ? 50 : 55));
+const timestamps = computed(() => calculateTimestamps(props.data.timeSlots, 30));
+const now = useNow(5000);
 
-    const dayIndex = computed(() => {
-      if (!props.isCurrentWeek) return null;
-      if (now.value.dayOfWeek > 5) return null;
-      return now.value.dayOfWeek - 1;
-    });
+const hourPixels = computed(() => (props.dense ? 50 : 55));
 
-    const markerPosition = computed(() => {
-      if (dayIndex.value === null) return null;
-
-      const midnight = now.value.round({ smallestUnit: 'day', roundingMode: 'floor' });
-
-      const timePosition = (now.value.epochSeconds - midnight.epochSeconds) / 60;
-      if (
-        timePosition < timestamps.value[0]
-        || timePosition > _.last(timestamps.value)!
-      ) return null;
-      return {
-        dayIndex: dayIndex.value,
-        offset: ((timePosition - timestamps.value[0]) * hourPixels.value) / 60,
-      };
-    });
-
-    const lessonItems = computed(() => props.data.lessons.map((day) => {
-      const items: TableItem[] = [];
-      day.forEach((moment, momentIndex) => {
-        if (moment.lessons.length === 0) return;
-        items.push({
-          moment,
-          timeSlot: props.data.timeSlots[momentIndex],
-          gridRow: momentIndex * 2 + 2,
-        });
-      });
-      return items;
-    }));
-
-    const headers = computed<Header[]>(() => {
-      const headersValue = props.data.headers;
-      const adequateWeekdayNames = (props.dense && quasar.screen.width <= 500) ? weekdayNamesShort : weekdayNames;
-      if (headersValue === null) {
-        return adequateWeekdayNames.map((name) => ({
-          name,
-          date: null,
-          label: name,
-          substitutions: null,
-        }));
-      }
-
-      return adequateWeekdayNames.map((name, index) => {
-        const header = headersValue[index];
-        return ({
-          name,
-          date: formatter.formatDisplay(header.date),
-          label: `${name}, ${formatter.formatLabel(header.date)}`,
-          substitutions: header.substitutions,
-        });
-      });
-    });
-
-    const daysEl = ref<HTMLDivElement>();
-    const headersEl = ref<HTMLDivElement>();
-
-    onMounted(() => {
-      if (!daysEl.value || dayIndex.value === null) return;
-      const dayItems = daysEl.value.getElementsByClassName('timetable-grid__day');
-      if (!dayItems) return;
-      const item = dayItems[dayIndex.value];
-      item?.scrollIntoView({
-        inline: 'start',
-      });
-    });
-
-    const wrapper = ref<HTMLDivElement>();
-    useDocumentListener('keydown', (event) => {
-      if (!wrapper.value) return;
-
-      if (event.code === 'Home') {
-        event.preventDefault();
-        wrapper.value.scrollTo({ left: 0, behavior: 'smooth' });
-        return;
-      }
-      if (event.code === 'End') {
-        event.preventDefault();
-        wrapper.value.scrollTo({ left: wrapper.value.scrollWidth, behavior: 'smooth' });
-        return;
-      }
-
-      const mode: readonly [-1|1, boolean] | undefined = ({
-        BracketLeft: [-1, true],
-        BracketRight: [1, true],
-        PageDown: [-1, true],
-        PageUp: [1, true],
-        ArrowLeft: [-1, event.ctrlKey],
-        ArrowRight: [1, event.ctrlKey],
-      } as const)[event.code];
-
-      if (mode === undefined) return;
-      event.preventDefault();
-      const [direction, skip] = mode;
-      const maxScroll = wrapper.value.scrollWidth - wrapper.value.clientWidth;
-      if (skip
-        || (direction === 1 && wrapper.value.scrollLeft >= maxScroll - 3)
-        || (direction === -1 && wrapper.value.scrollLeft <= 3)
-      ) {
-        if (!props.changeOffset(direction)) return;
-        if (!skip && direction === 1) {
-          wrapper.value.scrollTo({ left: 0, behavior: 'smooth' });
-        }
-        if (!skip && direction === -1) {
-          wrapper.value.scrollTo({ left: wrapper.value.scrollWidth, behavior: 'smooth' });
-        }
-        return;
-      }
-
-      const gridDays = wrapper.value.querySelector('.timetable-grid__days') as HTMLDivElement;
-      const gridDaysBoundingBox = gridDays.getBoundingClientRect();
-      const columnCount = parseInt(getComputedStyle(wrapper.value).getPropertyValue('--column-count'), 10);
-      const columnWidth = gridDaysBoundingBox.width / columnCount;
-      const dayPos = wrapper.value.scrollLeft / columnWidth + direction * 0.05;
-      const newDayPos = (direction === -1) ? Math.floor(dayPos) : Math.ceil(dayPos);
-      wrapper.value.scrollTo({ left: newDayPos * columnWidth, behavior: 'smooth' });
-    });
-
-    const focusLesson = (weekday: number) => {
-      const day = daysEl.value?.getElementsByClassName('timetable-grid__day')[weekday];
-      if (!day) return;
-      ((day.querySelector('.timetable-item') ?? day) as HTMLElement).focus();
-    };
-
-    const focusHeader = (weekday: number) => {
-      (
-        headersEl.value
-          ?.querySelectorAll('.timetable-grid__header .timetable-grid__header-content')
-          ?.[weekday] as HTMLElement | undefined
-      )?.focus();
-    };
-
-    return {
-      config,
-      daysEl,
-      headersEl,
-      rows: computed(() => calculateRows(timestamps.value, hourPixels.value)),
-      markerPosition,
-      markerOffsetPx: computed(() => `${markerPosition.value?.offset ?? 0}px`),
-      lessonItems,
-      headers,
-      gridWrapper: wrapper,
-      gridHeaderDense: computed(() => props.dense && quasar.screen.width < 650),
-      focusLesson,
-      focusHeader,
-    };
-  },
+const dayIndex = computed(() => {
+  if (!props.isCurrentWeek) return null;
+  if (now.value.dayOfWeek > 5) return null;
+  return now.value.dayOfWeek - 1;
 });
+
+const rows = computed(() => calculateRows(timestamps.value, hourPixels.value));
+
+const markerPosition = computed(() => {
+  if (dayIndex.value === null) return null;
+
+  const midnight = now.value.round({ smallestUnit: 'day', roundingMode: 'floor' });
+
+  const timePosition = (now.value.epochSeconds - midnight.epochSeconds) / 60;
+  if (
+    timePosition < timestamps.value[0]
+      || timePosition > _.last(timestamps.value)!
+  ) return null;
+  return {
+    dayIndex: dayIndex.value,
+    offset: ((timePosition - timestamps.value[0]) * hourPixels.value) / 60,
+  };
+});
+
+const markerOffsetPx = computed(() => `${markerPosition.value?.offset ?? 0}px`);
+
+const lessonItems = computed(() => props.data.lessons.map((day) => {
+  const items: TableItem[] = [];
+  day.forEach((moment, momentIndex) => {
+    if (moment.lessons.length === 0) return;
+    items.push({
+      moment,
+      timeSlot: props.data.timeSlots[momentIndex],
+      gridRow: momentIndex * 2 + 2,
+    });
+  });
+  return items;
+}));
+
+const headers = computed<Header[]>(() => {
+  const headersValue = props.data.headers;
+  const adequateWeekdayNames = (props.dense && quasar.screen.width <= 500) ? weekdayNamesShort : weekdayNames;
+  if (headersValue === null) {
+    return adequateWeekdayNames.map((name) => ({
+      name,
+      date: null,
+      label: name,
+      substitutions: null,
+    }));
+  }
+
+  return adequateWeekdayNames.map((name, index) => {
+    const header = headersValue[index];
+    return ({
+      name,
+      date: formatter.formatDisplay(header.date),
+      label: `${name}, ${formatter.formatLabel(header.date)}`,
+      substitutions: header.substitutions,
+    });
+  });
+});
+
+const daysEl = ref<HTMLDivElement>();
+const headersEl = ref<HTMLDivElement>();
+
+onMounted(() => {
+  if (!daysEl.value || dayIndex.value === null) return;
+  const dayItems = daysEl.value.getElementsByClassName('timetable-grid__day');
+  if (!dayItems) return;
+  const item = dayItems[dayIndex.value];
+  item?.scrollIntoView({
+    inline: 'start',
+  });
+});
+
+const wrapper = ref<HTMLDivElement>();
+useDocumentListener('keydown', (event) => {
+  if (!wrapper.value) return;
+
+  if (event.code === 'Home') {
+    event.preventDefault();
+    wrapper.value.scrollTo({ left: 0, behavior: 'smooth' });
+    return;
+  }
+  if (event.code === 'End') {
+    event.preventDefault();
+    wrapper.value.scrollTo({ left: wrapper.value.scrollWidth, behavior: 'smooth' });
+    return;
+  }
+
+  const mode: readonly [-1|1, boolean] | undefined = ({
+    BracketLeft: [-1, true],
+    BracketRight: [1, true],
+    PageDown: [-1, true],
+    PageUp: [1, true],
+    ArrowLeft: [-1, event.ctrlKey],
+    ArrowRight: [1, event.ctrlKey],
+  } as const)[event.code];
+
+  if (mode === undefined) return;
+  event.preventDefault();
+  const [direction, skip] = mode;
+  const maxScroll = wrapper.value.scrollWidth - wrapper.value.clientWidth;
+  if (skip
+      || (direction === 1 && wrapper.value.scrollLeft >= maxScroll - 3)
+      || (direction === -1 && wrapper.value.scrollLeft <= 3)
+  ) {
+    if (!props.changeOffset(direction)) return;
+    if (!skip && direction === 1) {
+      wrapper.value.scrollTo({ left: 0, behavior: 'smooth' });
+    }
+    if (!skip && direction === -1) {
+      wrapper.value.scrollTo({ left: wrapper.value.scrollWidth, behavior: 'smooth' });
+    }
+    return;
+  }
+
+  const gridDays = wrapper.value.querySelector('.timetable-grid__days') as HTMLDivElement;
+  const gridDaysBoundingBox = gridDays.getBoundingClientRect();
+  const columnCount = parseInt(getComputedStyle(wrapper.value).getPropertyValue('--column-count'), 10);
+  const columnWidth = gridDaysBoundingBox.width / columnCount;
+  const dayPos = wrapper.value.scrollLeft / columnWidth + direction * 0.05;
+  const newDayPos = (direction === -1) ? Math.floor(dayPos) : Math.ceil(dayPos);
+  wrapper.value.scrollTo({ left: newDayPos * columnWidth, behavior: 'smooth' });
+});
+
+const gridHeaderDense = computed(() => props.dense && quasar.screen.width < 650);
+
+const focusLesson = (weekday: number) => {
+  const day = daysEl.value?.getElementsByClassName('timetable-grid__day')[weekday];
+  if (!day) return;
+  ((day.querySelector('.timetable-item') ?? day) as HTMLElement).focus();
+};
+
+const focusHeader = (weekday: number) => {
+  (headersEl.value
+    ?.querySelectorAll('.timetable-grid__header .timetable-grid__header-content')
+    ?.[weekday] as HTMLElement | undefined
+  )?.focus();
+};
 </script>
 
 <style lang="scss">
@@ -374,7 +349,6 @@ $timetable-gap: 4px;
 
     .timetable-grid__header {
       grid-row: 1;
-      border-bottom: solid var(--separator-color) 1px;
       padding-right: $timetable-gap;
       font-size: 0.85rem;
       text-align: center;
@@ -466,7 +440,6 @@ $timetable-gap: 4px;
   .timetable-grid__corner {
     grid-row: 1;
     grid-column: 1;
-    border-bottom: solid var(--separator-color) 1px;
     position: sticky;
     top: -1px;
     margin-top: -1px;

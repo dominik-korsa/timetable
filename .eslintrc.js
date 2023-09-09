@@ -103,9 +103,7 @@ module.exports = {
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-console': process.env.NODE_ENV === 'production' ? ['error', {
-      allow: ['warn', 'error']
-    }] : ['off'],
+    'no-console': process.env.NODE_ENV === 'production' ? ['warn'] : ['off'],
 
     'no-undef': 'off',
     'default-case': 'off',
@@ -113,7 +111,9 @@ module.exports = {
     'consistent-return': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     'no-underscore-dangle': 'off',
-    'max-len': ['error', { code: 120 }]
+    'max-len': ['error', { code: 120 }],
+    'no-spaced-func': ['off'],
+    'func-call-spacing': ['off']
   },
 
   overrides: [

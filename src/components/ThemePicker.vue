@@ -9,33 +9,20 @@
     toggle-color="primary"
     unelevated
     spread
-    class="theme-picker"
+    class="bordered"
     :dense="$q.screen.lt.sm"
-    @update:model-value="onSet"
+    @update:model-value="setValue"
   />
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import { useConfigStore } from 'stores/config';
 
-export default defineComponent({
-  name: 'ThemePicker',
-  setup: () => {
-    const config = useConfigStore();
+const config = useConfigStore();
 
-    return ({
-      value: computed(() => config.dark),
-      onSet: (value: boolean | 'auto') => {
-        config.setDark(value);
-      },
-    });
-  },
-});
+const value = computed(() => config.dark);
+const setValue = (newValue: boolean | 'auto') => {
+  config.setDark(newValue);
+};
 </script>
-
-<style lang="scss">
-.theme-picker {
-  border: 1px solid var(--separator-color);
-}
-</style>

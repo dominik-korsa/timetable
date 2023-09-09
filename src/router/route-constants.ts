@@ -1,3 +1,4 @@
+import { RouteLocation, RouteParams } from 'vue-router';
 import { triRegex } from 'src/router/tri';
 
 export const queryNames = {
@@ -10,10 +11,21 @@ export const paramNames = {
   unit: 'unit',
 } as const;
 
+export const pickParams = (route: RouteLocation, ...params: (keyof typeof paramNames)[]) => {
+  const result: Partial<RouteParams> = {};
+  params.forEach((param) => {
+    const paramName = paramNames[param];
+    result[paramName] = route.params[paramName];
+    if (result[paramName] === undefined) console.warn(`No value for param ${paramName} in route ${route.fullPath}`);
+  });
+  return result;
+};
+
 export const routeNames = {
   home: Symbol('Home route'),
-  selectClass: Symbol('Select class route'),
-  selectRoom: Symbol('Select room route'),
+  schoolHome: Symbol('School home route'),
+  schoolUnitList: Symbol('School unit list route'),
+  vLoMap: Symbol('V LO map route'),
   unitTimetable: Symbol('Unit timetable route'),
   combinedTimetable: Symbol('Combined timetable route'),
   campaign: Symbol('Campaign route'),

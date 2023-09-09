@@ -46,13 +46,19 @@
   </q-dialog>
 </template>
 
-<script lang="ts">
-import {
-  computed, defineComponent, PropType, ref,
-} from 'vue';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
 import { LessonRange, Substitution, UnitType } from 'src/api/common';
-import SubstitutionInfo from 'components/SubstitutionInfo.vue';
+import SubstitutionInfo from 'components/timetable/SubstitutionInfo.vue';
 import { changesPlural, pluralRules } from 'src/plural';
+
+const props = defineProps<{
+  substitutions: Substitution[],
+  small?: boolean;
+  block?: boolean;
+  unitName: string;
+  unitType: UnitType;
+}>();
 
 function formatTimeSignature(range: LessonRange | null): string {
   if (range === null) return 'Cały dzień';
@@ -60,42 +66,24 @@ function formatTimeSignature(range: LessonRange | null): string {
   return `${range.first} - ${range.last}`;
 }
 
-export default defineComponent({
-  components: { SubstitutionInfo },
-  props: {
-    substitutions: {
-      type: Array as PropType<Substitution[]>,
-      required: true,
-    },
-    small: Boolean,
-    block: Boolean,
-    unitName: {
-      type: String,
-      required: true,
-    },
-    unitType: {
-      type: String as PropType<UnitType>,
-      required: true,
-    },
-  },
-  setup: (props) => ({
-    title: computed(() => `Zastępstwa ${{
-      class: 'dla klasy',
-      teacher: 'dla nauczyciela',
-      room: 'w sali',
-    }[props.unitType]} ${props.unitName}`),
-    dialogVisible: ref(false),
-    items: computed(() => {
-      const substitutions = [...props.substitutions];
-      substitutions.sort((a, b) => (a.lessons?.first ?? -1) - (b.lessons?.first ?? -1));
-      return substitutions.map((change) => ({
-        info: change.info,
-        timeSignature: formatTimeSignature(change.lessons),
-      }));
-    }),
-    changesText: computed(() => (changesPlural[pluralRules.select(props.substitutions.length)])),
-  }),
+const title = computed(() => `Zastępstwa ${{
+  class: 'dla klasy',
+  teacher: 'dla nauczyciela',
+  room: 'w sali',
+}[props.unitType]} ${props.unitName}`);
+
+const dialogVisible = ref(false);
+
+const items = computed(() => {
+  const substitutions = [...props.substitutions];
+  substitutions.sort((a, b) => (a.lessons?.first ?? -1) - (b.lessons?.first ?? -1));
+  return substitutions.map((change) => ({
+    info: change.info,
+    timeSignature: formatTimeSignature(change.lessons),
+  }));
 });
+
+const changesText = computed(() => (changesPlural[pluralRules.select(props.substitutions.length)]));
 </script>
 
 <style lang="scss">

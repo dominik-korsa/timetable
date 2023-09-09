@@ -5,7 +5,7 @@
     class="v-lo-map"
   >
     <text
-      v-if="!campaign13c"
+      v-if="!noText && !campaign13c"
       x="152"
       y="112"
       class="v-lo-map__floor-number"
@@ -121,7 +121,7 @@
         :d="room.d"
       />
       <foreignObject
-        v-if="room.short"
+        v-if="!noText && room.short"
         :width="room.width*8"
         :height="room.height*8"
         :x="room.x*8"
@@ -202,74 +202,58 @@
         </div>
       </foreignObject>
     </g>
-
-    <g
-      v-if="campaignDrzwi && floor === 'groundFloor'"
-      transform="translate(196, 212)"
-      class="v-lo-map__crown"
-    >
-      <path
-        d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z"
-      />
-    </g>
   </svg>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import {
   floorNames, floorRooms, FloorType,
 } from 'src/api/v-lo-rooms';
-import { computed, defineComponent, PropType } from 'vue';
+import { computed } from 'vue';
 
-export default defineComponent({
-  props: {
-    floor: {
-      type: String as PropType<FloorType>,
-      required: true,
-    },
-    viewbox: {
-      type: String as PropType<'default' | 'reduced-height' | 'centered'>,
-      required: false,
-      default: 'default',
-    },
-    campaign13c: Boolean,
-    campaignDrzwi: Boolean,
-    selectedId: {
-      type: String,
-      required: false,
-      default: undefined,
-    },
-  },
-  emits: ['roomClick'],
-  setup: (props, { emit }) => {
-    const rooms = computed(() => floorRooms[props.floor]);
-    return ({
-      rooms,
-      floorNumber: computed(() => ({
-        dungeons: '-1',
-        groundFloor: '0',
-        firstFloor: '+1',
-        secondFloor: '+2',
-      }[props.floor])),
-      floorName: computed(() => floorNames[props.floor]),
-      viewboxValue: computed(() => ({
-        default: '-4 -36 296 288',
-        'reduced-height': '-4 12 296 242',
-        centered: '-4 -36 312 288',
-      }[props.viewbox])),
-      onRoomClick: (id: string) => {
-        emit('roomClick', id);
-      },
-      selectedRoomEntrances: computed(() => {
-        if (props.selectedId === undefined) return [];
-        return rooms.value.find((room) => room.id === props.selectedId)?.entrances?.map((entrance, index) => ({
-          ...entrance,
-          id: `${props.selectedId}:${index}`,
-        })) ?? [];
-      }),
-    });
-  },
+const props = withDefaults(defineProps<{
+  floor: FloorType;
+  viewbox?: 'default' | 'reduced-height' | 'centered';
+  campaign13c?: boolean;
+  selectedId?: string | undefined;
+  noText?: boolean;
+}>(), {
+  viewbox: 'default',
+  selectedId: undefined,
 });
+
+const emit = defineEmits<{
+  (e: 'room-click', roomId: string): void;
+}>();
+
+const rooms = computed(() => floorRooms[props.floor]);
+
+const floorNumber = computed(() => ({
+  dungeons: '-1',
+  groundFloor: '0',
+  firstFloor: '+1',
+  secondFloor: '+2',
+}[props.floor]));
+
+const floorName = computed(() => floorNames[props.floor]);
+
+const viewboxValue = computed(() => ({
+  default: '-4 -36 296 288',
+  'reduced-height': '-4 12 296 242',
+  centered: '-4 -36 312 288',
+}[props.viewbox]));
+
+const selectedRoomEntrances = computed(() => {
+  if (props.selectedId === undefined) return [];
+  return rooms.value.find((room) => room.id === props.selectedId)?.entrances?.map((entrance, index) => ({
+    ...entrance,
+    id: `${props.selectedId}:${index}`,
+  })) ?? [];
+});
+
+const onRoomClick = (id: string) => {
+  emit('room-click', id);
+};
 </script>
 
 <style lang="scss">
@@ -439,17 +423,6 @@ export default defineComponent({
       margin-top: 8px;
       white-space: nowrap;
       font-size: 1.3em;
-    }
-  }
-
-  .v-lo-map__crown {
-    user-select: none;
-    pointer-events: none;
-
-    path {
-      fill: $amber;
-      stroke: black;
-      stroke-width: 1px;
     }
   }
 }

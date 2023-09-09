@@ -57,8 +57,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
 import { typed } from 'src/utils';
 import { useConfigStore } from 'stores/config';
 import { useQuasar } from 'quasar';
@@ -74,49 +74,43 @@ interface NetlifyBuildInfo {
   siteName: string,
 }
 
-export default defineComponent({
-  name: 'BuildInfo',
-  setup: () => {
-    const config = useConfigStore();
-    const formatter = useFormatter();
-    const quasar = useQuasar();
+const config = useConfigStore();
+const formatter = useFormatter();
+const quasar = useQuasar();
 
-    const buildTime = Temporal.Instant.from(process.env.BUILD_TIME as string);
-    let buildTimeClickCount = 0;
+const buildTime = Temporal.Instant.from(process.env.BUILD_TIME as string);
+let buildTimeClickCount = 0;
 
-    const justUnlocked = ref(false);
+const justUnlocked = ref(false);
 
-    return {
-      config,
-      buildTimeDisplay: computed(() => formatter.formatDateTimeDisplay(buildTime)),
-      buildTimeLabel: computed(() => formatter.formatDateTimeLabel(buildTime)),
-      buildInfo: process.env.DEPLOY_ID === undefined ? null : typed<NetlifyBuildInfo>({
-        deployId: process.env.DEPLOY_ID,
-        commitRef: process.env.COMMIT_REF as string,
-        repositoryUrl: process.env.REPOSITORY_URL as string,
-        siteName: process.env.SITE_NAME as string,
-        branch: process.env.BRANCH as string,
-      }),
-      buildTimeClick: () => {
-        if (config.superSecretSettingsEnabled) return;
-        buildTimeClickCount += 1;
-        if (buildTimeClickCount < 5) return;
-        config.setSuperSecretSettings(true);
-        quasar.notify({
-          message: 'Włączono Super Secret Settings',
-        });
-        justUnlocked.value = true;
-        setTimeout(() => {
-          justUnlocked.value = false;
-        }, 1000);
-      },
-      onSourceCodeLinkClick: (event: MouseEvent) => {
-        if (justUnlocked.value)event.preventDefault();
-      },
-      superSecretSettingsTo: { name: routeNames.superSecretSettings },
-    };
-  },
+const buildTimeDisplay = computed(() => formatter.formatDateTimeDisplay(buildTime));
+const buildTimeLabel = computed(() => formatter.formatDateTimeLabel(buildTime));
+const buildInfo = process.env.DEPLOY_ID === undefined ? null : typed<NetlifyBuildInfo>({
+  deployId: process.env.DEPLOY_ID,
+  commitRef: process.env.COMMIT_REF as string,
+  repositoryUrl: process.env.REPOSITORY_URL as string,
+  siteName: process.env.SITE_NAME as string,
+  branch: process.env.BRANCH as string,
 });
+
+const superSecretSettingsTo = { name: routeNames.superSecretSettings };
+
+const buildTimeClick = () => {
+  if (config.superSecretSettingsEnabled) return;
+  buildTimeClickCount += 1;
+  if (buildTimeClickCount < 5) return;
+  config.setSuperSecretSettings(true);
+  quasar.notify({
+    message: 'Włączono Super Secret Settings',
+  });
+  justUnlocked.value = true;
+  setTimeout(() => {
+    justUnlocked.value = false;
+  }, 1000);
+};
+const onSourceCodeLinkClick = (event: MouseEvent) => {
+  if (justUnlocked.value)event.preventDefault();
+};
 </script>
 
 <style lang="scss">

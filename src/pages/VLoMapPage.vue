@@ -9,13 +9,12 @@
         <v-lo-map
           :floor="floor"
           :selected-id="selectedRoom?.id"
-          :campaign-drzwi="campaignDrzwi"
           viewbox="centered"
           @room-click="selectRoom"
         />
         <q-btn-toggle
           :model-value="floor"
-          class="select-room__floor-picker"
+          class="select-room__floor-picker bordered"
           toggle-color="primary"
           spread
           no-caps
@@ -42,7 +41,6 @@
           floor="groundFloor"
           class="select-room__floor select-room__floor--ground"
           :selected-id="selectedRoom?.id"
-          :campaign-drzwi="campaignDrzwi"
           @room-click="selectRoom"
         />
         <v-lo-map
@@ -62,7 +60,7 @@
       </div>
       <div class="select-room__other">
         <div
-          v-for="room in otherRooms"
+          v-for="room in otherRoomList"
           :key="room.id"
           tabindex="0"
           role="button"
@@ -109,62 +107,48 @@
   </q-page>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { computed, ref, watch } from 'vue';
+import VLoMap from 'components/lists/VLoMap.vue';
 import {
-  computed, defineComponent, ref, watch,
-} from 'vue';
-import VLoMap from 'components/VLoMap.vue';
-import {
-  FloorType, otherRooms, locationDescription, vLoRooms, isFloor,
+  FloorType, locationDescription, vLoRooms, isFloor, otherRoomList,
 } from 'src/api/v-lo-rooms';
 import { useRoute, useRouter } from 'vue-router';
 
-export default defineComponent({
-  components: { VLoMap },
-  setup: () => {
-    const router = useRouter();
-    const route = useRoute();
+const router = useRouter();
+const route = useRoute();
 
-    const floor = ref<FloorType>('groundFloor');
-    const selectedRoom = computed(() => {
-      const room = vLoRooms.find((e) => e.id === route.query.selected);
-      if (!room) return undefined;
-      return {
-        ...room,
-        description: locationDescription[room.location],
-      };
-    });
-
-    watch(() => selectedRoom.value, (value) => {
-      if (!value) return;
-      if (isFloor(value.location)) floor.value = value.location;
-    }, { immediate: true });
-
-    const selectRoom = (id: string | undefined) => {
-      router.replace({
-        query: {
-          ...route.query,
-          selected: id,
-        },
-      });
-    };
-    return ({
-      otherRooms,
-      floor,
-      selectedRoom,
-      selectRoom,
-      selectFloor: (value: FloorType) => {
-        floor.value = value;
-        if (selectedRoom.value
-          && isFloor(selectedRoom.value.location)
-          && selectedRoom.value.location !== value
-        ) selectRoom(undefined);
-      },
-      styleFn: (topMargin: number, height: number) => ({ height: `${height - topMargin}px` }),
-      campaignDrzwi: computed(() => route.query.campaign === 'drzwi'),
-    });
-  },
+const floor = ref<FloorType>('groundFloor');
+const selectedRoom = computed(() => {
+  const room = vLoRooms.find((e) => e.id === route.query.selected);
+  if (!room) return undefined;
+  return {
+    ...room,
+    description: locationDescription[room.location],
+  };
 });
+
+watch(() => selectedRoom.value, (value) => {
+  if (!value) return;
+  if (isFloor(value.location)) floor.value = value.location;
+}, { immediate: true });
+
+const selectRoom = (id: string | undefined) => {
+  router.replace({
+    query: {
+      ...route.query,
+      selected: id,
+    },
+  });
+};
+const selectFloor = (value: FloorType) => {
+  floor.value = value;
+  if (selectedRoom.value
+      && isFloor(selectedRoom.value.location)
+      && selectedRoom.value.location !== value
+  ) selectRoom(undefined);
+};
+const styleFn = (topMargin: number, height: number) => ({ height: `${height - topMargin}px` });
 </script>
 
 <style lang="scss">
@@ -265,7 +249,6 @@ export default defineComponent({
   }
 
   .select-room__floor-picker {
-    border: 1px solid var(--separator-color);
     margin-top: 24px;
   }
 

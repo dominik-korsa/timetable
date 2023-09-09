@@ -68,10 +68,9 @@
     </template>
   </timetable-layout>
 </template>
-<script lang="ts">
-import {
-  computed, defineComponent, ref, watch,
-} from 'vue';
+
+<script lang="ts" setup>
+import { computed, ref, watch } from 'vue';
 import {
   useIsFavourite, weekdayNames, weekdayNamesShort, useSyncedOffset,
 } from 'src/shared';
@@ -81,7 +80,7 @@ import {
 } from 'src/api/common';
 import { NotInCacheError } from 'src/api/requests';
 import { useQuasar } from 'quasar';
-import CombinedTimetableGrid from 'components/CombinedTimetableGrid.vue';
+import CombinedTimetableGrid from 'components/timetable/CombinedTimetableGrid.vue';
 import { Temporal } from '@js-temporal/polyfill';
 import { useConfigStore } from 'stores/config';
 import { onBeforeRouteLeave } from 'vue-router';
@@ -101,174 +100,162 @@ export interface Weekday {
   }[];
 }
 
-export default defineComponent({
-  components: { CombinedTimetableGrid, TimetableLayout },
-  setup: () => {
-    const clientRef = useClientRef();
-    const quasar = useQuasar();
-    const config = useConfigStore();
-    const formatter = useFormatter();
-    const isFavourite = useIsFavourite();
+const clientRef = useClientRef();
+const quasar = useQuasar();
+const config = useConfigStore();
+const formatter = useFormatter();
+const isFavourite = useIsFavourite();
 
-    const data = ref<AllClassesLessons | null>(null);
-    const errorMessage = ref<string | null>(null);
-    const isLoading = ref(true);
+const data = ref<AllClassesLessons | null>(null);
+const errorMessage = ref<string | null>(null);
+const isLoading = ref(true);
 
-    let refreshId = 0;
+let refreshId = 0;
 
-    const { offset, disposeOffset, offsetDisposed } = useSyncedOffset(
-      () => clientRef.value === undefined || !clientRef.value.supportsOffsets,
-    );
-    onBeforeRouteLeave(() => {
-      disposeOffset();
-    });
+const { offset, disposeOffset, offsetDisposed } = useSyncedOffset(
+  () => clientRef.value === undefined || !clientRef.value.supportsOffsets,
+);
+onBeforeRouteLeave(() => {
+  disposeOffset();
+});
 
-    const dataRef = computed(() => {
-      if (clientRef.value === undefined) return null;
-      if (offsetDisposed.value) return null;
-      return ({
-        client: clientRef.value,
-        monday: offset.value.monday,
-      });
-    });
+const dataRef = computed(() => {
+  if (clientRef.value === undefined) return null;
+  if (offsetDisposed.value) return null;
+  return ({
+    client: clientRef.value,
+    monday: offset.value.monday,
+  });
+});
 
-    watch(
-      dataRef,
-      async (value, prevValue) => {
-        if (value === null) return;
-        if (prevValue && value.client === prevValue.client && value.monday.equals(prevValue.monday)) return;
+watch(
+  dataRef,
+  async (value, prevValue) => {
+    if (value === null) return;
+    if (prevValue && value.client === prevValue.client && value.monday.equals(prevValue.monday)) return;
 
-        isLoading.value = true;
-        refreshId += 1;
-        const currId = refreshId;
-        const clearTimeoutId = setTimeout(() => {
-          if (currId !== refreshId) return;
-          data.value = null;
-        }, 750);
-        errorMessage.value = null;
-
-        let cacheFailed = false;
-        try {
-          const cachedData = await value.client.getLessonsOfAllClasses(true, value.monday);
-          if (currId !== refreshId) return;
-          data.value = cachedData;
-          clearTimeout(clearTimeoutId);
-        } catch (error) {
-          cacheFailed = true;
-          if (!(error instanceof NotInCacheError)) console.warn(error);
-        }
-
-        try {
-          const networkData = await value.client.getLessonsOfAllClasses(false, value.monday);
-          if (currId !== refreshId) return;
-          clearTimeout(clearTimeoutId);
-          data.value = networkData;
-        } catch (error) {
-          console.error(error);
-          clearTimeout(clearTimeoutId);
-          if (currId !== refreshId) return;
-          if (cacheFailed) errorMessage.value = 'Nie udało się wczytać planu lekcji';
-          else {
-            quasar.notify({
-              type: 'negative',
-              message: 'Nie udało się wczytać aktualnego planu lekcji, wyświetlanie zapisanej wersji',
-            });
-          }
-        }
-        isLoading.value = false;
-      },
-      { immediate: true },
-    );
-
-    const retryLoad = async () => {
-      if (dataRef.value === null) return;
+    isLoading.value = true;
+    refreshId += 1;
+    const currId = refreshId;
+    const clearTimeoutId = setTimeout(() => {
+      if (currId !== refreshId) return;
       data.value = null;
-      errorMessage.value = null;
-      try {
-        data.value = await dataRef.value.client.getLessonsOfAllClasses(false, dataRef.value.monday);
-      } catch (error) {
-        console.error(error);
-        errorMessage.value = 'Nie udało się wczytać planu lekcji';
+    }, 750);
+    errorMessage.value = null;
+
+    let cacheFailed = false;
+    try {
+      const cachedData = await value.client.getLessonsOfAllClasses(true, value.monday);
+      if (currId !== refreshId) return;
+      data.value = cachedData;
+      clearTimeout(clearTimeoutId);
+    } catch (error) {
+      cacheFailed = true;
+      if (!(error instanceof NotInCacheError)) console.warn(error);
+    }
+
+    try {
+      const networkData = await value.client.getLessonsOfAllClasses(false, value.monday);
+      if (currId !== refreshId) return;
+      clearTimeout(clearTimeoutId);
+      data.value = networkData;
+    } catch (error) {
+      console.error(error);
+      clearTimeout(clearTimeoutId);
+      if (currId !== refreshId) return;
+      if (cacheFailed) errorMessage.value = 'Nie udało się wczytać planu lekcji';
+      else {
+        quasar.notify({
+          type: 'negative',
+          message: 'Nie udało się wczytać aktualnego planu lekcji, wyświetlanie zapisanej wersji',
+        });
       }
-    };
+    }
+    isLoading.value = false;
+  },
+  { immediate: true },
+);
 
-    const weekdays = computed<Weekday[] | null>(() => {
-      if (data.value === null) return null;
-      const { units } = data.value;
-      return weekdayNames.map((weekdayName, index) => ({
-        name: weekdayName,
-        index,
-        units: units.map(({
-          lessons, unit, unitName, unitType, headers,
-        }) => ({
-          unitType,
-          unit,
-          unitName,
-          moments: lessons[index],
-          substitutions: headers?.[index]?.substitutions ?? [],
-          isFavourite: isFavourite.value(unitType, unit),
-        })),
-      }));
-    });
+const retryLoad = async () => {
+  if (dataRef.value === null) return;
+  data.value = null;
+  errorMessage.value = null;
+  try {
+    data.value = await dataRef.value.client.getLessonsOfAllClasses(false, dataRef.value.monday);
+  } catch (error) {
+    console.error(error);
+    errorMessage.value = 'Nie udało się wczytać planu lekcji';
+  }
+};
 
-    const isStartup = computed(
-      () => config.startupUnit !== null
+const weekdays = computed<Weekday[] | null>(() => {
+  if (data.value === null) return null;
+  const { units } = data.value;
+  return weekdayNames.map((weekdayName, index) => ({
+    name: weekdayName,
+    index,
+    units: units.map(({
+      lessons, unit, unitName, unitType, headers,
+    }) => ({
+      unitType,
+      unit,
+      unitName,
+      moments: lessons[index],
+      substitutions: headers?.[index]?.substitutions ?? [],
+      isFavourite: isFavourite.value(unitType, unit),
+    })),
+  }));
+});
+
+const isStartup = computed(
+  () => config.startupUnit !== null
         && dataRef.value !== null
         && config.startupUnit.tri === dataRef.value.client.tri
         && config.startupUnit.unitType === 'combined',
-    );
+);
 
-    return {
-      offsetId: computed({
-        set: (value: string) => {
-          offset.value.monday = Temporal.PlainDate.from(value);
-        },
-        get: () => offset.value.monday.toString(),
-      }),
-      offset,
-      retryLoad,
-      isStartup,
-      onStartupToggle: () => {
-        if (!dataRef.value) return;
-        config.setStartupTable(isStartup.value ? null : {
-          tri: dataRef.value.client.tri,
-          unitType: 'combined',
-        });
-      },
-      isLoading,
-      data,
-      errorMessage,
-      weekdays,
-      tabPanels: computed(() => {
-        const names = quasar.screen.lt.sm ? weekdayNamesShort : weekdayNames;
-        if (offset.value.const) {
-          return [{
-            id: offset.value.monday.toString(),
-            tabs: names.map((name, weekdayIndex) => ({
-              name,
-              label: weekdayNames[weekdayIndex],
-              date: null,
-            })),
-          }];
-        }
-        return [
-          offset.value.monday.subtract({ weeks: 1 }),
-          offset.value.monday,
-          offset.value.monday.add({ weeks: 1 }),
-        ].map((monday) => ({
-          id: monday.toString(),
-          tabs: names.map((name, weekdayIndex) => {
-            const date = monday.add({ days: weekdayIndex });
-            return ({
-              name,
-              date: formatter.formatDisplay(date),
-              label: `${weekdayNames[weekdayIndex]}, ${formatter.formatLabel(date)}`,
-            });
-          }),
-        }));
-      }),
-    };
+const offsetId = computed({
+  set: (value: string) => {
+    offset.value.monday = Temporal.PlainDate.from(value);
   },
+  get: () => offset.value.monday.toString(),
+});
+
+const onStartupToggle = () => {
+  if (!dataRef.value) return;
+  config.setStartupTable(isStartup.value ? null : {
+    tri: dataRef.value.client.tri,
+    unitType: 'combined',
+  });
+};
+
+const tabPanels = computed(() => {
+  const names = quasar.screen.lt.sm ? weekdayNamesShort : weekdayNames;
+  if (offset.value.const) {
+    return [{
+      id: offset.value.monday.toString(),
+      tabs: names.map((name, weekdayIndex) => ({
+        name,
+        label: weekdayNames[weekdayIndex],
+        date: null,
+      })),
+    }];
+  }
+  return [
+    offset.value.monday.subtract({ weeks: 1 }),
+    offset.value.monday,
+    offset.value.monday.add({ weeks: 1 }),
+  ].map((monday) => ({
+    id: monday.toString(),
+    tabs: names.map((name, weekdayIndex) => {
+      const date = monday.add({ days: weekdayIndex });
+      return ({
+        name,
+        date: formatter.formatDisplay(date),
+        label: `${weekdayNames[weekdayIndex]}, ${formatter.formatLabel(date)}`,
+      });
+    }),
+  }));
 });
 </script>
 

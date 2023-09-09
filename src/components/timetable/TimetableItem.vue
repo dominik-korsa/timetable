@@ -1,9 +1,7 @@
 <template>
-  <q-card
+  <div
     v-ripple
-    flat
-    bordered
-    class="timetable-item"
+    class="timetable-item rounded-borders bordered relative-position"
     :class="{
       'timetable-item--hidden': favourite === null
     }"
@@ -39,55 +37,36 @@
         @close="dialogVisible = false"
       />
     </q-dialog>
-  </q-card>
+  </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import {
-  computed, defineComponent, PropType, ref,
+  computed, ref,
 } from 'vue';
-import TimetableItemSingle from 'components/TimetableItemSingle.vue';
-import TimetableItemMultiple from 'components/TimetableItemMultiple.vue';
+import TimetableItemSingle from 'components/timetable/TimetableItemSingle.vue';
+import TimetableItemMultiple from 'components/timetable/TimetableItemMultiple.vue';
 import { TableTimeSlot, TableLessonMoment, UnitType } from 'src/api/common';
 import { useConfigStore } from 'stores/config';
-import TimetableDialog from 'components/TimetableDialog.vue';
+import TimetableDialog from 'components/timetable/TimetableDialog.vue';
 import { weekdayNames } from 'src/shared';
 
-export default defineComponent({
-  name: 'TimetableItem',
-  components: { TimetableDialog, TimetableItemMultiple, TimetableItemSingle },
-  props: {
-    moment: {
-      type: Object as PropType<TableLessonMoment>,
-      required: true,
-    },
-    small: Boolean,
-    timeSlot: {
-      type: Object as PropType<TableTimeSlot>,
-      required: true,
-    },
-    unitType: {
-      type: String as PropType<UnitType>,
-      required: true,
-    },
-  },
-  setup: (props) => {
-    const config = useConfigStore();
-    const favourite = computed(() => config.favouriteLessons[`${props.moment.umid}|#`]);
-    return ({
-      favourite,
-      dialogVisible: ref(false),
-      description: computed(
-        () => {
-          const text = `${weekdayNames[props.moment.weekday]}, `
-            + `godzina ${props.timeSlot.begin}. `
-            + `Lekcja numer ${props.timeSlot.display}.`;
-          if (favourite.value === null) return `Lekcja ukryta. ${text}`;
-          return text;
-        },
-      ),
-    });
-  },
+const props = defineProps<{
+  moment: TableLessonMoment,
+  small?: boolean,
+  timeSlot: TableTimeSlot,
+  unitType: UnitType,
+}>();
+
+const config = useConfigStore();
+const favourite = computed(() => config.favouriteLessons[`${props.moment.umid}|#`]);
+const dialogVisible = ref(false);
+const description = computed(() => {
+  const text = `${weekdayNames[props.moment.weekday]}, `
+      + `godzina ${props.timeSlot.begin}. `
+      + `Lekcja numer ${props.timeSlot.display}.`;
+  if (favourite.value === null) return `Lekcja ukryta. ${text}`;
+  return text;
 });
 </script>
 

@@ -7,6 +7,7 @@
       <div
         v-for="(items, subject) in groups"
         :key="subject"
+        class="border-b-no-last"
       >
         <div
           class="timetable-dialog__list-header"
@@ -17,7 +18,7 @@
         <q-item
           v-for="(lesson, i) in items"
           :key="i"
-          class="q-px-sm q-py-none timetable-dialog__item"
+          class="q-px-sm q-py-none timetable-dialog__item border-b-no-last"
           role="listitem"
         >
           <q-item-section
@@ -46,12 +47,14 @@
                 v-else-if="lesson.teacherTo"
                 class="timetable-dialog__item-teacher"
                 :to="lesson.teacherTo"
+                :aria-label="`Nauczyciel ${lesson.teacher}`"
               >
                 {{ lesson.teacher }}
               </router-link>
               <div
                 v-else
                 class="timetable-dialog__item-teacher"
+                :aria-label="`Nauczyciel ${lesson.teacher}`"
               >
                 {{ lesson.teacher }}
               </div>
@@ -130,119 +133,109 @@
   </q-card>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, PropType } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import { FavouriteLesson, useConfigStore } from 'stores/config';
 import { TableTimeSlot, TableLesson, TableLessonMoment } from 'src/api/common';
 import { weekdayNames } from 'src/shared';
-import TimetableDialogClasses from 'components/TimetableDialogClasses.vue';
+import TimetableDialogClasses from 'components/timetable/TimetableDialogClasses.vue';
 import { RouteLocationRaw, useRoute } from 'vue-router';
-import { paramNames, routeNames } from 'src/router/route-constants';
+import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
 import { useFormatter } from 'src/composables/formatter';
 
 interface LessonItem extends TableLesson {
   isFavourite: boolean | null | undefined;
   favouriteClick: () => void;
   roomTo: RouteLocationRaw | undefined;
-
   teacherTo: RouteLocationRaw | undefined;
 }
 
-export default defineComponent({
-  name: 'TimetableDialog',
-  components: { TimetableDialogClasses },
-  props: {
-    moment: {
-      type: Object as PropType<TableLessonMoment>,
-      required: true,
-    },
-    timeSlot: {
-      type: Object as PropType<TableTimeSlot>,
-      required: true,
-    },
-    favourite: {
-      type: [Object] as PropType<FavouriteLesson | null | undefined>,
-      required: false,
-      default: undefined,
-    },
-    isVLo: Boolean,
-  },
-  emits: ['close'],
-  setup: (props, { emit }) => {
-    const config = useConfigStore();
-    const formatter = useFormatter();
-    const route = useRoute();
+const props = defineProps<{
+  moment: TableLessonMoment;
+  timeSlot: TableTimeSlot;
+  favourite?: FavouriteLesson | null | undefined;
+  isVLo?: boolean;
+}>();
 
-    const setFavourite = (value: FavouriteLesson | null | undefined) => {
-      config.setFavourite(`${props.moment.umid}|#`, value);
-    };
+const emit = defineEmits(['close']);
 
-    return ({
-      hideClick: () => {
-        if (props.favourite !== null) emit('close');
-        setFavourite(props.favourite === null ? undefined : null);
-      },
-      many: computed(() => props.moment.lessons.length > 1),
-      groups: computed(() => {
-        const groups: Record<string, LessonItem[]> = {};
-        props.moment.lessons.forEach((lesson) => {
-          const isFavourite = props.favourite
-            && props.favourite.group === lesson.group?.key
-            && props.favourite.subject === lesson.subject;
-          if (!(lesson.subject in groups)) groups[lesson.subject] = [];
-          groups[lesson.subject].push({
-            ...lesson,
-            isFavourite,
-            favouriteClick: isFavourite ? () => {
-              setFavourite(undefined);
-            } : () => {
-              setFavourite({
-                subject: lesson.subject,
-                group: lesson.group?.key,
-              });
-              emit('close');
-            },
-            roomTo: lesson.roomId === undefined ? undefined
-              : route.params[paramNames.tri] === 'v-lo' ? {
-                name: routeNames.selectRoom,
-                params: route.params,
-                query: { selected: lesson.roomId },
-              } : {
-                name: routeNames.unitTimetable,
-                params: {
-                  ...route.params,
-                  [paramNames.unitType]: 'room',
-                  [paramNames.unit]: lesson.roomId,
-                },
-              },
-            teacherTo: lesson.teacherId === undefined ? undefined : {
-              name: routeNames.unitTimetable,
-              params: {
-                ...route.params,
-                [paramNames.unitType]: 'teacher',
-                [paramNames.unit]: lesson.teacherId,
-              },
-            },
-          });
+const config = useConfigStore();
+const formatter = useFormatter();
+const route = useRoute();
+
+const setFavourite = (value: FavouriteLesson | null | undefined) => {
+  config.setFavourite(`${props.moment.umid}|#`, value);
+};
+
+const hideClick = () => {
+  if (props.favourite !== null) emit('close');
+  setFavourite(props.favourite === null ? undefined : null);
+};
+
+const many = computed(() => props.moment.lessons.length > 1);
+
+const groups = computed(() => {
+  const result: Record<string, LessonItem[]> = {};
+  props.moment.lessons.forEach((lesson) => {
+    const isFavourite = props.favourite
+        && props.favourite.group === lesson.group?.key
+        && props.favourite.subject === lesson.subject;
+    if (!(lesson.subject in result)) result[lesson.subject] = [];
+    result[lesson.subject].push({
+      ...lesson,
+      isFavourite,
+      favouriteClick: isFavourite ? () => {
+        setFavourite(undefined);
+      } : () => {
+        setFavourite({
+          subject: lesson.subject,
+          group: lesson.group?.key,
         });
-        return groups;
-      }),
-      timeSlotLabel: computed(() => formatter.formatTimeSlotLabel(props.timeSlot)),
-      date: computed(() => {
-        const weekdayName = weekdayNames[props.moment.weekday];
-        if (!props.moment.date) {
-          return {
-            display: weekdayName,
-            label: weekdayName,
-          };
-        }
-        return {
-          display: `${weekdayName}, ${formatter.formatDisplay(props.moment.date)}`,
-          label: `${weekdayName}, ${formatter.formatLabel(props.moment.date)}`,
-        };
-      }),
+        emit('close');
+      },
+      roomTo: lesson.roomId === undefined ? undefined
+        : route.params[paramNames.tri] === 'v-lo' ? {
+          name: routeNames.schoolUnitList,
+          params: {
+            ...pickParams(route, 'tri'),
+            [paramNames.unitType]: 'room',
+          },
+          query: { selected: lesson.roomId },
+        } : {
+          name: routeNames.unitTimetable,
+          params: {
+            ...pickParams(route, 'tri'),
+            [paramNames.unitType]: 'room',
+            [paramNames.unit]: lesson.roomId,
+          },
+        },
+      teacherTo: lesson.teacherId === undefined ? undefined : {
+        name: routeNames.unitTimetable,
+        params: {
+          ...pickParams(route, 'tri'),
+          [paramNames.unitType]: 'teacher',
+          [paramNames.unit]: lesson.teacherId,
+        },
+      },
     });
-  },
+  });
+  return result;
+});
+
+const timeSlotLabel = computed(() => formatter.formatTimeSlotLabel(props.timeSlot));
+
+const date = computed(() => {
+  const weekdayName = weekdayNames[props.moment.weekday];
+  if (!props.moment.date) {
+    return {
+      display: weekdayName,
+      label: weekdayName,
+    };
+  }
+  return {
+    display: `${weekdayName}, ${formatter.formatDisplay(props.moment.date)}`,
+    label: `${weekdayName}, ${formatter.formatLabel(props.moment.date)}`,
+  };
 });
 </script>
 
@@ -273,18 +266,10 @@ export default defineComponent({
         top: 0;
         margin-top: -$inset;
       }
-
-      &:not(:last-of-type) {
-        border-bottom: var(--separator-color) 1px solid;
-      }
     }
   }
 
   .timetable-dialog__item {
-    &:not(:last-of-type) {
-      border-bottom: var(--separator-color) 1px solid;
-    }
-
     .timetable-dialog__item-top {
       display: flex;
       flex-direction: row;

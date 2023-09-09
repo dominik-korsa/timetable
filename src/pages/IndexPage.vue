@@ -11,46 +11,7 @@
       <optivum-timetable-picker />
     </q-card>
 
-    <router-link
-      :to="vLoTo"
-      class="index-page__v-lo-link q-mb-md"
-      aria-label="Plan Piątego Liceum imienia Augusta Witkowskiego w Krakowie"
-    >
-      <q-card
-        v-ripple
-        class="index-page__v-lo"
-        outlined
-        dark
-        flat
-        aria-hidden="true"
-      >
-        <q-card-section horizontal>
-          <img
-            src="~assets/v-lo.png"
-            alt="Logo V LO"
-            class="index-page__v-lo-logo"
-          >
-          <q-separator
-            vertical
-            dark
-          />
-          <q-card-section class="column justify-center index-page__v-lo-section q-pr-sm">
-            <div class="text-h6 index-page__v-lo-name text-center">
-              V&nbsp;LO
-              <span class="index-page__v-lo-patron">im. Augusta Witkowskiego</span>
-              w&nbsp;Krakowie
-            </div>
-          </q-card-section>
-          <q-card-section class="column justify-center q-pl-none">
-            <q-icon
-              class="index-page__v-lo-arrow"
-              name="arrow_forward"
-              size="sm"
-            />
-          </q-card-section>
-        </q-card-section>
-      </q-card>
-    </router-link>
+    <home-school />
 
     <q-card
       v-if="favouriteUnits !== null && favouriteUnits.length > 0"
@@ -99,22 +60,24 @@
       </q-list>
     </q-card>
 
-    <pwa-banner class="q-mb-md" />
+    <!-- TODO: Restore -->
+    <!-- Removed to avoid new installs on old domain -->
+    <!-- <pwa-banner class="q-mb-md" />-->
 
     <build-info />
   </q-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import { useConfigStore } from 'stores/config';
 import { CacheMode } from 'src/api/requests';
 import BuildInfo from 'components/BuildInfo.vue';
-import PwaBanner from 'components/PwaBanner.vue';
 import { getClient } from 'src/api/client';
 import OptivumTimetablePicker from 'components/OptivumTimetablePicker.vue';
 import { paramNames, routeNames } from 'src/router/route-constants';
+import HomeSchool from 'components/HomeSchool.vue';
 
 interface UnitItem {
   key: string;
@@ -130,60 +93,46 @@ interface FavouriteUnitItem {
   items: UnitItem[];
 }
 
-export default defineComponent({
-  name: 'IndexPage',
-  components: { OptivumTimetablePicker, BuildInfo, PwaBanner },
-  setup() {
-    const configStore = useConfigStore();
+const configStore = useConfigStore();
 
-    const favouriteUnits = ref<FavouriteUnitItem[] | null>(null);
+const favouriteUnits = ref<FavouriteUnitItem[] | null>(null);
 
-    onMounted(async () => {
-      favouriteUnits.value = await Promise.all(
-        Object.entries(configStore.favouriteUnits)
-          .map(async ([tri, units]) => {
-            const client = getClient(tri);
-            const [getUnitName, title] = await Promise.all([
-              client.getUnitNameMapper(CacheMode.CacheFirst),
-              client.getTitle(CacheMode.CacheFirst),
-            ]);
+onMounted(async () => {
+  favouriteUnits.value = await Promise.all(
+    Object.entries(configStore.favouriteUnits)
+      .map(async ([tri, units]) => {
+        const client = getClient(tri);
+        const [getUnitName, title] = await Promise.all([
+          client.getUnitNameMapper(CacheMode.CacheFirst),
+          client.getTitle(CacheMode.CacheFirst),
+        ]);
+        return ({
+          tri,
+          title,
+          subtitle: client.type === 'optivum' ? client.baseUrl : null,
+          items: units.map(({ unitType, unit }) => {
+            const unitName = getUnitName(unitType, unit);
             return ({
-              tri,
-              title,
-              subtitle: client.type === 'optivum' ? client.baseUrl : null,
-              items: units.map(({ unitType, unit }) => {
-                const unitName = getUnitName(unitType, unit);
-                return ({
-                  key: `${unitType}|${unit}`,
-                  name: unitName,
-                  label: `Plan lekcji ${{
-                    class: 'klasy',
-                    room: 'sali',
-                    teacher: 'nauczyciela',
-                  }[unitType]} ${unitName}`,
-                  to: {
-                    name: routeNames.unitTimetable,
-                    params: {
-                      [paramNames.tri]: tri,
-                      [paramNames.unitType]: unitType,
-                      [paramNames.unit]: unit,
-                    },
-                  },
-                });
-              }).sort((lhs, rhs) => lhs.name.localeCompare(rhs.name)),
+              key: `${unitType}|${unit}`,
+              name: unitName,
+              label: `Plan lekcji ${{
+                class: 'klasy',
+                room: 'sali',
+                teacher: 'nauczyciela',
+              }[unitType]} ${unitName}`,
+              to: {
+                name: routeNames.unitTimetable,
+                params: {
+                  [paramNames.tri]: tri,
+                  [paramNames.unitType]: unitType,
+                  [paramNames.unit]: unit,
+                },
+              },
             });
-          }),
-      );
-    });
-
-    return {
-      vLoTo: {
-        name: routeNames.selectClass,
-        params: { [paramNames.tri]: 'v-lo' },
-      },
-      favouriteUnits,
-    };
-  },
+          }).sort((lhs, rhs) => lhs.name.localeCompare(rhs.name)),
+        });
+      }),
+  );
 });
 </script>
 
@@ -203,38 +152,6 @@ export default defineComponent({
 
     .index-page__optivum-picker {
       width: 100%;
-    }
-
-    .index-page__v-lo-link {
-      text-decoration: none;
-      color: inherit;
-
-      .index-page__v-lo {
-        background-color: $v-lo;
-        border: var(--separator-color) solid 1px;
-
-        .index-page__v-lo-logo {
-          height: 110px;
-          max-height: 20vw;
-          aspect-ratio: 1;
-          align-self: center;
-        }
-
-        .index-page__v-lo-section {
-          flex: 1;
-        }
-
-        .index-page__v-lo-name {
-          line-height: 1.8rem;
-          font-size: 1rem;
-        }
-
-        @media (max-width: 375px) {
-          .index-page__v-lo-patron {
-            display: none;
-          }
-        }
-      }
     }
   }
 </style>

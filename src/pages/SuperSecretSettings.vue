@@ -25,35 +25,29 @@
   </q-page>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import { useConfigStore } from 'stores/config';
 
-export default defineComponent({
-  setup: () => {
-    const config = useConfigStore();
+const config = useConfigStore();
 
-    return ({
-      settings: [
-        {
-          label: 'Scroll snap',
-          value: computed(() => config.scrollSnap),
-          set: config.setScrollSnap,
-        },
-        {
-          label: 'Używaj formatu ISO8601',
-          value: computed(() => config.iso8601),
-          set: config.setISO8601,
-        },
-        {
-          label: 'Przycisk Super Secret Settings',
-          value: computed(() => config.superSecretSettingsEnabled),
-          set: config.setSuperSecretSettings,
-        },
-      ],
-    });
+const settings = [
+  {
+    label: 'Scroll snap',
+    value: computed(() => config.scrollSnap),
+    set: config.setScrollSnap,
   },
-});
+  {
+    label: 'Używaj formatu ISO8601',
+    value: computed(() => config.iso8601),
+    set: config.setISO8601,
+  },
+  {
+    label: 'Przycisk Super Secret Settings',
+    value: computed(() => config.superSecretSettingsEnabled),
+    set: config.setSuperSecretSettings,
+  },
+];
 </script>
 
 <style lang="scss">

@@ -1,4 +1,4 @@
-import { ComputedRef, inject, InjectionKey } from 'vue';
+import { inject, InjectionKey, Ref } from 'vue';
 import { CacheMode } from 'src/api/requests';
 import { bangDecode, DefaultsMap } from 'src/utils';
 import { VLoClient } from 'src/api/v-lo';
@@ -38,7 +38,7 @@ export interface BaseClient {
 
 export type Client = VLoClient | OptivumClient;
 
-export const clientSymbol = Symbol('API Client Symbol') as InjectionKey<ComputedRef<Client | undefined>>;
+export const clientSymbol = Symbol('API Client Symbol') as InjectionKey<Readonly<Ref<Client | undefined>>>;
 
 export const useClientRef = () => {
   const client = inject(clientSymbol);

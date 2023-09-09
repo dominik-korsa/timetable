@@ -1,6 +1,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { Temporal } from '@js-temporal/polyfill';
 import { colors } from 'quasar';
+import _ from 'lodash';
 import textToRgb = colors.textToRgb;
 import rgbToHex = colors.rgbToHex;
 import hsvToRgb = colors.hsvToRgb;
@@ -69,6 +70,7 @@ export function common<T>(array: T[]): T | undefined {
 }
 
 export function getTypeValidator<T extends unknown[]>() {
+  // noinspection JSUnusedLocalSymbols
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return (...args: T) => true;
 }
@@ -115,3 +117,13 @@ export const createArray = <T>(n: number, getDefault: (index: number) => T): T[]
   for (let i = 0; i < n; i += 1) result.push(getDefault(i));
   return result;
 };
+
+export const balance = (itemCount: number, maxCount: number) => {
+  const rowCount = Math.ceil(itemCount / maxCount);
+  return Math.ceil(itemCount / rowCount);
+};
+
+export const chunkBalanced = <T>(items: T[], maxCount: number) => _.chunk(
+  items,
+  balance(items.length, maxCount),
+);
