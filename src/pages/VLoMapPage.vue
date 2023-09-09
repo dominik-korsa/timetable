@@ -60,7 +60,7 @@
       </div>
       <div class="select-room__other">
         <div
-          v-for="room in otherRooms"
+          v-for="room in otherRoomList"
           :key="room.id"
           tabindex="0"
           role="button"
@@ -107,61 +107,48 @@
   </q-page>
 </template>
 
-<script lang="ts">
-import {
-  computed, defineComponent, ref, watch,
-} from 'vue';
+<script lang="ts" setup>
+import { computed, ref, watch } from 'vue';
 import VLoMap from 'components/lists/VLoMap.vue';
 import {
   FloorType, locationDescription, vLoRooms, isFloor, otherRoomList,
 } from 'src/api/v-lo-rooms';
 import { useRoute, useRouter } from 'vue-router';
 
-export default defineComponent({
-  components: { VLoMap },
-  setup: () => {
-    const router = useRouter();
-    const route = useRoute();
+const router = useRouter();
+const route = useRoute();
 
-    const floor = ref<FloorType>('groundFloor');
-    const selectedRoom = computed(() => {
-      const room = vLoRooms.find((e) => e.id === route.query.selected);
-      if (!room) return undefined;
-      return {
-        ...room,
-        description: locationDescription[room.location],
-      };
-    });
-
-    watch(() => selectedRoom.value, (value) => {
-      if (!value) return;
-      if (isFloor(value.location)) floor.value = value.location;
-    }, { immediate: true });
-
-    const selectRoom = (id: string | undefined) => {
-      router.replace({
-        query: {
-          ...route.query,
-          selected: id,
-        },
-      });
-    };
-    return ({
-      otherRooms: otherRoomList,
-      floor,
-      selectedRoom,
-      selectRoom,
-      selectFloor: (value: FloorType) => {
-        floor.value = value;
-        if (selectedRoom.value
-          && isFloor(selectedRoom.value.location)
-          && selectedRoom.value.location !== value
-        ) selectRoom(undefined);
-      },
-      styleFn: (topMargin: number, height: number) => ({ height: `${height - topMargin}px` }),
-    });
-  },
+const floor = ref<FloorType>('groundFloor');
+const selectedRoom = computed(() => {
+  const room = vLoRooms.find((e) => e.id === route.query.selected);
+  if (!room) return undefined;
+  return {
+    ...room,
+    description: locationDescription[room.location],
+  };
 });
+
+watch(() => selectedRoom.value, (value) => {
+  if (!value) return;
+  if (isFloor(value.location)) floor.value = value.location;
+}, { immediate: true });
+
+const selectRoom = (id: string | undefined) => {
+  router.replace({
+    query: {
+      ...route.query,
+      selected: id,
+    },
+  });
+};
+const selectFloor = (value: FloorType) => {
+  floor.value = value;
+  if (selectedRoom.value
+      && isFloor(selectedRoom.value.location)
+      && selectedRoom.value.location !== value
+  ) selectRoom(undefined);
+};
+const styleFn = (topMargin: number, height: number) => ({ height: `${height - topMargin}px` });
 </script>
 
 <style lang="scss">

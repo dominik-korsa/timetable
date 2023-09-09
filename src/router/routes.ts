@@ -27,7 +27,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: routeNames.vLoMap,
         path: `:${paramNames.tri}(v-lo)/map`,
-        component: () => import('pages/SelectRoom.vue'),
+        component: () => import('pages/VLoMapPage.vue'),
         meta: {
           title: 'Mapa pomieszczeń',
         },
