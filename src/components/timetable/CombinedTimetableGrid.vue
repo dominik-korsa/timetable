@@ -78,9 +78,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  computed, onMounted, PropType, ref,
-} from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import {
   calculateRows, calculateTimestamps, TableLessonMoment, TableTimeSlot, UnitType,
 } from 'src/api/common';
@@ -99,21 +97,12 @@ interface TableItem {
   gridRow: number;
 }
 
-const props = defineProps({
-  weekday: {
-    type: Object as PropType<Weekday>,
-    required: true,
-  },
-  timeSlots: {
-    type: Array as PropType<TableTimeSlot[]>,
-    required: true,
-  },
-  isCurrentWeek: Boolean,
-  unitType: {
-    type: String as PropType<UnitType>,
-    required: true,
-  },
-});
+const props = defineProps<{
+  weekday: Weekday;
+  timeSlots: TableTimeSlot[];
+  isCurrentWeek?: boolean;
+  unitType: UnitType;
+}>();
 
 const config = useConfigStore();
 const clientRef = useClientRef();
