@@ -26,16 +26,13 @@
   </q-card>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import { installPromptEvent } from 'src/install-prompt';
 
-export default defineComponent({
-  setup: () => ({
-    showPrompt: computed(() => installPromptEvent.value !== null),
-    install: async () => {
-      await installPromptEvent.value?.prompt();
-    },
-  }),
-});
+const showPrompt = computed(() => installPromptEvent.value !== null);
+
+const install = async () => {
+  await installPromptEvent.value?.prompt();
+};
 </script>

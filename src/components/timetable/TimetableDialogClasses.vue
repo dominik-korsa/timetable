@@ -17,38 +17,30 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
-import { PropType } from 'vue/dist/vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import { TableLessonClass } from 'src/api/common';
 import { useRoute } from 'vue-router';
 import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
 
-export default defineComponent({
-  props: {
-    classes: {
-      type: Array as PropType<TableLessonClass[]>,
-      required: true,
+const props = defineProps<{
+  classes: TableLessonClass[];
+}>();
+
+const route = useRoute();
+
+const items = computed(() => props.classes.map(({
+  name,
+  id,
+}) => ({
+  name,
+  to: id === undefined ? undefined : {
+    name: routeNames.unitTimetable,
+    params: {
+      ...pickParams(route, 'tri'),
+      [paramNames.unitType]: 'class',
+      [paramNames.unit]: id,
     },
   },
-  setup: (props) => {
-    const route = useRoute();
-    return ({
-      items: computed(() => props.classes.map(({
-        name,
-        id,
-      }) => ({
-        name,
-        to: id === undefined ? undefined : {
-          name: routeNames.unitTimetable,
-          params: {
-            ...pickParams(route, 'tri'),
-            [paramNames.unitType]: 'class',
-            [paramNames.unit]: id,
-          },
-        },
-      }))),
-    });
-  },
-});
+})));
 </script>

@@ -15,14 +15,8 @@
   </q-layout>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
 import VLoMap from 'components/lists/VLoMap.vue';
-
-export default defineComponent({
-  name: 'CampaignPage',
-  components: { VLoMap },
-});
 </script>
 
 <style lang="scss">

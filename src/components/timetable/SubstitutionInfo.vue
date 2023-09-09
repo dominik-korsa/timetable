@@ -129,22 +129,15 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script lang="ts" setup>
 import { SubstitutionInfo } from 'src/api/common';
 import { groupPlural, pluralRules } from 'src/plural';
 
-export default defineComponent({
-  props: {
-    info: {
-      type: Object as PropType<SubstitutionInfo>,
-      required: true,
-    },
-  },
-  setup: () => ({
-    getGroupsText: (count: number) => groupPlural[pluralRules.select(count)],
-  }),
-});
+defineProps<{
+  info: SubstitutionInfo;
+}>();
+
+const getGroupsText = (count: number) => groupPlural[pluralRules.select(count)];
 </script>
 
 <style lang="scss">

@@ -205,61 +205,55 @@
   </svg>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import {
   floorNames, floorRooms, FloorType,
 } from 'src/api/v-lo-rooms';
-import { computed, defineComponent, PropType } from 'vue';
+import { computed } from 'vue';
 
-export default defineComponent({
-  props: {
-    floor: {
-      type: String as PropType<FloorType>,
-      required: true,
-    },
-    viewbox: {
-      type: String as PropType<'default' | 'reduced-height' | 'centered'>,
-      required: false,
-      default: 'default',
-    },
-    campaign13c: Boolean,
-    selectedId: {
-      type: String,
-      required: false,
-      default: undefined,
-    },
-    noText: Boolean,
-  },
-  emits: ['roomClick'],
-  setup: (props, { emit }) => {
-    const rooms = computed(() => floorRooms[props.floor]);
-    return ({
-      rooms,
-      floorNumber: computed(() => ({
-        dungeons: '-1',
-        groundFloor: '0',
-        firstFloor: '+1',
-        secondFloor: '+2',
-      }[props.floor])),
-      floorName: computed(() => floorNames[props.floor]),
-      viewboxValue: computed(() => ({
-        default: '-4 -36 296 288',
-        'reduced-height': '-4 12 296 242',
-        centered: '-4 -36 312 288',
-      }[props.viewbox])),
-      onRoomClick: (id: string) => {
-        emit('roomClick', id);
-      },
-      selectedRoomEntrances: computed(() => {
-        if (props.selectedId === undefined) return [];
-        return rooms.value.find((room) => room.id === props.selectedId)?.entrances?.map((entrance, index) => ({
-          ...entrance,
-          id: `${props.selectedId}:${index}`,
-        })) ?? [];
-      }),
-    });
-  },
+const props = withDefaults(defineProps<{
+  floor: FloorType;
+  viewbox?: 'default' | 'reduced-height' | 'centered';
+  campaign13c?: boolean;
+  selectedId?: string | undefined;
+  noText?: boolean;
+}>(), {
+  viewbox: 'default',
+  selectedId: undefined,
 });
+
+const emit = defineEmits<{
+  (e: 'room-click', roomId: string): void;
+}>();
+
+const rooms = computed(() => floorRooms[props.floor]);
+
+const floorNumber = computed(() => ({
+  dungeons: '-1',
+  groundFloor: '0',
+  firstFloor: '+1',
+  secondFloor: '+2',
+}[props.floor]));
+
+const floorName = computed(() => floorNames[props.floor]);
+
+const viewboxValue = computed(() => ({
+  default: '-4 -36 296 288',
+  'reduced-height': '-4 12 296 242',
+  centered: '-4 -36 312 288',
+}[props.viewbox]));
+
+const selectedRoomEntrances = computed(() => {
+  if (props.selectedId === undefined) return [];
+  return rooms.value.find((room) => room.id === props.selectedId)?.entrances?.map((entrance, index) => ({
+    ...entrance,
+    id: `${props.selectedId}:${index}`,
+  })) ?? [];
+});
+
+const onRoomClick = (id: string) => {
+  emit('room-click', id);
+};
 </script>
 
 <style lang="scss">
