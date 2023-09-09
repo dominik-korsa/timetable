@@ -63,8 +63,8 @@ import { typed } from 'src/utils';
 import { useConfigStore } from 'stores/config';
 import { useQuasar } from 'quasar';
 import { Temporal } from '@js-temporal/polyfill';
-import { routeNames } from 'src/router/route-constants';
 import { useFormatter } from 'src/composables/formatter';
+import { paths } from 'src/router/path-builder';
 
 interface NetlifyBuildInfo {
   deployId: string,
@@ -93,7 +93,7 @@ const buildInfo = process.env.DEPLOY_ID === undefined ? null : typed<NetlifyBuil
   branch: process.env.BRANCH as string,
 });
 
-const superSecretSettingsTo = { name: routeNames.superSecretSettings };
+const superSecretSettingsTo = paths.superSecretSettings;
 
 const buildTimeClick = () => {
   if (config.superSecretSettingsEnabled) return;

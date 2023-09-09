@@ -2,6 +2,7 @@ import { UnitType } from 'src/api/common';
 
 export const paths = {
   home: '/',
+  superSecretSettings: '/super-secret-settings',
   tri: (tri: string) => {
     const triPrefix = `/${tri}/`;
     const unitType = (type: UnitType) => {
@@ -20,10 +21,3 @@ export const paths = {
     };
   },
 };
-
-// TODO: Remove
-console.assert(paths.home === '/');
-console.assert(paths.tri('2137').school === '/2137/');
-console.assert(paths.tri('2137').room.list === '/2137/room/');
-console.assert(paths.tri('2137').unitType('teacher').id('m.chodacka') === '/2137/teacher/m.chodacka');
-console.assert(paths.tri('2137').class.id('3e') === '/2137/class/3e');

@@ -142,6 +142,7 @@ import TimetableDialogClasses from 'components/timetable/TimetableDialogClasses.
 import { RouteLocationRaw, useRoute } from 'vue-router';
 import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
 import { useFormatter } from 'src/composables/formatter';
+import { paths } from 'src/router/path-builder';
 
 interface LessonItem extends TableLesson {
   isFavourite: boolean | null | undefined;
@@ -209,14 +210,8 @@ const groups = computed(() => {
             [paramNames.unit]: lesson.roomId,
           },
         },
-      teacherTo: lesson.teacherId === undefined ? undefined : {
-        name: routeNames.unitTimetable,
-        params: {
-          ...pickParams(route, 'tri'),
-          [paramNames.unitType]: 'teacher',
-          [paramNames.unit]: lesson.teacherId,
-        },
-      },
+      teacherTo: lesson.teacherId === undefined ? undefined
+        : paths.tri(route.params[paramNames.tri]).teacher.id(lesson.teacherId),
     });
   });
   return result;

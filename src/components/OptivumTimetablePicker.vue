@@ -137,6 +137,7 @@ import isUrl from 'is-url-superb';
 import { toProxied } from 'src/api/common';
 import OptivumHelp from 'components/OptivumHelp.vue';
 import { paramNames, routeNames } from 'src/router/route-constants';
+import { paths } from 'src/router/path-builder';
 
 const config = useConfigStore();
 const quasar = useQuasar();
@@ -196,10 +197,7 @@ const historyItems = computed(() => config.optivumHistory
   .slice(0, historyLimit.value)
   .map((item) => ({
     ...item,
-    to: {
-      name: routeNames.schoolHome,
-      params: { [paramNames.tri]: OptivumClient.createTri(item.baseUrl, item.listPath) },
-    },
+    to: paths.tri(OptivumClient.createTri(item.baseUrl, item.listPath)).school,
     absoluteImageSrc: item.logoSrc
       ? toProxied(new URL(item.logoSrc, new URL(item.listPath, item.baseUrl)).toString()).url.toString()
       : undefined,
