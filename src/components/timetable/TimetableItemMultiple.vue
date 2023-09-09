@@ -43,9 +43,8 @@
         :unit-type="unitType"
         show-color
       />
-      <q-separator vertical />
       <div
-        class="timetable-item-multiple__more"
+        class="timetable-item-multiple__more border-l"
         :aria-label="otherGroupsLabel"
       >
         +{{ lessons.length-1 }}

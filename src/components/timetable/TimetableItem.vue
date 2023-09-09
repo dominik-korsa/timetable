@@ -1,9 +1,7 @@
 <template>
-  <q-card
+  <div
     v-ripple
-    flat
-    bordered
-    class="timetable-item"
+    class="timetable-item rounded-borders bordered relative-position"
     :class="{
       'timetable-item--hidden': favourite === null
     }"
@@ -39,7 +37,7 @@
         @close="dialogVisible = false"
       />
     </q-dialog>
-  </q-card>
+  </div>
 </template>
 
 <script lang="ts" setup>
