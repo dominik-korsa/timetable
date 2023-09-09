@@ -126,10 +126,8 @@
   </q-dialog>
 </template>
 
-<script lang="ts">
-import {
-  computed, defineComponent, ref, watch,
-} from 'vue';
+<script lang="ts" setup>
+import { computed, ref, watch } from 'vue';
 import { OptivumClient } from 'src/api/optivum';
 import { CacheMode } from 'src/api/requests';
 import { useConfigStore } from 'stores/config';
@@ -140,88 +138,74 @@ import { toProxied } from 'src/api/common';
 import OptivumHelp from 'components/OptivumHelp.vue';
 import { paramNames, routeNames } from 'src/router/route-constants';
 
-export default defineComponent({
-  components: { OptivumHelp },
-  setup: () => {
-    const config = useConfigStore();
-    const quasar = useQuasar();
-    const router = useRouter();
+const config = useConfigStore();
+const quasar = useQuasar();
+const router = useRouter();
 
-    const url = ref('');
-    const urlValid = computed(() => isUrl(url.value));
-    const urlValidBefore = ref(false);
-    const loading = ref(false);
-    const helpDialogVisible = ref(false);
+const url = ref('');
+const urlValid = computed(() => isUrl(url.value));
+const urlValidBefore = ref(false);
+const loading = ref(false);
+const helpDialogVisible = ref(false);
 
-    watch(urlValid, (value) => {
-      if (value) urlValidBefore.value = true;
-    }, { immediate: true });
+watch(urlValid, (value) => {
+  if (value) urlValidBefore.value = true;
+}, { immediate: true });
 
-    const submit = async () => {
-      if (!urlValid.value) return;
-      loading.value = true;
-      try {
-        const timetableInfo = await OptivumClient.attemptLoad(CacheMode.NetworkFirst, url.value);
-        config.addHistoryEntry(timetableInfo, null);
-        await router.push({
-          name: routeNames.schoolHome,
-          params: {
-            [paramNames.tri]: OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath),
-          },
-        });
-      } catch (error) {
-        console.error(error);
-        quasar.notify({
-          type: 'negative',
-          message: 'Nie udało się wczytać planu',
-        });
-      }
-      loading.value = false;
-    };
-
-    const historyLimit = ref(3);
-    watch(() => config.optivumHistory.length, (value) => {
-      while (historyLimit.value > value + 5) historyLimit.value -= 5;
+const submit = async () => {
+  if (!urlValid.value) return;
+  loading.value = true;
+  try {
+    const timetableInfo = await OptivumClient.attemptLoad(CacheMode.NetworkFirst, url.value);
+    config.addHistoryEntry(timetableInfo, null);
+    await router.push({
+      name: routeNames.schoolHome,
+      params: {
+        [paramNames.tri]: OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath),
+      },
     });
-    const increaseHistoryLimit = () => {
-      historyLimit.value += 5;
-    };
+  } catch (error) {
+    console.error(error);
+    quasar.notify({
+      type: 'negative',
+      message: 'Nie udało się wczytać planu',
+    });
+  }
+  loading.value = false;
+};
 
-    const removeHistoryEntry = (index: number) => {
-      quasar.dialog({
-        title: 'Usunąć adres z historii połączeń?',
-        message: 'Twoje preferencje dotyczące planu nie zostaną usunięte',
-        cancel: true,
-      }).onOk(() => {
-        config.removeHistoryEntry(index);
-      });
-    };
-
-    return {
-      url,
-      loading,
-      urlValid,
-      urlValidBefore,
-      helpDialogVisible,
-      submit,
-      increaseHistoryLimit,
-      removeHistoryEntry,
-      historyItems: computed(() => config.optivumHistory
-        .slice(0, historyLimit.value)
-        .map((item) => ({
-          ...item,
-          to: {
-            name: routeNames.schoolHome,
-            params: { [paramNames.tri]: OptivumClient.createTri(item.baseUrl, item.listPath) },
-          },
-          absoluteImageSrc: item.logoSrc
-            ? toProxied(new URL(item.logoSrc, new URL(item.listPath, item.baseUrl)).toString()).url.toString()
-            : undefined,
-        }))),
-      historyOverflow: computed(() => config.optivumHistory.length > historyLimit.value),
-    };
-  },
+const historyLimit = ref(3);
+watch(() => config.optivumHistory.length, (value) => {
+  while (historyLimit.value > value + 5) historyLimit.value -= 5;
 });
+const increaseHistoryLimit = () => {
+  historyLimit.value += 5;
+};
+
+const removeHistoryEntry = (index: number) => {
+  quasar.dialog({
+    title: 'Usunąć adres z historii połączeń?',
+    message: 'Twoje preferencje dotyczące planu nie zostaną usunięte',
+    cancel: true,
+  }).onOk(() => {
+    config.removeHistoryEntry(index);
+  });
+};
+
+const historyItems = computed(() => config.optivumHistory
+  .slice(0, historyLimit.value)
+  .map((item) => ({
+    ...item,
+    to: {
+      name: routeNames.schoolHome,
+      params: { [paramNames.tri]: OptivumClient.createTri(item.baseUrl, item.listPath) },
+    },
+    absoluteImageSrc: item.logoSrc
+      ? toProxied(new URL(item.logoSrc, new URL(item.listPath, item.baseUrl)).toString()).url.toString()
+      : undefined,
+  })));
+
+const historyOverflow = computed(() => config.optivumHistory.length > historyLimit.value);
 </script>
 
 <style lang="scss">
