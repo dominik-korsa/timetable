@@ -73,7 +73,7 @@ import VLoMapDisabled from 'components/lists/VLoMapDisabled.vue';
 
 defineProps<{
   data: Data;
-  isVLo: boolean;
+  isVLo?: boolean;
   modelValue: string;
 }>();
 

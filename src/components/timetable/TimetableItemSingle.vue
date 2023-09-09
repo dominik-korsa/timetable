@@ -63,39 +63,26 @@
   </div>
 </template>
 
-<script lang="ts">
-import { PropType } from 'vue/dist/vue';
-import { computed, defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import { useConfigStore } from 'stores/config';
 import { withOpacity } from 'src/utils';
 import { TableLesson, UnitType } from 'src/api/common';
 
-export default defineComponent({
-  name: 'TimetableItemSingle',
-  props: {
-    lesson: {
-      type: Object as PropType<TableLesson>,
-      required: true,
-    },
-    showColor: Boolean,
-    small: Boolean,
-    unitType: {
-      type: String as PropType<UnitType>,
-      required: true,
-    },
-  },
-  setup: (props) => {
-    const config = useConfigStore();
-    return ({
-      classNames: computed(() => props.lesson.classes.map((e) => e.name).join(', ')),
-      background: computed(
-        () => (props.showColor && config.showColors && props.lesson.color
-          ? withOpacity(props.lesson.color, 45)
-          : 'transparent'),
-      ),
-    });
-  },
-});
+const props = defineProps<{
+  lesson: TableLesson;
+  showColor?: boolean;
+  small?: boolean;
+  unitType: UnitType;
+}>();
+
+const config = useConfigStore();
+const classNames = computed(() => props.lesson.classes.map((e) => e.name).join(', '));
+const background = computed(
+  () => (props.showColor && config.showColors && props.lesson.color
+    ? withOpacity(props.lesson.color, 45)
+    : 'transparent'),
+);
 </script>
 
 <style lang="scss">

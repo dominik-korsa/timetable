@@ -54,56 +54,39 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { TableLesson, UnitType } from 'src/api/common';
-import {
-  computed, defineComponent, PropType,
-} from 'vue';
+import { computed } from 'vue';
 import { common } from 'src/utils';
 import TimetableItemSingle from 'components/timetable/TimetableItemSingle.vue';
 import { FavouriteLesson } from 'stores/config';
 import { groupPlural, otherLessonsPlural, pluralRules } from 'src/plural';
 
-export default defineComponent({
-  name: 'TimetableItemMultiple',
-  components: { TimetableItemSingle },
-  props: {
-    lessons: {
-      type: Array as PropType<TableLesson[]>,
-      required: true,
-    },
-    favourite: {
-      type: [Object] as PropType<FavouriteLesson | null | undefined>,
-      required: false,
-      default: undefined,
-    },
-    small: Boolean,
-    unitType: {
-      type: String as PropType<UnitType>,
-      required: true,
-    },
-  },
-  setup: (props) => ({
-    groupsText: computed(() => (groupPlural[pluralRules.select(props.lessons.length)])),
-    otherGroupsLabel: computed(
-      () => `i ${props.lessons.length - 1} ${
-        otherLessonsPlural[pluralRules.select(props.lessons.length - 1)]
-      }`,
-    ),
-    commonSubjectShort: computed(
-      () => common(props.lessons.map((lesson) => lesson.subjectShort)),
-    ),
-    commonSubject: computed(
-      () => common(props.lessons.map((lesson) => lesson.subject)),
-    ),
-    favouriteLesson: computed(() => {
-      const { favourite } = props;
-      if (!favourite) return null;
-      return props.lessons.find(
-        (lesson) => lesson.group?.key === favourite.group && lesson.subject === favourite.subject,
-      ) ?? null;
-    }),
-  }),
+const props = defineProps<{
+  lessons: TableLesson[];
+  favourite?: FavouriteLesson | null | undefined;
+  small?: boolean;
+  unitType: UnitType;
+}>();
+
+const groupsText = computed(() => groupPlural[pluralRules.select(props.lessons.length)]);
+const otherGroupsLabel = computed(
+  () => `i ${props.lessons.length - 1} ${
+    otherLessonsPlural[pluralRules.select(props.lessons.length - 1)]
+  }`,
+);
+const commonSubjectShort = computed(
+  () => common(props.lessons.map((lesson) => lesson.subjectShort)),
+);
+const commonSubject = computed(
+  () => common(props.lessons.map((lesson) => lesson.subject)),
+);
+const favouriteLesson = computed(() => {
+  const { favourite } = props;
+  if (!favourite) return null;
+  return props.lessons.find(
+    (lesson) => lesson.group?.key === favourite.group && lesson.subject === favourite.subject,
+  ) ?? null;
 });
 </script>
 

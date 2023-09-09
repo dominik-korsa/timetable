@@ -55,7 +55,7 @@ import { weekdayNames } from 'src/shared';
 
 const props = defineProps<{
   moment: TableLessonMoment,
-  small: boolean,
+  small?: boolean,
   timeSlot: TableTimeSlot,
   unitType: UnitType,
 }>();
