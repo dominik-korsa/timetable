@@ -32,32 +32,21 @@
   </ul>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import { TableTimeSlot } from 'src/api/common';
 import { useFormatter } from 'src/composables/formatter';
 
-export default defineComponent({
-  props: {
-    timeSlots: {
-      type: Array as PropType<TableTimeSlot[]>,
-      required: true,
-    },
-    rows: {
-      type: String,
-      required: true,
-    },
-  },
-  setup: (props) => {
-    const formatter = useFormatter();
-    return {
-      items: props.timeSlots.map((timeSlot) => ({
-        ...timeSlot,
-        label: formatter.formatTimeSlotLabel(timeSlot),
-      })),
-    };
-  },
-});
+const props = defineProps<{
+  timeSlots: TableTimeSlot[];
+  rows: string;
+}>();
+
+const formatter = useFormatter();
+const items = computed(() => props.timeSlots.map((timeSlot) => ({
+  ...timeSlot,
+  label: formatter.formatTimeSlotLabel(timeSlot),
+})));
 </script>
 
 <style lang="scss">
