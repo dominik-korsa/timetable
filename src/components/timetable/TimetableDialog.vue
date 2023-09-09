@@ -133,8 +133,8 @@
   </q-card>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, PropType } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import { FavouriteLesson, useConfigStore } from 'stores/config';
 import { TableTimeSlot, TableLesson, TableLessonMoment } from 'src/api/common';
 import { weekdayNames } from 'src/shared';
@@ -150,104 +150,92 @@ interface LessonItem extends TableLesson {
   teacherTo: RouteLocationRaw | undefined;
 }
 
-export default defineComponent({
-  name: 'TimetableDialog',
-  components: { TimetableDialogClasses },
-  props: {
-    moment: {
-      type: Object as PropType<TableLessonMoment>,
-      required: true,
-    },
-    timeSlot: {
-      type: Object as PropType<TableTimeSlot>,
-      required: true,
-    },
-    favourite: {
-      type: [Object] as PropType<FavouriteLesson | null | undefined>,
-      required: false,
-      default: undefined,
-    },
-    isVLo: Boolean,
-  },
-  emits: ['close'],
-  setup: (props, { emit }) => {
-    const config = useConfigStore();
-    const formatter = useFormatter();
-    const route = useRoute();
+const props = defineProps<{
+  moment: TableLessonMoment;
+  timeSlot: TableTimeSlot;
+  favourite?: FavouriteLesson | null | undefined;
+  isVLo?: boolean;
+}>();
 
-    const setFavourite = (value: FavouriteLesson | null | undefined) => {
-      config.setFavourite(`${props.moment.umid}|#`, value);
-    };
+const emit = defineEmits(['close']);
 
-    return ({
-      hideClick: () => {
-        if (props.favourite !== null) emit('close');
-        setFavourite(props.favourite === null ? undefined : null);
-      },
-      many: computed(() => props.moment.lessons.length > 1),
-      groups: computed(() => {
-        const groups: Record<string, LessonItem[]> = {};
-        props.moment.lessons.forEach((lesson) => {
-          const isFavourite = props.favourite
-            && props.favourite.group === lesson.group?.key
-            && props.favourite.subject === lesson.subject;
-          if (!(lesson.subject in groups)) groups[lesson.subject] = [];
-          groups[lesson.subject].push({
-            ...lesson,
-            isFavourite,
-            favouriteClick: isFavourite ? () => {
-              setFavourite(undefined);
-            } : () => {
-              setFavourite({
-                subject: lesson.subject,
-                group: lesson.group?.key,
-              });
-              emit('close');
-            },
-            roomTo: lesson.roomId === undefined ? undefined
-              : route.params[paramNames.tri] === 'v-lo' ? {
-                name: routeNames.schoolUnitList,
-                params: {
-                  ...pickParams(route, 'tri'),
-                  [paramNames.unitType]: 'room',
-                },
-                query: { selected: lesson.roomId },
-              } : {
-                name: routeNames.unitTimetable,
-                params: {
-                  ...pickParams(route, 'tri'),
-                  [paramNames.unitType]: 'room',
-                  [paramNames.unit]: lesson.roomId,
-                },
-              },
-            teacherTo: lesson.teacherId === undefined ? undefined : {
-              name: routeNames.unitTimetable,
-              params: {
-                ...pickParams(route, 'tri'),
-                [paramNames.unitType]: 'teacher',
-                [paramNames.unit]: lesson.teacherId,
-              },
-            },
-          });
+const config = useConfigStore();
+const formatter = useFormatter();
+const route = useRoute();
+
+const setFavourite = (value: FavouriteLesson | null | undefined) => {
+  config.setFavourite(`${props.moment.umid}|#`, value);
+};
+
+const hideClick = () => {
+  if (props.favourite !== null) emit('close');
+  setFavourite(props.favourite === null ? undefined : null);
+};
+
+const many = computed(() => props.moment.lessons.length > 1);
+
+const groups = computed(() => {
+  const result: Record<string, LessonItem[]> = {};
+  props.moment.lessons.forEach((lesson) => {
+    const isFavourite = props.favourite
+        && props.favourite.group === lesson.group?.key
+        && props.favourite.subject === lesson.subject;
+    if (!(lesson.subject in result)) result[lesson.subject] = [];
+    result[lesson.subject].push({
+      ...lesson,
+      isFavourite,
+      favouriteClick: isFavourite ? () => {
+        setFavourite(undefined);
+      } : () => {
+        setFavourite({
+          subject: lesson.subject,
+          group: lesson.group?.key,
         });
-        return groups;
-      }),
-      timeSlotLabel: computed(() => formatter.formatTimeSlotLabel(props.timeSlot)),
-      date: computed(() => {
-        const weekdayName = weekdayNames[props.moment.weekday];
-        if (!props.moment.date) {
-          return {
-            display: weekdayName,
-            label: weekdayName,
-          };
-        }
-        return {
-          display: `${weekdayName}, ${formatter.formatDisplay(props.moment.date)}`,
-          label: `${weekdayName}, ${formatter.formatLabel(props.moment.date)}`,
-        };
-      }),
+        emit('close');
+      },
+      roomTo: lesson.roomId === undefined ? undefined
+        : route.params[paramNames.tri] === 'v-lo' ? {
+          name: routeNames.schoolUnitList,
+          params: {
+            ...pickParams(route, 'tri'),
+            [paramNames.unitType]: 'room',
+          },
+          query: { selected: lesson.roomId },
+        } : {
+          name: routeNames.unitTimetable,
+          params: {
+            ...pickParams(route, 'tri'),
+            [paramNames.unitType]: 'room',
+            [paramNames.unit]: lesson.roomId,
+          },
+        },
+      teacherTo: lesson.teacherId === undefined ? undefined : {
+        name: routeNames.unitTimetable,
+        params: {
+          ...pickParams(route, 'tri'),
+          [paramNames.unitType]: 'teacher',
+          [paramNames.unit]: lesson.teacherId,
+        },
+      },
     });
-  },
+  });
+  return result;
+});
+
+const timeSlotLabel = computed(() => formatter.formatTimeSlotLabel(props.timeSlot));
+
+const date = computed(() => {
+  const weekdayName = weekdayNames[props.moment.weekday];
+  if (!props.moment.date) {
+    return {
+      display: weekdayName,
+      label: weekdayName,
+    };
+  }
+  return {
+    display: `${weekdayName}, ${formatter.formatDisplay(props.moment.date)}`,
+    label: `${weekdayName}, ${formatter.formatLabel(props.moment.date)}`,
+  };
 });
 </script>
 

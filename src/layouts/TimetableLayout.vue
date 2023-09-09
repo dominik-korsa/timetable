@@ -10,7 +10,7 @@
           round
           icon="arrow_back"
           aria-label="Wróć do wyboru klasy"
-          @click="goBack"
+          @click="goBackClick"
         />
 
         <q-toolbar-title class="col-grow">
@@ -165,10 +165,8 @@
   </q-layout>
 </template>
 
-<script lang="ts">
-import {
-  computed, defineComponent, PropType, ref,
-} from 'vue';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
 import { goBack, Offset, shake } from 'src/shared';
 import { useRoute, useRouter } from 'vue-router';
 import { QBtn } from 'quasar';
@@ -176,76 +174,56 @@ import { useConfigStore } from 'stores/config';
 import ThemePicker from 'components/ThemePicker.vue';
 import { pickParams, routeNames } from 'src/router/route-constants';
 
+const props = withDefaults(defineProps<{
+  title?: string | null;
+  hasData?: boolean;
+  isLoading?: boolean;
+  errorMessage?: string | null;
+  offset: Offset;
+  isStartup?: boolean;
+}>(), {
+  title: null,
+  errorMessage: null,
+});
+
+defineEmits(['retryLoad', 'startupToggle']);
+
 export type ChangeOffsetFn = (change: -1|1) => boolean;
 
-export default defineComponent({
-  components: { ThemePicker },
-  props: {
-    title: {
-      type: String as PropType<string | null>,
-      required: false,
-      default: null,
-    },
-    hasData: {
-      type: Boolean,
-    },
-    isLoading: {
-      type: Boolean,
-    },
-    errorMessage: {
-      type: String as PropType<string | null>,
-      required: false,
-      default: null,
-    },
-    offset: {
-      type: Object as PropType<Offset>,
-      required: true,
-    },
-    isStartup: Boolean,
-  },
-  emits: ['retryLoad', 'startupToggle'],
-  setup(props) {
-    const router = useRouter();
-    const route = useRoute();
-    const config = useConfigStore();
+const router = useRouter();
+const route = useRoute();
+const config = useConfigStore();
 
-    const offsetDownButton = ref<QBtn>();
-    const offsetUpButton = ref<QBtn>();
+const offsetDownButton = ref<QBtn>();
+const offsetUpButton = ref<QBtn>();
 
-    const changeOffset = (direction: -1|1) => {
-      if (props.offset === null) return false;
-      if (!props.offset.change(direction)) return false;
-      if (direction === -1 && offsetDownButton.value) shake(offsetDownButton.value.$el, false);
-      if (direction === 1 && offsetUpButton.value) shake(offsetUpButton.value.$el, true);
-      return false;
-    };
+const changeOffset = (direction: -1|1) => {
+  if (props.offset === null) return false;
+  if (!props.offset.change(direction)) return false;
+  if (direction === -1 && offsetDownButton.value) shake(offsetDownButton.value.$el, false);
+  if (direction === 1 && offsetUpButton.value) shake(offsetUpButton.value.$el, true);
+  return false;
+};
 
-    return {
-      goBack: () => {
-        const backTo = route.name === routeNames.combinedTimetable ? {
-          name: routeNames.schoolHome,
-          params: pickParams(route, 'tri'),
-        } : {
-          name: routeNames.schoolUnitList,
-          params: pickParams(route, 'tri', 'unitType'),
-        };
-        goBack(router, backTo);
-      },
-      offsetDownButton,
-      offsetUpButton,
-      changeOffset,
-      onOffsetSwipe: (event: { direction: 'left' | 'right' }) => {
-        if (event.direction === 'right') changeOffset(-1);
-        if (event.direction === 'left') changeOffset(1);
-      },
-      styleFn: (topMargin: number, height: number) => ({ height: `${height - topMargin}px` }),
-      showColors: computed(() => config.showColors),
-      onColorsToggle: () => {
-        config.toggleColors();
-      },
-    };
-  },
-});
+const goBackClick = () => {
+  const backTo = route.name === routeNames.combinedTimetable ? {
+    name: routeNames.schoolHome,
+    params: pickParams(route, 'tri'),
+  } : {
+    name: routeNames.schoolUnitList,
+    params: pickParams(route, 'tri', 'unitType'),
+  };
+  goBack(router, backTo);
+};
+const onOffsetSwipe = (event: { direction: 'left' | 'right' }) => {
+  if (event.direction === 'right') changeOffset(-1);
+  if (event.direction === 'left') changeOffset(1);
+};
+const styleFn = (topMargin: number, height: number) => ({ height: `${height - topMargin}px` });
+const showColors = computed(() => config.showColors);
+const onColorsToggle = () => {
+  config.toggleColors();
+};
 </script>
 
 <style lang="scss">
