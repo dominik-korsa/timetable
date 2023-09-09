@@ -5,12 +5,9 @@
       class="bg-page text-page"
     >
       <q-toolbar>
-        <q-btn
-          flat
-          round
-          icon="arrow_back"
-          aria-label="Wróć do wyboru klasy"
-          @click="goBackClick"
+        <back-button
+          aria-label="Wróć do listy"
+          :to="backTo"
         />
 
         <q-toolbar-title class="col-grow">
@@ -167,12 +164,12 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { goBack, Offset, shake } from 'src/shared';
-import { useRoute, useRouter } from 'vue-router';
+import { Offset, shake } from 'src/shared';
 import { QBtn } from 'quasar';
 import { useConfigStore } from 'stores/config';
 import ThemePicker from 'components/ThemePicker.vue';
-import { pickParams, routeNames } from 'src/router/route-constants';
+import { useNavigation } from 'src/router/navigation';
+import BackButton from 'components/BackButton.vue';
 
 const props = withDefaults(defineProps<{
   title?: string | null;
@@ -190,9 +187,8 @@ defineEmits(['retryLoad', 'startupToggle']);
 
 export type ChangeOffsetFn = (change: -1|1) => boolean;
 
-const router = useRouter();
-const route = useRoute();
 const config = useConfigStore();
+const navigation = useNavigation();
 
 const offsetDownButton = ref<QBtn>();
 const offsetUpButton = ref<QBtn>();
@@ -205,16 +201,8 @@ const changeOffset = (direction: -1|1) => {
   return false;
 };
 
-const goBackClick = () => {
-  const backTo = route.name === routeNames.combinedTimetable ? {
-    name: routeNames.schoolHome,
-    params: pickParams(route, 'tri'),
-  } : {
-    name: routeNames.schoolUnitList,
-    params: pickParams(route, 'tri', 'unitType'),
-  };
-  goBack(router, backTo);
-};
+// TODO: Use dynamic back text
+const backTo = computed(() => navigation.currentUnitList ?? navigation.triRelative.school);
 const onOffsetSwipe = (event: { direction: 'left' | 'right' }) => {
   if (event.direction === 'right') changeOffset(-1);
   if (event.direction === 'left') changeOffset(1);

@@ -8,13 +8,10 @@
       :bordered="elevateHeader"
     >
       <q-toolbar>
-        <q-btn
-          v-if="showBack"
-          flat
-          round
-          icon="arrow_back"
+        <back-button
+          v-if="backTo !== null"
+          :to="backTo"
           aria-label="Wróć"
-          @click="goBackClick"
         />
 
         <q-toolbar-title
@@ -37,28 +34,18 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import _ from 'lodash';
-import { pickParams, routeNames } from 'src/router/route-constants';
 import ThemePickerButton from 'components/ThemePickerButton.vue';
-import { goBack } from 'src/shared';
+import BackButton from 'components/BackButton.vue';
+import { Path } from 'src/router/path-builder';
 
 const route = useRoute();
-const router = useRouter();
 
 const elevateHeader = ref(false);
 const onVScroll = (pos: number) => {
   elevateHeader.value = pos > 0;
 };
-const showBack = computed(() => _.last(route.matched)?.name !== routeNames.home);
 const title = computed(() => _.last(route.matched)?.meta?.title);
-const goBackClick = () => {
-  const backTo = (route.name === routeNames.schoolHome || route.name === routeNames.superSecretSettings)
-    ? { name: routeNames.home }
-    : {
-      name: routeNames.schoolHome,
-      params: pickParams(route, 'tri'),
-    };
-  goBack(router, backTo);
-};
+const backTo = computed(() => (_.last(route.matched)?.meta?.backTo ?? null) as Path | null);
 </script>

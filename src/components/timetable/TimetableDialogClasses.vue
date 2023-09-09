@@ -20,27 +20,19 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { TableLessonClass } from 'src/api/common';
-import { useRoute } from 'vue-router';
-import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
+import { useNavigation } from 'src/router/navigation';
 
 const props = defineProps<{
   classes: TableLessonClass[];
 }>();
 
-const route = useRoute();
+const navigation = useNavigation();
 
 const items = computed(() => props.classes.map(({
   name,
   id,
 }) => ({
   name,
-  to: id === undefined ? undefined : {
-    name: routeNames.unitTimetable,
-    params: {
-      ...pickParams(route, 'tri'),
-      [paramNames.unitType]: 'class',
-      [paramNames.unit]: id,
-    },
-  },
+  to: id === undefined ? undefined : navigation.triRelative.class.id(id),
 })));
 </script>

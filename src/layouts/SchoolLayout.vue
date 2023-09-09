@@ -8,12 +8,9 @@
       class="bg-page text-page"
     >
       <q-toolbar>
-        <q-btn
-          flat
-          round
-          icon="arrow_back"
+        <back-button
           aria-label="Wróć do ekranu głównego"
-          @click="goBackClick"
+          :to="backTo"
         />
 
         <q-space />
@@ -22,13 +19,10 @@
       </q-toolbar>
     </q-header>
     <template v-else>
-      <q-btn
+      <back-button
         class="fixed z-top school-layout__back"
-        flat
-        round
-        icon="arrow_back"
         aria-label="Wróć do ekranu głównego"
-        @click="goBackClick"
+        :to="backTo"
       />
       <theme-picker-button class="fixed z-top school-layout__theme" />
     </template>
@@ -88,9 +82,7 @@
 
 <script lang="ts" setup>
 import SchoolHomeDesktop from 'pages/school-home/SchoolHomeDesktop.vue';
-import { goBack } from 'src/shared';
-import { useRoute, useRouter } from 'vue-router';
-import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
+import { useRouter } from 'vue-router';
 import ThemePickerButton from 'components/ThemePickerButton.vue';
 import { QRouteTabProps, useQuasar } from 'quasar';
 import { computed, ref, watch } from 'vue';
@@ -99,24 +91,24 @@ import { useConfigStore } from 'stores/config';
 import { CacheMode } from 'src/api/requests';
 import { OptivumUnitLists } from 'src/api/optivum';
 import SchoolHomeMobile from 'pages/school-home/SchoolHomeMobile.vue';
+import { useNavigation } from 'src/router/navigation';
+import { paths } from 'src/router/path-builder';
+import { UnitType } from 'src/api/common';
+import BackButton from 'components/BackButton.vue';
 
 const quasar = useQuasar();
 const config = useConfigStore();
 const clientRef = useClientRef();
-const route = useRoute();
+const navigation = useNavigation();
 const router = useRouter();
 
 const mobile = computed(() => quasar.screen.width < 900);
-const tab = computed<string>({
-  get: () => route.params[paramNames.unitType] as string,
+const tab = computed({
+  get: () => navigation.params.unitType as UnitType,
   set: (value) => {
-    if (value === route.params[paramNames.unitType]) return;
-    router.replace({
-      params: {
-        ...pickParams(route, 'tri'),
-        [paramNames.unitType]: value,
-      },
-    });
+    if (value === navigation.params.unitType) return;
+    // TODO: Use q-router-tab
+    router.replace(navigation.triRelative.unitType(value).list);
   },
 });
 
@@ -180,12 +172,7 @@ watch(() => clientRef.value, async (client) => {
 });
 
 const isVLo = computed(() => clientRef.value?.type === 'v-lo');
-
-const goBackClick = () => {
-  goBack(router, {
-    name: routeNames.home,
-  });
-};
+const backTo = paths.home;
 </script>
 
 <style lang="scss">

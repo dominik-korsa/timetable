@@ -136,7 +136,6 @@ import { useRouter } from 'vue-router';
 import isUrl from 'is-url-superb';
 import { toProxied } from 'src/api/common';
 import OptivumHelp from 'components/OptivumHelp.vue';
-import { paramNames, routeNames } from 'src/router/route-constants';
 import { paths } from 'src/router/path-builder';
 
 const config = useConfigStore();
@@ -159,12 +158,7 @@ const submit = async () => {
   try {
     const timetableInfo = await OptivumClient.attemptLoad(CacheMode.NetworkFirst, url.value);
     config.addHistoryEntry(timetableInfo, null);
-    await router.push({
-      name: routeNames.schoolHome,
-      params: {
-        [paramNames.tri]: OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath),
-      },
-    });
+    await router.push(paths.tri(OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath)).school);
   } catch (error) {
     console.error(error);
     quasar.notify({

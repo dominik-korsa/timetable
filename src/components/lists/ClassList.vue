@@ -37,10 +37,9 @@ import { computed } from 'vue';
 import { DefaultsMap } from 'src/utils';
 import _ from 'lodash';
 import { useIsFavourite } from 'src/shared';
-import { pickParams, routeNames } from 'src/router/route-constants';
 import ButtonGrid, { Button } from 'components/ButtonGrid.vue';
-import { useRoute } from 'vue-router';
 import PushBanner from 'components/PushBanner.vue';
+import { useNavigation } from 'src/router/navigation';
 
 const props = defineProps<{
   items: UnitListItem[];
@@ -51,7 +50,7 @@ const props = defineProps<{
 const classDigitRegex = /^\d+/;
 
 const isFavourite = useIsFavourite();
-const route = useRoute();
+const navigation = useNavigation();
 
 const groups = computed(() => {
   const classItems = props.items.map((item): Button => {
@@ -61,13 +60,7 @@ const groups = computed(() => {
       name: item.name,
       ariaLabel: classIsFavourite ? `Ulubiona klasa ${item.name}` : `Klasa ${item.name}`,
       isFavourite: classIsFavourite,
-      to: {
-        name: routeNames.unitTimetable,
-        params: {
-          unitType: 'class',
-          unit: item.unit,
-        },
-      },
+      to: navigation.triRelative.class.id(item.unit),
     });
   });
   const groupMap = new DefaultsMap<number, Button[]>(() => []);
@@ -86,8 +79,5 @@ const groups = computed(() => {
   // }));
 });
 
-const combinedRoute = computed(() => ({
-  name: routeNames.combinedTimetable,
-  params: pickParams(route, 'tri'),
-}));
+const combinedRoute = computed(() => navigation.triRelative.combined);
 </script>

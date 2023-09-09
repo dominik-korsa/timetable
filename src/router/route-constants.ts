@@ -3,6 +3,7 @@ import { triRegex } from 'src/router/tri';
 
 export const queryNames = {
   date: 'date',
+  selected: 'selected',
 } as const;
 
 export const paramNames = {
@@ -20,17 +21,6 @@ export const pickParams = (route: RouteLocation, ...params: (keyof typeof paramN
   });
   return result;
 };
-
-export const routeNames = {
-  home: Symbol('Home route'),
-  schoolHome: Symbol('School home route'),
-  schoolUnitList: Symbol('School unit list route'),
-  vLoMap: Symbol('V LO map route'),
-  unitTimetable: Symbol('Unit timetable route'),
-  combinedTimetable: Symbol('Combined timetable route'),
-  campaign: Symbol('Campaign route'),
-  superSecretSettings: Symbol('Super Secret Settings route'),
-} as const;
 
 export const triParam = `:${paramNames.tri}(${triRegex.replaceAll(')', '\\)')})`;
 

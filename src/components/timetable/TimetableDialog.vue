@@ -139,10 +139,9 @@ import { FavouriteLesson, useConfigStore } from 'stores/config';
 import { TableTimeSlot, TableLesson, TableLessonMoment } from 'src/api/common';
 import { weekdayNames } from 'src/shared';
 import TimetableDialogClasses from 'components/timetable/TimetableDialogClasses.vue';
-import { RouteLocationRaw, useRoute } from 'vue-router';
-import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
+import { RouteLocationRaw } from 'vue-router';
 import { useFormatter } from 'src/composables/formatter';
-import { paths } from 'src/router/path-builder';
+import { useNavigation } from 'src/router/navigation';
 
 interface LessonItem extends TableLesson {
   isFavourite: boolean | null | undefined;
@@ -162,7 +161,7 @@ const emit = defineEmits(['close']);
 
 const config = useConfigStore();
 const formatter = useFormatter();
-const route = useRoute();
+const navigation = useNavigation();
 
 const setFavourite = (value: FavouriteLesson | null | undefined) => {
   config.setFavourite(`${props.moment.umid}|#`, value);
@@ -195,23 +194,12 @@ const groups = computed(() => {
         emit('close');
       },
       roomTo: lesson.roomId === undefined ? undefined
-        : route.params[paramNames.tri] === 'v-lo' ? {
-          name: routeNames.schoolUnitList,
-          params: {
-            ...pickParams(route, 'tri'),
-            [paramNames.unitType]: 'room',
-          },
+        : props.isVLo ? {
+          path: navigation.triRelative.room.list,
           query: { selected: lesson.roomId },
-        } : {
-          name: routeNames.unitTimetable,
-          params: {
-            ...pickParams(route, 'tri'),
-            [paramNames.unitType]: 'room',
-            [paramNames.unit]: lesson.roomId,
-          },
-        },
+        } : navigation.triRelative.room.id(lesson.roomId),
       teacherTo: lesson.teacherId === undefined ? undefined
-        : paths.tri(route.params[paramNames.tri]).teacher.id(lesson.teacherId),
+        : navigation.triRelative.teacher.id(lesson.teacherId),
     });
   });
   return result;
