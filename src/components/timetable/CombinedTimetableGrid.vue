@@ -77,9 +77,9 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import {
-  computed, defineComponent, onMounted, PropType, ref,
+  computed, onMounted, PropType, ref,
 } from 'vue';
 import {
   calculateRows, calculateTimestamps, TableLessonMoment, TableTimeSlot, UnitType,
@@ -99,73 +99,66 @@ interface TableItem {
   gridRow: number;
 }
 
-export default defineComponent({
-  name: 'CombinedTimetableGrid',
-  components: { TimeSlotMarkers, SubstitutionsButton, TimetableItem },
-  props: {
-    weekday: {
-      type: Object as PropType<Weekday>,
-      required: true,
-    },
-    timeSlots: {
-      type: Array as PropType<TableTimeSlot[]>,
-      required: true,
-    },
-    isCurrentWeek: Boolean,
-    unitType: {
-      type: String as PropType<UnitType>,
-      required: true,
-    },
+const props = defineProps({
+  weekday: {
+    type: Object as PropType<Weekday>,
+    required: true,
   },
-  setup: (props) => {
-    const config = useConfigStore();
-    const clientRef = useClientRef();
-
-    const timestamps = computed(() => calculateTimestamps(props.timeSlots, 10));
-    const now = useNow(5000);
-
-    const hourPixels = 50;
-
-    const grid = ref<HTMLDivElement>();
-    onMounted(() => {
-      if (!clientRef.value) return;
-      grid.value?.scrollTo({ left: config.getCombinedTimetableScroll(clientRef.value.key) });
-    });
-
-    return {
-      grid,
-      rows: computed(() => calculateRows(timestamps.value, hourPixels)),
-      items: computed(() => props.weekday.units.map(({ moments }) => {
-        const items: TableItem[] = [];
-        moments.forEach((moment, momentIndex) => {
-          if (moment.lessons.length === 0) return;
-          items.push(({
-            gridRow: momentIndex * 2 + 2,
-            moment,
-            timeSlot: props.timeSlots[momentIndex],
-          }));
-        });
-        return items;
-      })),
-      markerPositionPx: computed(() => {
-        if (!props.isCurrentWeek || props.weekday.index !== now.value.dayOfWeek - 1) return null;
-
-        const midnight = now.value.round({ smallestUnit: 'day', roundingMode: 'floor' });
-        const timePosition = (now.value.epochSeconds - midnight.epochSeconds) / 60;
-        if (
-          timePosition < timestamps.value[0]
-          || timePosition > _.last(timestamps.value)!
-        ) return null;
-        return `${((timePosition - timestamps.value[0]) * hourPixels) / 60}px`;
-      }),
-      columnCount: computed(() => props.weekday.units.length),
-      onScroll: (event: { position: { top: number, left: number } }) => {
-        if (!clientRef.value) return;
-        config.setCombinedTimetableScroll(clientRef.value.key, event.position.left);
-      },
-    };
+  timeSlots: {
+    type: Array as PropType<TableTimeSlot[]>,
+    required: true,
+  },
+  isCurrentWeek: Boolean,
+  unitType: {
+    type: String as PropType<UnitType>,
+    required: true,
   },
 });
+
+const config = useConfigStore();
+const clientRef = useClientRef();
+
+const timestamps = computed(() => calculateTimestamps(props.timeSlots, 10));
+const now = useNow(5000);
+
+const hourPixels = 50;
+
+const grid = ref<HTMLDivElement>();
+onMounted(() => {
+  if (!clientRef.value) return;
+  grid.value?.scrollTo({ left: config.getCombinedTimetableScroll(clientRef.value.key) });
+});
+
+const rows = computed(() => calculateRows(timestamps.value, hourPixels));
+const items = computed(() => props.weekday.units.map(({ moments }) => {
+  const result: TableItem[] = [];
+  moments.forEach((moment, momentIndex) => {
+    if (moment.lessons.length === 0) return;
+    result.push(({
+      gridRow: momentIndex * 2 + 2,
+      moment,
+      timeSlot: props.timeSlots[momentIndex],
+    }));
+  });
+  return result;
+}));
+
+const markerPositionPx = computed(() => {
+  if (!props.isCurrentWeek || props.weekday.index !== now.value.dayOfWeek - 1) return null;
+
+  const midnight = now.value.round({ smallestUnit: 'day', roundingMode: 'floor' });
+  const timePosition = (now.value.epochSeconds - midnight.epochSeconds) / 60;
+  if (
+    timePosition < timestamps.value[0]
+      || timePosition > _.last(timestamps.value)!
+  ) return null;
+  return `${((timePosition - timestamps.value[0]) * hourPixels) / 60}px`;
+});
+
+const onScroll = (event: { position: { top: number, left: number } }) => {
+  if (!clientRef.value) return;
+  config.setCombinedTimetableScroll(clientRef.value.key, event.position.left);
+};
 </script>
 
 <style lang="scss">
