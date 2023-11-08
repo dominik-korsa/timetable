@@ -6,7 +6,7 @@
   >
     <q-card-section class="text-h6 row items-center justify-between">
       <div role="heading">
-        Plan lekcji OPTIVUM
+        Wczytaj plan lekcji OPTIVUM
       </div>
       <q-btn
         v-if="$q.screen.width > 380"
@@ -115,6 +115,7 @@
         v-if="historyOverflow"
         color="primary"
         flat
+        no-caps
         @click="increaseHistoryLimit"
       >
         Pokaż więcej
