@@ -271,7 +271,13 @@ const selectedRoomEntrances = computed(() => {
   })) ?? [];
 });
 
+const audio = new Audio('/sounds/checkpoint.wav');
+
 const onRoomClick = (id: string) => {
+  if (id === 'kontrola-graniczna') {
+    audio.currentTime = 0;
+    audio.play();
+  }
   emit('room-click', id);
 };
 </script>
