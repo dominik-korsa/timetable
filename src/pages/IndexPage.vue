@@ -3,6 +3,8 @@
     padding
     class="index-page column content-center"
   >
+    <school-search />
+
     <q-card
       flat
       bordered
@@ -78,6 +80,7 @@ import { getClient } from 'src/api/client';
 import OptivumTimetablePicker from 'components/OptivumTimetablePicker.vue';
 import HomeSchool from 'components/HomeSchool.vue';
 import { paths } from 'src/router/path-builder';
+import SchoolSearch from 'components/SchoolSearch.vue';
 
 interface UnitItem {
   key: string;
