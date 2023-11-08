@@ -57,14 +57,15 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
 import { UnitListItem } from 'src/api/client';
-import { useRoute } from 'vue-router';
-import { paramNames, pickParams, routeNames } from 'src/router/route-constants';
 import _ from 'lodash';
+import { useNavigation } from 'src/router/navigation';
 
 const props = defineProps<{
   units: UnitListItem[];
   unitType: 'teacher' | 'room';
 }>();
+
+const navigation = useNavigation();
 
 const searchValue = ref('');
 
@@ -75,17 +76,9 @@ const searchMessage = computed(
   () => `Wyszukaj ${props.unitType === 'teacher' ? 'nauczyciela' : 'salę'}`,
 );
 
-const route = useRoute();
 const items = computed(() => props.units.map((unit) => ({
   ...unit,
-  to: {
-    name: routeNames.unitTimetable,
-    params: {
-      ...pickParams(route, 'tri'),
-      [paramNames.unitType]: props.unitType,
-      [paramNames.unit]: unit.unit,
-    },
-  },
+  to: navigation.triRelative.unitType(props.unitType).id(unit.unit),
   searchText: unit.name.toLocaleLowerCase('pl').replaceAll(/\s/g, ''),
 })));
 

@@ -136,7 +136,7 @@ import { useRouter } from 'vue-router';
 import isUrl from 'is-url-superb';
 import { toProxied } from 'src/api/common';
 import OptivumHelp from 'components/OptivumHelp.vue';
-import { paramNames, routeNames } from 'src/router/route-constants';
+import { paths } from 'src/router/path-builder';
 
 const config = useConfigStore();
 const quasar = useQuasar();
@@ -158,12 +158,7 @@ const submit = async () => {
   try {
     const timetableInfo = await OptivumClient.attemptLoad(CacheMode.NetworkFirst, url.value);
     config.addHistoryEntry(timetableInfo, null);
-    await router.push({
-      name: routeNames.schoolHome,
-      params: {
-        [paramNames.tri]: OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath),
-      },
-    });
+    await router.push(paths.tri(OptivumClient.createTri(timetableInfo.baseUrl, timetableInfo.listPath)).school);
   } catch (error) {
     console.error(error);
     quasar.notify({
@@ -196,10 +191,7 @@ const historyItems = computed(() => config.optivumHistory
   .slice(0, historyLimit.value)
   .map((item) => ({
     ...item,
-    to: {
-      name: routeNames.schoolHome,
-      params: { [paramNames.tri]: OptivumClient.createTri(item.baseUrl, item.listPath) },
-    },
+    to: paths.tri(OptivumClient.createTri(item.baseUrl, item.listPath)).school,
     absoluteImageSrc: item.logoSrc
       ? toProxied(new URL(item.logoSrc, new URL(item.listPath, item.baseUrl)).toString()).url.toString()
       : undefined,

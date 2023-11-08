@@ -10,20 +10,20 @@ import {
 import { useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
 import OldDomainLayout from 'layouts/OldDomainLayout.vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { Client, clientSymbol, getClient } from 'src/api/client';
-import { paramNames, routeNames } from 'src/router/route-constants';
+import { useNavigation } from 'src/router/navigation';
+import { paths } from 'src/router/path-builder';
 
 const quasar = useQuasar();
 const config = useConfigStore();
 const router = useRouter();
-const route = useRoute();
+const navigation = useNavigation();
 
 const client = ref<Client | undefined>();
 provide(clientSymbol, client);
-watch(() => route.params[paramNames.tri], (tri: string | string[] | undefined, oldTri) => {
-  if (tri === oldTri || tri === undefined) return;
-  if (typeof tri === 'object') [tri] = tri;
+watch(() => navigation.params.tri, (tri, oldTri) => {
+  if (tri === oldTri || tri === null) return;
   try {
     client.value = getClient(tri);
   } catch (error) {
@@ -32,7 +32,7 @@ watch(() => route.params[paramNames.tri], (tri: string | string[] | undefined, o
       type: 'negative',
       message: 'Niepoprawny identyfikator planu lekcji',
     });
-    router.push({ name: routeNames.home });
+    router.push(paths.home);
     client.value = undefined;
   }
 }, { immediate: true });

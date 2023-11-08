@@ -31,6 +31,8 @@ export default route((/* { store, ssrContext } */) => {
     history: createHistory(
       process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE,
     ),
+    strict: false,
+    sensitive: true,
   });
 
   return Router;

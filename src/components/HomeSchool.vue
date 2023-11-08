@@ -40,13 +40,9 @@
 </template>
 
 <script setup lang="ts">
-import { paramNames, routeNames } from 'src/router/route-constants';
-import { RouteLocationRaw } from 'vue-router';
+import { paths } from 'src/router/path-builder';
 
-const vLoTo: RouteLocationRaw = {
-  name: routeNames.schoolHome,
-  params: { [paramNames.tri]: 'v-lo' },
-};
+const vLoTo = paths.tri('v-lo').school;
 </script>
 
 <style lang="scss">

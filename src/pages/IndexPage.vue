@@ -76,8 +76,8 @@ import { CacheMode } from 'src/api/requests';
 import BuildInfo from 'components/BuildInfo.vue';
 import { getClient } from 'src/api/client';
 import OptivumTimetablePicker from 'components/OptivumTimetablePicker.vue';
-import { paramNames, routeNames } from 'src/router/route-constants';
 import HomeSchool from 'components/HomeSchool.vue';
+import { paths } from 'src/router/path-builder';
 
 interface UnitItem {
   key: string;
@@ -120,14 +120,7 @@ onMounted(async () => {
                 room: 'sali',
                 teacher: 'nauczyciela',
               }[unitType]} ${unitName}`,
-              to: {
-                name: routeNames.unitTimetable,
-                params: {
-                  [paramNames.tri]: tri,
-                  [paramNames.unitType]: unitType,
-                  [paramNames.unit]: unit,
-                },
-              },
+              to: paths.tri(tri).unitType(unitType).id(unit),
             });
           }).sort((lhs, rhs) => lhs.name.localeCompare(rhs.name)),
         });

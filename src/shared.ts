@@ -1,6 +1,4 @@
-import {
-  RouteLocationRaw, Router, useRoute, useRouter,
-} from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
   computed, ComputedRef, reactive, readonly, ref, watch,
 } from 'vue';
@@ -21,12 +19,6 @@ export function shake(el: Element, reverse: boolean) {
   ];
   if (reverse) keyframes.reverse();
   el.animate(keyframes, { duration: 250 });
-}
-
-export function goBack(router: Router, to: RouteLocationRaw) {
-  const resolved = router.resolve(to);
-  if (resolved.href === window.history.state.back) router.back();
-  else router.push(to);
 }
 
 export interface Offset {
