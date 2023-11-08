@@ -536,6 +536,16 @@
       },
       {
         "type": "other",
+        "id": "kontrola-graniczna",
+        "raw": "21",
+        "full": "Punkt kontroli granicznej",
+        "width": 6,
+        "height": 4,
+        "x": 16,
+        "y": 27
+      },
+      {
+        "type": "other",
         "id": "pielegniarka",
         "full": "Gabinet pielęgniarki",
         "width": 2,
