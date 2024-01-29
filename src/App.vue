@@ -1,15 +1,11 @@
 <template>
-  <old-domain-layout v-if="isOldDomian" />
-  <router-view v-else />
+  <router-view />
 </template>
 
 <script lang="ts" setup>
-import {
-  computed, provide, ref, watch,
-} from 'vue';
+import { provide, ref, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { useConfigStore } from 'stores/config';
-import OldDomainLayout from 'layouts/OldDomainLayout.vue';
 import { useRouter } from 'vue-router';
 import { Client, clientSymbol, getClient } from 'src/api/client';
 import { useNavigation } from 'src/router/navigation';
@@ -52,5 +48,4 @@ watch(
   (value) => quasar.dark.set(value),
   { immediate: true },
 );
-const isOldDomian = computed(() => window.location.host === process.env.OLD_HOST);
 </script>

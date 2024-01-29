@@ -89,8 +89,6 @@ module.exports = configure((ctx) => ({
     // chainWebpack (/* chain */) {}
     env: {
       PROXY_URL: requireEnv('PROXY_URL'),
-      OLD_HOST: requireEnv('OLD_HOST'),
-      NEW_HOST: requireEnv('NEW_HOST'),
       VLO_V1_API_ORIGIN: process.env.VLO_V1_API_ORIGIN,
       VLO_V2_API_ORIGIN: process.env.VLO_V2_API_ORIGIN,
       WEB_PUSH_BACKEND_ORIGIN: requireEnv('WEB_PUSH_BACKEND_ORIGIN'),
