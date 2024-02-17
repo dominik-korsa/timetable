@@ -27,6 +27,7 @@
         no-caps
         class="q-py-sm"
         icon="o_map"
+        :to="paths.schoolMap"
       />
       <q-separator
         vertical
@@ -59,7 +60,9 @@
 </template>
 
 <script setup lang="ts">
+import { paths } from 'src/router/path-builder';
 </script>
+
 <style lang="scss">
 .school-search {
   .school-search__buttons {

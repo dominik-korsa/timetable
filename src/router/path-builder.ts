@@ -8,6 +8,7 @@ export type Path = string & {
 export const paths = {
   home: '/' as Path,
   superSecretSettings: '/super-secret-settings' as Path,
+  schoolMap: '/school-map' as Path,
   tri: (tri: string) => {
     const triPrefix = `/${tri}/`;
     const unitType = (type: UnitType) => {

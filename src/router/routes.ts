@@ -28,6 +28,13 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'school-map',
+        component: () => import('pages/SchoolMap.vue'),
+        meta: {
+          backTo: paths.home,
+        },
+      },
+      {
         path: `:${paramNames.tri}(v-lo)/map`,
         component: () => import('pages/VLoMapPage.vue'),
         meta: {
