@@ -21,10 +21,23 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
+const schoolIcon = L.icon({
+  iconUrl: '/leaflet-icons/marker-icon.png',
+  iconRetinaUrl: '/leaflet-icons/marker-icon-2x.png',
+  shadowUrl: '/leaflet-icons/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41],
+});
+
 const mapEl = ref<HTMLDivElement>();
 onMounted(() => {
   if (mapEl.value === undefined) throw new Error('No map element');
-  const map = L.map(mapEl.value).setView([52, 19.5], 6);
+  const map = L.map(mapEl.value, {
+    minZoom: 6,
+  }).setView([52, 19.5], 6);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; Autorzy <a href=https://www.openstreetmap.org/copyright>OpenStreetMap</a>',
@@ -42,7 +55,9 @@ onMounted(() => {
     });
     map.addLayer(markers);
     markers.addLayers((await response.json()).schools.map((school) => {
-      const marker = L.marker([school.geo_lat, school.geo_long]);
+      const marker = L.marker([school.geo_lat, school.geo_long], {
+        icon: schoolIcon,
+      });
       marker.bindTooltip(`[${school.rspo_id}] ${school.name}`);
       return marker;
     }));
