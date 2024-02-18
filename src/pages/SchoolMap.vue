@@ -32,28 +32,21 @@ onMounted(() => {
   }).addTo(map);
 
   const voivodeships = ['02', '04', '06', '08', '10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30', '32'];
-  Promise.all((voivodeships.map((teryt) => fetch(`https://tapi.dk-gl.eu/v1/schools?teryt=${teryt}`).then(async (response) => {
+
+  Promise.all(voivodeships.map((teryt) => fetch(`https://tapi.dk-gl.eu/v1/schools?teryt=${teryt}`).then(async (response) => {
     if (!response.ok) {
       throw Error(`HTTP Request for TERYT ${teryt} failed with status code ${response.status}`);
     }
-    return (await response.json()).schools;
-  })))).then((result) => {
     const markers = L.markerClusterGroup({
       chunkedLoading: true,
-      chunkProgress: (processed, total) => {
-        console.log(processed, total);
-      },
     });
     map.addLayer(markers);
-
-    markers.addLayers(result.flat().map((school) => {
+    markers.addLayers((await response.json()).schools.map((school) => {
       const marker = L.marker([school.geo_lat, school.geo_long]);
-      marker.bindTooltip(school.name);
+      marker.bindTooltip(`[${school.rspo_id}] ${school.name}`);
       return marker;
     }));
-
-    markers.addTo(map);
-  });
+  })));
 });
 </script>
 
