@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@js-temporal/polyfill": "^0.4.4",
+    "@maptiler/leaflet-maptilersdk": "^2.0.0",
     "@quasar/extras": "^1.16.5",
     "@wulkanowy/timetable-parser": "^1.6.0",
     "core-js": "^3.32.1",

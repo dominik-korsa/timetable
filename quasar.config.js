@@ -93,6 +93,7 @@ module.exports = configure((ctx) => ({
       VLO_V2_API_ORIGIN: process.env.VLO_V2_API_ORIGIN,
       WEB_PUSH_BACKEND_ORIGIN: requireEnv('WEB_PUSH_BACKEND_ORIGIN'),
       WEB_PUSH_VAPID_PUBLIC_KEY: requireEnv('WEB_PUSH_VAPID_PUBLIC_KEY'),
+      MAPTILER_API_KEY: requireEnv('MAPTILER_API_KEY'),
       BRANCH: process.env.BRANCH,
       DEPLOY_ID: process.env.DEPLOY_ID,
       REPOSITORY_URL: process.env.REPOSITORY_URL,

@@ -12,6 +12,7 @@
 <script lang="ts" setup>
 import L from 'leaflet';
 import 'leaflet.markercluster';
+import '@maptiler/leaflet-maptilersdk';
 
 globalThis.L = L;
 
@@ -37,13 +38,14 @@ onMounted(() => {
   if (mapEl.value === undefined) throw new Error('No map element');
   const map = L.map(mapEl.value, {
     minZoom: 6,
+    maxZoom: 18,
   }).setView([52, 19.5], 6);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; Autorzy <a href=https://www.openstreetmap.org/copyright>OpenStreetMap</a>',
-    detectRetina: true,
+  new L.MaptilerLayer({
+    apiKey: process.env.MAPTILER_API_KEY,
+    language: L.MaptilerLanguage.POLISH,
+    style: L.MaptilerStyle.DATAVIZ,
   }).addTo(map);
-
   const voivodeships = ['02', '04', '06', '08', '10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30', '32'];
 
   Promise.all(voivodeships.map((teryt) => fetch(`https://tapi.dk-gl.eu/v1/schools?teryt=${teryt}`).then(async (response) => {
