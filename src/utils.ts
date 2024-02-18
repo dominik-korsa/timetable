@@ -127,3 +127,5 @@ export const chunkBalanced = <T>(items: T[], maxCount: number) => _.chunk(
   items,
   balance(items.length, maxCount),
 );
+
+export const notNull = <T>(value: T | null): value is T => value !== null;

@@ -21,6 +21,7 @@ import { onMounted, ref } from 'vue';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+import { getSchoolListByTeryt, voivodeshipTerytCodes } from 'src/api/tapi';
 
 const schoolIcon = L.icon({
   iconUrl: '/leaflet-icons/marker-icon.png',
@@ -46,24 +47,24 @@ onMounted(() => {
     language: L.MaptilerLanguage.POLISH,
     style: L.MaptilerStyle.DATAVIZ,
   }).addTo(map);
-  const voivodeships = ['02', '04', '06', '08', '10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30', '32'];
 
-  Promise.all(voivodeships.map((teryt) => fetch(`https://tapi.dk-gl.eu/v1/schools?teryt=${teryt}`).then(async (response) => {
-    if (!response.ok) {
-      throw Error(`HTTP Request for TERYT ${teryt} failed with status code ${response.status}`);
-    }
+  Promise.all(voivodeshipTerytCodes.map(async (teryt) => {
+    const schools = await getSchoolListByTeryt(teryt);
     const markers = L.markerClusterGroup({
       chunkedLoading: true,
     });
     map.addLayer(markers);
-    markers.addLayers((await response.json()).schools.map((school) => {
+    markers.addLayers(schools.map((school) => {
       const marker = L.marker([school.geo_lat, school.geo_long], {
         icon: schoolIcon,
       });
-      marker.bindTooltip(`[${school.rspo_id}] ${school.name}`);
+      let addressLine1 = `${school.address_street} ${school.address_building_number}`;
+      if (school.address_apartament_number !== '') addressLine1 += `/${school.address_apartament_number}`;
+      const addressLine2 = `${school.address_zip_code} ${school.address_town}`;
+      marker.bindTooltip(`[${school.rspo_id}] ${school.name}<br>${addressLine1}<br>${addressLine2}`);
       return marker;
     }));
-  })));
+  }));
 });
 </script>
 
