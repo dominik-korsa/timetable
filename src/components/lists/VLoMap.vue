@@ -44,27 +44,13 @@
       />
     </template>
     <template v-else-if="floor === 'groundFloor'">
-      <rect
-        class="v-lo-map__corridor"
-        width="16"
-        height="80"
-        x="80"
-        y="32"
-      />
       <path
         class="v-lo-map__corridor"
-        d="M 240,32 V 192 H 96 v -48 H 80 v 48 H 16 v 16 H 112 v 20 h 8 l 8,-8 v 28 H 176 v -40 H 256 V 32 Z"
-      />
-      <rect
-        class="v-lo-map__corridor-outline"
-        width="16"
-        height="80"
-        x="80"
-        y="32"
+        d="M 240,32 V 192 H 96 V 32 H 80 V 192 H 48 v 16 H 112 v 20 h 8 l 8,-8 v 28 H 176 v -40 H 256 V 32 Z"
       />
       <path
         class="v-lo-map__corridor-outline"
-        d="M 240,32 V 192 H 96 v -48 H 80 v 48 H 16 v 16 H 112 v 20 h 8 l 8,-8 v 28 H 176 v -40 H 256 V 32 Z"
+        d="M 240,32 V 192 H 96 V 32 H 80 V 192 H 48 v 16 H 112 v 20 h 8 l 8,-8 v 28 H 176 v -40 H 256 V 32 Z"
       />
       <path
         class="v-lo-map__corridor-outline"
@@ -101,7 +87,6 @@
         [`v-lo-map__room--${room.type}`]: true,
         'v-lo-map__room--vertical': !!room.vertical,
         'v-lo-map__room--selected': room.id === selectedId,
-        'v-lo-map__room--checkpoint': room.id === 'kontrola-graniczna'
       }"
       :aria-label="room.full"
       @click="onRoomClick(room.id)"
@@ -137,25 +122,6 @@
           </div>
         </div>
       </foreignObject>
-      <template v-if="room.id === 'kontrola-graniczna'">
-        <path d="M 128,216 h 6 v 1 l -6 6 Z" />
-        <path d="M 128,227 l 6 -6 v 6 l -6 6 Z" />
-        <path d="M 128,237 l 6 -6 v 6 l -6 6 Z" />
-        <path d="M 128,247 l 6 -6 v 7 h -6 Z" />
-
-        <path d="M 170,216 h 6 v 1 l -6 6 Z" />
-        <path d="M 170,227 l 6 -6 v 6 l -6 6 Z" />
-        <path d="M 170,237 l 6 -6 v 6 l -6 6 Z" />
-        <path d="M 170,247 l 6 -6 v 7 h -6 Z" />
-
-        <g transform="translate(142, 222) scale(0.05)">
-          <path
-            d="M 300 49 L 217 49 L 207 49 L 182 74 L 207 74 L 207 79 C 207 107 230 130 258 130 C 287 130 310 107 310 79 L 310 49 L 300 49 Z M 310 33 L 205 33 L 182 0 L 310 0 Z M 349 148 L 348 148 L 344 148 L 215 312 L 320 312 L 320 340 L 188 340 L 188 396 L 320 396 L 376 396 L 376 340 L 376 312 L 376 209 L 376 176 C 376 161 364 148 349 148 Z M 3 17 L 3 53 L 3 84 L 3 121 L 7 124 C 26 138 44 152 63 167 C 64 167 65 168 66 169 C 66 169 66 169 67 169 L 67 133 L 67 124 L 89 124 L 89 17 L 3 17 Z M 83 118 L 67 118 L 67 102 L 67 65 C 48 51 29 37 10 22 L 83 22 L 83 118 Z M 304 148 L 181 148 L 170 148 L 170 148 C 164 148 158 150 154 155 C 139 174 124 193 108 212 C 86 195 63 178 41 161 C 30 153 13 159 7 170 C 0 182 6 195 16 203 C 43 223 70 244 97 264 C 98 265 98 266 99 266 C 100 266 100 267 100 267 C 105 270 111 271 117 270 C 122 269 127 267 130 263 C 130 263 130 263 130 262 C 131 261 132 260 133 259 C 149 239 165 218 181 198 L 181 302 L 304 148 Z"
-            fill="#000"
-            stroke="none"
-          />
-        </g>
-      </template>
     </g>
     <g
       v-for="entrance in selectedRoomEntrances"
@@ -271,13 +237,7 @@ const selectedRoomEntrances = computed(() => {
   })) ?? [];
 });
 
-const audio = new Audio('/sounds/checkpoint.wav');
-
 const onRoomClick = (id: string) => {
-  if (id === 'kontrola-graniczna') {
-    audio.currentTime = 0;
-    audio.play();
-  }
   emit('room-click', id);
 };
 </script>
@@ -351,12 +311,6 @@ const onRoomClick = (id: string) => {
       --base-color:  #{$lime-7};
       --hover-color: #{$lime-4};
       --blink-color: #{$lime-2};
-    }
-
-    &.v-lo-map__room--checkpoint {
-      --base-color: #{$amber};
-      --hover-color: #{$amber-4};
-      --blink-color: #{$amber-2};
     }
 
     &:hover .v-lo-map__room-shape {

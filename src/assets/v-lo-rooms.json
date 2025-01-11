@@ -375,27 +375,6 @@
         ]
       },
       {
-        "type": "teachers",
-        "id": "his",
-        "full": "Pokój nauczycieli języka hiszpańskiego",
-        "width": 2,
-        "height": 4,
-        "x": 10,
-        "y": 14,
-        "entrances": [
-          {
-            "x": 11,
-            "y": 14,
-            "rotation": 180
-          },
-          {
-            "x": 11,
-            "y": 18,
-            "rotation": 0
-          }
-        ]
-      },
-      {
         "type": "classroom",
         "id": "13a",
         "raw": "13A",
@@ -533,16 +512,6 @@
             "rotation": 135
           }
         ]
-      },
-      {
-        "type": "other",
-        "id": "kontrola-graniczna",
-        "raw": "21",
-        "full": "Punkt kontroli granicznej",
-        "width": 6,
-        "height": 4,
-        "x": 16,
-        "y": 27
       },
       {
         "type": "other",
